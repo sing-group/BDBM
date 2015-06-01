@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>es.uvigo.ei.sing</groupId>
+	<artifactId>bdbm-project</artifactId>
+	<version>0.11.0-SNAPSHOT</version>
+	<!-- WARNING: change version using: mvn versions:set -DnewVersion=[new_version] 
+		in order to change the version in all modules at-once -->
+	<name>BLAST DataBase Manager</name>
+	<inceptionYear>2014</inceptionYear>
+	<url>http://sing.ei.uvigo.es/BDBM</url>
+	<packaging>pom</packaging>
+	
+	<developers>
+		<developer>
+			<name>Miguel Reboiro-Jato</name>
+			<organization>SING Group - University of Vigo</organization>
+			<organizationUrl>http://sing.ei.uvigo.es/</organizationUrl>
+			<email>mrjato@uvigo.es</email>
+		</developer>
+		<developer>
+			<name>Hugo López-Fernández</name>
+			<organization>SING Group - University of Vigo</organization>
+			<organizationUrl>http://sing.ei.uvigo.es/</organizationUrl>
+			<email>hlfernandez@uvigo.es</email>
+		</developer>
+	</developers>
+	<contributors>
+		<contributor>
+			<name>Jorge Vieira</name>
+			<organization>Instituto de Biologia Molecular e Celular, Universidade do Porto</organization>
+			<organizationUrl>http://evolution.ibmc.up.pt/</organizationUrl>
+			<email>jbvieira@ibmc.up.pt</email>
+			<roles>
+				<role>Principal Investigator</role>
+			</roles>
+		</contributor>
+		<contributor>
+			<name>Cristina P. Vieira</name>
+			<organization>Instituto de Biologia Molecular e Celular, Universidade do Porto</organization>
+			<organizationUrl>http://evolution.ibmc.up.pt/</organizationUrl>
+			<email>cgvieira@ibmc.up.pt</email>
+			<roles>
+				<role>Researcher</role>
+			</roles>
+		</contributor>
+		<contributor>
+			<name>Florentino Fdez-Riverola</name>
+			<organization>SING Group - University of Vigo</organization>
+			<organizationUrl>http://sing.ei.uvigo.es/</organizationUrl>
+			<email>riverola@uvigo.es</email>
+			<roles>
+				<role>Researcher</role>
+			</roles>
+		</contributor>
+	</contributors>
+
+	<licenses>
+		<license>
+			<name>GNU GENERAL PUBLIC LICENSE, Version 3</name>
+			<url>http://www.gnu.org/licenses/gpl.html</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<properties>
+		<!-- General -->
+		<source.version>1.7</source.version>
+		<target.version>1.7</target.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		
+		<!-- Plugins -->
+		<maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
+		<license-maven-plugin.version>1.8</license-maven-plugin.version>
+		
+		<!-- Testing -->
+		<junit.version>4.12</junit.version>
+		<easymock.version>3.3.1</easymock.version>
+		
+		<!-- license-maven-plugin configuration -->
+		<license.licenseName>gpl_v3</license.licenseName>
+		<license.copyrightOwners>Miguel Reboiro-Jato, Critina P. Vieira, Hugo López-Fdez, Florentino Fdez-Riverola and Jorge Vieira</license.copyrightOwners>
+		<license.organizationName>Instituto de Biologia Molecular e Celular (Universidade do Porto) and SING Group (University of Vigo)</license.organizationName>
+		<license.addJavaLicenseAfterPackage>false</license.addJavaLicenseAfterPackage>
+	</properties>
+
+	<distributionManagement>
+		<repository>
+			<id>sing-maven2-repository</id>
+			<url>ftp://sing.ei.uvigo.es</url>
+		</repository>
+	</distributionManagement>
+
+	<repositories>
+		<repository>
+			<id>sing-repository</id>
+			<name>SING repository</name>
+			<url>http://sing.ei.uvigo.es/maven2</url>
+		</repository>
+		<repository>
+			<id>say.swing.footchooser</id>
+			<url>http://jfontchooser.sourceforge.jp/repository/</url>
+		</repository>
+	</repositories>
+
+	<modules>
+		<module>bdbm-api</module>
+		<module>bdbm-core</module>
+		<module>bdbm-gui</module>
+		<module>bdbm-cli</module>
+	</modules>
+	
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.easymock</groupId>
+			<artifactId>easymock</artifactId>
+			<version>${easymock.version}</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven-compiler-plugin.version}</version>
+				<configuration>
+					<source>${source.version}</source>
+					<target>${target.version}</target>
+				</configuration>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>license-maven-plugin</artifactId>
+				<version>${license-maven-plugin.version}</version>
+			</plugin>
+		</plugins>
+	</build>
+</project>

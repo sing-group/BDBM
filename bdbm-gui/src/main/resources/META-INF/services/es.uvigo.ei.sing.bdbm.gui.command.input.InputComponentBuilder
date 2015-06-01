@@ -1,0 +1,3 @@
+es.uvigo.ei.sing.bdbm.gui.command.input.FileInputComponentBuilder
+es.uvigo.ei.sing.bdbm.gui.command.input.EnumInputComponentBuilder
+es.uvigo.ei.sing.bdbm.gui.command.input.BooleanInputComponentBuilder
