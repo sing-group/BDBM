@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>es.uvigo.ei.sing</groupId>
 		<artifactId>bdbm-project</artifactId>
-		<version>0.11.0</version>
+		<version>0.12.0-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -20,6 +20,7 @@
 		<!-- Dependencies -->
 		<jfontchooser.version>1.0.5</jfontchooser.version>
 		<commons-lang3.version>3.4</commons-lang3.version>
+		<javahelp.version>2.0.05</javahelp.version>
 	</properties>
 
 	<dependencies>
@@ -38,6 +39,11 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 			<version>${commons-lang3.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.help</groupId>
+			<artifactId>javahelp</artifactId>
+			<version>${javahelp.version}</version>
 		</dependency>
 	</dependencies>
 

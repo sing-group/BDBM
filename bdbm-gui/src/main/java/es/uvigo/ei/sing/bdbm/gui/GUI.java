@@ -29,9 +29,13 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 import java.util.Observable;
 import java.util.Observer;
 
+import javax.help.CSH;
+import javax.help.HelpSet;
+import javax.help.HelpSetException;
 import javax.swing.AbstractAction;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
@@ -39,6 +43,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -313,19 +318,27 @@ public class GUI implements Observer {
 		
 		
 		final JMenu menuHelp = new JMenu("Help");
-		menuHelp.add(new AbstractAction("User manual") {
-			private static final long serialVersionUID = 1L;
+		try {
+			final URL hsURL = HelpSet.findHelpSet(GUI.class.getClassLoader(), "help/helpset.hs");
+			final HelpSet hs = new HelpSet(null, hsURL);
+			final JMenuItem mi = new JMenuItem("User manual");
+			mi.addActionListener(new CSH.DisplayHelpFromSource(hs.createHelpBroker()));
+			menuHelp.add(mi);
+		} catch (HelpSetException e1) {
+			menuHelp.add(new AbstractAction("User manual") {
+				private static final long serialVersionUID = 1L;
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(
-					parent, 
-					"This option will be available soon",
-					"Help",
-					JOptionPane.INFORMATION_MESSAGE
-				);
-			}
-		});
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					JOptionPane.showMessageDialog(
+						parent, 
+						"Sorry, an error happend while trying to load help. Please, contact administrators.",
+						"Help",
+						JOptionPane.ERROR_MESSAGE
+					);
+				}
+			});	
+		}
 		menuHelp.add(new AbstractAction("About BDBM") {
 			private static final long serialVersionUID = 1L;
 			

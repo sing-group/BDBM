@@ -1,0 +1,105 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!--
+  #%L
+  BDBM GUI
+  %%
+  Copyright (C) 2014 - 2015 Miguel Reboiro-Jato, Critina P. Vieira, Hugo López-Fdez, Florentino Fdez-Riverola and Jorge Vieira
+  %%
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
+  
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+  
+  You should have received a copy of the GNU General Public
+  License along with this program.  If not, see
+  <http://www.gnu.org/licenses/gpl-3.0.html>.
+  #L%
+  -->
+
+<!DOCTYPE toc PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 2.0//EN"
+		"http://java.sun.com/products/javahelp/toc_2_0.dtd">
+
+<toc version="1.0">
+	<tocitem text="BDBM Help">
+		<tocitem 
+			text="Introduction" 
+			target="top"
+		/>
+
+		<tocitem 
+			text="Working with BDBM"
+		>
+			<tocitem 
+				text="Viewing and searching files" 
+				target="bdbm.view-search-files"
+			/>
+			<tocitem 
+				text="Deleting and exporting files" 
+				target="bdbm.delete-export-files"
+			/>
+		</tocitem>	
+		
+		<tocitem 
+			text="The File menu"
+			target="bdbm.file"
+		>
+			<tocitem 
+				text="The Configuration option" 
+				target="bdbm.file.configuration"
+			/>
+		</tocitem>
+		
+		<tocitem 
+			text="The Operations menu"
+			target="bdbm.operations"
+		>
+			<tocitem 
+				text="Import Fasta" 
+				target="bdbm.operations.import-fasta"
+			/>
+			<tocitem 
+				text="Make BLAST Database" 
+				target="bdbm.operations.make-blast-database"
+			/>
+			<tocitem 
+				text="BLAST DB alias" 
+				target="bdbm.operations.blast-db-alias"
+			/>
+			<tocitem 
+				text="Retrieve Search Entry" 
+				target="bdbm.operations.retrieve-search-entry"
+			/>
+			<tocitem 
+				text="Get ORF (EMBOSS)" 
+				target="bdbm.operations.get-orf"
+			/>
+			<tocitem 
+				text="Splign-Compart (NCBI)" 
+				target="bdbm.operations.splign-compart"
+			/>
+			<tocitem 
+				text="Reformat Fasta" 
+				target="bdbm.operations.reformat-fasta"
+			/>
+			<tocitem 
+				text="Merge Fastas" 
+				target="bdbm.operations.merge-fastas"
+			/>
+		</tocitem>
+		
+		<tocitem 
+			text="The BLAST menu"
+			target="bdbm.blast"
+		>
+			<tocitem 
+				text="BLASTN, BLASTP, TBLASTN and TBLASTX (with or without external query)" 
+				target="bdbm.blast.blastn"
+			/>
+		</tocitem>		
+	</tocitem>
+</toc>

@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!--
+  #%L
+  BDBM GUI
+  %%
+  Copyright (C) 2014 - 2015 Miguel Reboiro-Jato, Critina P. Vieira, Hugo López-Fdez, Florentino Fdez-Riverola and Jorge Vieira
+  %%
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
+  
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+  
+  You should have received a copy of the GNU General Public
+  License along with this program.  If not, see
+  <http://www.gnu.org/licenses/gpl-3.0.html>.
+  #L%
+  -->
+
+<!DOCTYPE map PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Map Version 1.0//EN"
+                     "http://java.sun.com/products/javahelp/map_2_0.dtd">
+
+<map version="2.0">
+	<mapID target="top" url="HTML/index.html"/>
+	
+	<mapID target="bdbm.view-search-files" url="HTML/BDBM/ViewSearchFiles.html"/>	
+	<mapID target="bdbm.delete-export-files" url="HTML/BDBM/DeleteExportFiles.html"/>	
+	
+	<mapID target="bdbm.file" url="HTML/File/File.html"/>	
+	<mapID target="bdbm.file.configuration" url="HTML/File/Configuration.html"/>	
+	
+	<mapID target="bdbm.operations" url="HTML/Operations/Operations.html"/>	
+	<mapID target="bdbm.operations.import-fasta" url="HTML/Operations/ImportFasta.html"/>	
+	<mapID target="bdbm.operations.make-blast-database" url="HTML/Operations/MakeBlastDatabase.html"/>	
+	<mapID target="bdbm.operations.blast-db-alias" url="HTML/Operations/BlastDBAlias.html"/>	
+	<mapID target="bdbm.operations.retrieve-search-entry" url="HTML/Operations/RetrieveSearchEntry.html"/>	
+	<mapID target="bdbm.operations.get-orf" url="HTML/Operations/GetORF.html"/>	
+	<mapID target="bdbm.operations.splign-compart" url="HTML/Operations/SplignCompart.html"/>	
+	<mapID target="bdbm.operations.reformat-fasta" url="HTML/Operations/ReformatFasta.html"/>	
+	<mapID target="bdbm.operations.merge-fastas" url="HTML/Operations/MergeFastas.html"/>	
+	
+	<mapID target="bdbm.blast" url="HTML/Blast/Blast.html"/>	
+	<mapID target="bdbm.blast.blastn" url="HTML/Blast/Blastn.html"/>		
+</map>
