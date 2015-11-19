@@ -39,8 +39,8 @@ import es.uvigo.ei.sing.bdbm.gui.command.ParameterValuesReceiver;
 import es.uvigo.ei.sing.bdbm.persistence.entities.ProteinDatabase;
 import es.uvigo.ei.sing.bdbm.persistence.entities.ProteinSearchEntry;
 import es.uvigo.ei.sing.bdbm.persistence.entities.ProteinSearchEntry.ProteinQuery;
-import es.uvigo.ei.sing.yaacli.Option;
-import es.uvigo.ei.sing.yaacli.Parameters;
+import es.uvigo.ei.sing.yaacli.command.option.Option;
+import es.uvigo.ei.sing.yaacli.command.parameter.Parameters;
 
 public class BLASTPCommandDialog extends CommandDialog {
 	private static final long serialVersionUID = 1L;

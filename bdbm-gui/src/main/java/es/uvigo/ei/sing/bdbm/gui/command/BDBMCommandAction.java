@@ -29,8 +29,8 @@ import javax.swing.Icon;
 
 import es.uvigo.ei.sing.bdbm.controller.BDBMController;
 import es.uvigo.ei.sing.bdbm.gui.actions.BDBMAction;
-import es.uvigo.ei.sing.yaacli.Command;
-import es.uvigo.ei.sing.yaacli.Parameters;
+import es.uvigo.ei.sing.yaacli.command.Command;
+import es.uvigo.ei.sing.yaacli.command.parameter.Parameters;
 
 public class BDBMCommandAction extends BDBMAction {
 	private static final long serialVersionUID = 1L;

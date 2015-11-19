@@ -33,7 +33,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import es.uvigo.ei.sing.bdbm.gui.command.ParameterValuesReceiver;
-import es.uvigo.ei.sing.yaacli.Option;
+import es.uvigo.ei.sing.yaacli.command.option.Option;
 
 public class FileInputComponentBuilder implements InputComponentBuilder {
 	private final static JFileChooser FILE_CHOOSER = new JFileChooser(new File("."));

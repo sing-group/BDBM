@@ -34,7 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import es.uvigo.ei.sing.bdbm.gui.command.ParameterValuesReceiver;
-import es.uvigo.ei.sing.yaacli.Option;
+import es.uvigo.ei.sing.yaacli.command.option.Option;
 
 public class DefaultInputComponentBuilder implements InputComponentBuilder {
 	private final static Logger LOG = LoggerFactory.getLogger(DefaultInputComponentBuilder.class);

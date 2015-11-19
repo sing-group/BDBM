@@ -33,8 +33,8 @@ import es.uvigo.ei.sing.bdbm.controller.BDBMController;
 import es.uvigo.ei.sing.bdbm.gui.command.CommandDialog;
 import es.uvigo.ei.sing.bdbm.gui.command.ParameterValuesReceiver;
 import es.uvigo.ei.sing.bdbm.persistence.entities.NucleotideDatabase;
-import es.uvigo.ei.sing.yaacli.Option;
-import es.uvigo.ei.sing.yaacli.Parameters;
+import es.uvigo.ei.sing.yaacli.command.option.Option;
+import es.uvigo.ei.sing.yaacli.command.parameter.Parameters;
 
 public class ExternalTBLASTNCommandDialog extends CommandDialog {
 	private static final long serialVersionUID = 1L;

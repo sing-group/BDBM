@@ -24,7 +24,7 @@ package es.uvigo.ei.sing.bdbm.gui.command.input;
 import java.awt.Component;
 
 import es.uvigo.ei.sing.bdbm.gui.command.ParameterValuesReceiver;
-import es.uvigo.ei.sing.yaacli.Option;
+import es.uvigo.ei.sing.yaacli.command.option.Option;
 
 public interface InputComponentBuilder {
 	public boolean canHandle(Option<?> option);

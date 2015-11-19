@@ -26,8 +26,8 @@ import java.lang.reflect.Modifier;
 import java.util.LinkedList;
 import java.util.List;
 
-import es.uvigo.ei.sing.yaacli.AbstractCommand;
-import es.uvigo.ei.sing.yaacli.Option;
+import es.uvigo.ei.sing.yaacli.command.AbstractCommand;
+import es.uvigo.ei.sing.yaacli.command.option.Option;
 
 public abstract class AbstractOptionCommand extends AbstractCommand {
 	private static final String REFLECTION_OPTION_PREFIX = "OPTION_";

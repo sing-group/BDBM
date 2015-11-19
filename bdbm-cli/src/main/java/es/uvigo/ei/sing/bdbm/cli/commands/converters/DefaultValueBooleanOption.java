@@ -21,7 +21,7 @@
  */
 package es.uvigo.ei.sing.bdbm.cli.commands.converters;
 
-import es.uvigo.ei.sing.yaacli.DefaultValuedOption;
+import es.uvigo.ei.sing.yaacli.command.option.DefaultValuedOption;
 
 public class DefaultValueBooleanOption extends DefaultValuedOption<Boolean> {
 	public DefaultValueBooleanOption(

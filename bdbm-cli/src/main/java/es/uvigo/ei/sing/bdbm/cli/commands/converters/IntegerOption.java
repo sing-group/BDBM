@@ -21,7 +21,7 @@
  */
 package es.uvigo.ei.sing.bdbm.cli.commands.converters;
 
-import es.uvigo.ei.sing.yaacli.DefaultValuedStringConstructedOption;
+import es.uvigo.ei.sing.yaacli.command.option.DefaultValuedStringConstructedOption;
 
 public class IntegerOption extends DefaultValuedStringConstructedOption<Integer> {
 	public IntegerOption(

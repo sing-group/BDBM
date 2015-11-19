@@ -24,7 +24,7 @@ package es.uvigo.ei.sing.bdbm.gui.command.dialogs;
 import java.util.List;
 
 import es.uvigo.ei.sing.bdbm.gui.command.ParameterValuesReceiver;
-import es.uvigo.ei.sing.yaacli.Option;
+import es.uvigo.ei.sing.yaacli.command.option.Option;
 
 public class ParameterValuesReceiverWrapper extends AbstractParameterValuesReceiver {
 	private final ParameterValuesReceiver receiver;

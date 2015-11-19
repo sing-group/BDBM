@@ -18,7 +18,7 @@
 		<maven-assembly-plugin.version>2.5.4</maven-assembly-plugin.version>
 	
 		<!-- Dependencies -->
-		<yaacli.version>0.0.2-SNAPSHOT</yaacli.version>
+		<yaacli.version>0.1.0-SNAPSHOT</yaacli.version>
 	</properties>
 
 	<dependencies>

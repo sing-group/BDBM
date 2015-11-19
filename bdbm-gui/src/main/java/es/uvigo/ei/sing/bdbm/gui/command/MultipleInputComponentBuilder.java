@@ -27,7 +27,7 @@ import java.awt.Component;
 import javax.swing.JPanel;
 
 import es.uvigo.ei.sing.bdbm.gui.command.input.InputComponentBuilder;
-import es.uvigo.ei.sing.yaacli.Option;
+import es.uvigo.ei.sing.yaacli.command.option.Option;
 
 public class MultipleInputComponentBuilder implements InputComponentBuilder {
 	@Override

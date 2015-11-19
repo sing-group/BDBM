@@ -31,8 +31,8 @@ import es.uvigo.ei.sing.bdbm.cli.commands.converters.FileOption;
 import es.uvigo.ei.sing.bdbm.controller.BDBMController;
 import es.uvigo.ei.sing.bdbm.persistence.entities.DefaultNucleotideDatabase;
 import es.uvigo.ei.sing.bdbm.persistence.entities.DefaultNucleotideSearchEntry;
-import es.uvigo.ei.sing.yaacli.Parameters;
-import es.uvigo.ei.sing.yaacli.StringOption;
+import es.uvigo.ei.sing.yaacli.command.option.StringOption;
+import es.uvigo.ei.sing.yaacli.command.parameter.Parameters;
 
 public class BLASTNCommand extends BDBMCommand {
 	public static final FileOption OPTION_DATABASE = 

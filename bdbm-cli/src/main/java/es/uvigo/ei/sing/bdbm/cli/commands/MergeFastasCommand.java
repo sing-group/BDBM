@@ -30,9 +30,9 @@ import es.uvigo.ei.sing.bdbm.controller.BDBMController;
 import es.uvigo.ei.sing.bdbm.environment.SequenceType;
 import es.uvigo.ei.sing.bdbm.persistence.entities.AbstractFasta;
 import es.uvigo.ei.sing.bdbm.persistence.entities.Fasta;
-import es.uvigo.ei.sing.yaacli.Option;
-import es.uvigo.ei.sing.yaacli.Parameters;
-import es.uvigo.ei.sing.yaacli.StringOption;
+import es.uvigo.ei.sing.yaacli.command.option.Option;
+import es.uvigo.ei.sing.yaacli.command.option.StringOption;
+import es.uvigo.ei.sing.yaacli.command.parameter.Parameters;
 
 public class MergeFastasCommand extends BDBMCommand {
 	public static final Option<SequenceType> OPTION_FASTA_TYPE = 

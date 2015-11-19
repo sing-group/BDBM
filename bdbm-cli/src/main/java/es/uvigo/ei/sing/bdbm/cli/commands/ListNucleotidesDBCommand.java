@@ -26,8 +26,8 @@ import java.util.List;
 
 import es.uvigo.ei.sing.bdbm.controller.BDBMController;
 import es.uvigo.ei.sing.bdbm.persistence.entities.NucleotideDatabase;
-import es.uvigo.ei.sing.yaacli.Option;
-import es.uvigo.ei.sing.yaacli.Parameters;
+import es.uvigo.ei.sing.yaacli.command.option.Option;
+import es.uvigo.ei.sing.yaacli.command.parameter.Parameters;
 
 public class ListNucleotidesDBCommand extends BDBMCommand {
 	public ListNucleotidesDBCommand() {

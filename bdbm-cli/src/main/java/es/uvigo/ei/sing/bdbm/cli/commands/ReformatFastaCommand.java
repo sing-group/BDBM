@@ -36,11 +36,11 @@ import es.uvigo.ei.sing.bdbm.environment.SequenceType;
 import es.uvigo.ei.sing.bdbm.fasta.FastaUtils;
 import es.uvigo.ei.sing.bdbm.fasta.ReformatFastaParameters;
 import es.uvigo.ei.sing.bdbm.persistence.entities.AbstractFasta;
-import es.uvigo.ei.sing.yaacli.DefaultValuedStringOption;
-import es.uvigo.ei.sing.yaacli.Option;
-import es.uvigo.ei.sing.yaacli.Parameters;
-import es.uvigo.ei.sing.yaacli.StringConstructedOption;
-import es.uvigo.ei.sing.yaacli.StringOption;
+import es.uvigo.ei.sing.yaacli.command.option.DefaultValuedStringOption;
+import es.uvigo.ei.sing.yaacli.command.option.Option;
+import es.uvigo.ei.sing.yaacli.command.option.StringConstructedOption;
+import es.uvigo.ei.sing.yaacli.command.option.StringOption;
+import es.uvigo.ei.sing.yaacli.command.parameter.Parameters;
 
 public class ReformatFastaCommand extends BDBMCommand {
 	public static final Option<SequenceType> OPTION_FASTA_TYPE = 

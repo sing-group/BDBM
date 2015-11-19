@@ -28,9 +28,9 @@ import java.awt.event.ActionListener;
 import javax.swing.JComboBox;
 
 import es.uvigo.ei.sing.bdbm.gui.command.ParameterValuesReceiver;
-import es.uvigo.ei.sing.yaacli.Option;
-import es.uvigo.ei.sing.yaacli.OptionConverter;
-import es.uvigo.ei.sing.yaacli.SingleParameterValue;
+import es.uvigo.ei.sing.yaacli.command.option.Option;
+import es.uvigo.ei.sing.yaacli.command.option.OptionConverter;
+import es.uvigo.ei.sing.yaacli.command.parameter.SingleParameterValue;
 
 public class EnumInputComponentBuilder implements InputComponentBuilder {
 	@Override

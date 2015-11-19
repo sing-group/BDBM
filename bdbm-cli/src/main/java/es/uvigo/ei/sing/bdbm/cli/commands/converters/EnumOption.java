@@ -21,9 +21,9 @@
  */
 package es.uvigo.ei.sing.bdbm.cli.commands.converters;
 
-import es.uvigo.ei.sing.yaacli.AbstractOptionConverter;
-import es.uvigo.ei.sing.yaacli.DefaultValuedOption;
-import es.uvigo.ei.sing.yaacli.SingleParameterValue;
+import es.uvigo.ei.sing.yaacli.command.option.AbstractOptionConverter;
+import es.uvigo.ei.sing.yaacli.command.option.DefaultValuedOption;
+import es.uvigo.ei.sing.yaacli.command.parameter.SingleParameterValue;
 
 public class EnumOption<T extends Enum<T>> extends DefaultValuedOption<T> {
 	public EnumOption(
@@ -67,9 +67,6 @@ public class EnumOption<T extends Enum<T>> extends DefaultValuedOption<T> {
 			new EnumConverter<T>(enumType)
 		);
 	}
-
-
-
 
 	private final static class EnumConverter<E extends Enum<E>> extends AbstractOptionConverter<E> {
 		private final Class<E> enumType;

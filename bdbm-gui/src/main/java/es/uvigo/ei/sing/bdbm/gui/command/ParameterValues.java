@@ -29,12 +29,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 
-import es.uvigo.ei.sing.yaacli.DefaultValuedOption;
-import es.uvigo.ei.sing.yaacli.MultipleParameterValue;
-import es.uvigo.ei.sing.yaacli.Option;
-import es.uvigo.ei.sing.yaacli.ParameterValue;
-import es.uvigo.ei.sing.yaacli.Parameters;
-import es.uvigo.ei.sing.yaacli.SingleParameterValue;
+import es.uvigo.ei.sing.yaacli.command.option.DefaultValuedOption;
+import es.uvigo.ei.sing.yaacli.command.option.Option;
+import es.uvigo.ei.sing.yaacli.command.parameter.MultipleParameterValue;
+import es.uvigo.ei.sing.yaacli.command.parameter.ParameterValue;
+import es.uvigo.ei.sing.yaacli.command.parameter.Parameters;
+import es.uvigo.ei.sing.yaacli.command.parameter.SingleParameterValue;
 
 public class ParameterValues extends Observable implements ParameterValuesReceiver, Parameters {
 		private final List<Option<?>> options;

@@ -27,7 +27,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 
 import es.uvigo.ei.sing.bdbm.gui.command.ParameterValuesReceiver;
-import es.uvigo.ei.sing.yaacli.Option;
+import es.uvigo.ei.sing.yaacli.command.option.Option;
 
 public class BuildComponent {
 	public static <T> Component forOption(

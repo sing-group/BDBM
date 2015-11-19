@@ -31,9 +31,9 @@ import es.uvigo.ei.sing.bdbm.controller.BDBMController;
 import es.uvigo.ei.sing.bdbm.environment.SequenceType;
 import es.uvigo.ei.sing.bdbm.persistence.entities.AbstractDatabase;
 import es.uvigo.ei.sing.bdbm.persistence.entities.Database;
-import es.uvigo.ei.sing.yaacli.Option;
-import es.uvigo.ei.sing.yaacli.Parameters;
-import es.uvigo.ei.sing.yaacli.StringOption;
+import es.uvigo.ei.sing.yaacli.command.option.Option;
+import es.uvigo.ei.sing.yaacli.command.option.StringOption;
+import es.uvigo.ei.sing.yaacli.command.parameter.Parameters;
 
 public class BLASTDBAliasToolCommand extends BDBMCommand {
 	public static final Option<SequenceType> OPTION_DB_TYPE = 

@@ -64,10 +64,10 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import es.uvigo.ei.sing.bdbm.controller.BDBMController;
 import es.uvigo.ei.sing.bdbm.gui.command.input.DefaultInputComponentBuilder;
 import es.uvigo.ei.sing.bdbm.gui.command.input.InputComponentBuilder;
-import es.uvigo.ei.sing.yaacli.Command;
-import es.uvigo.ei.sing.yaacli.DefaultValuedOption;
-import es.uvigo.ei.sing.yaacli.Option;
-import es.uvigo.ei.sing.yaacli.Parameters;
+import es.uvigo.ei.sing.yaacli.command.Command;
+import es.uvigo.ei.sing.yaacli.command.option.DefaultValuedOption;
+import es.uvigo.ei.sing.yaacli.command.option.Option;
+import es.uvigo.ei.sing.yaacli.command.parameter.Parameters;
 
 public class CommandDialog extends JDialog {
 	private final static long serialVersionUID = 1L;

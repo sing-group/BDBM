@@ -73,13 +73,13 @@ import es.uvigo.ei.sing.bdbm.persistence.entities.SearchEntry;
 import es.uvigo.ei.sing.bdbm.persistence.entities.SequenceEntity;
 import es.uvigo.ei.sing.bdbm.persistence.entities.Export.ExportEntry;
 import es.uvigo.ei.sing.bdbm.persistence.entities.SearchEntry.Query;
-import es.uvigo.ei.sing.yaacli.Command;
-import es.uvigo.ei.sing.yaacli.DefaultParameters;
-import es.uvigo.ei.sing.yaacli.MultipleParameterValue;
-import es.uvigo.ei.sing.yaacli.Option;
-import es.uvigo.ei.sing.yaacli.ParameterValue;
-import es.uvigo.ei.sing.yaacli.Parameters;
-import es.uvigo.ei.sing.yaacli.SingleParameterValue;
+import es.uvigo.ei.sing.yaacli.command.Command;
+import es.uvigo.ei.sing.yaacli.command.option.Option;
+import es.uvigo.ei.sing.yaacli.command.parameter.DefaultParameters;
+import es.uvigo.ei.sing.yaacli.command.parameter.MultipleParameterValue;
+import es.uvigo.ei.sing.yaacli.command.parameter.ParameterValue;
+import es.uvigo.ei.sing.yaacli.command.parameter.Parameters;
+import es.uvigo.ei.sing.yaacli.command.parameter.SingleParameterValue;
 
 public class OperationsRepositoryListener extends MouseAdapter {
 	private final BDBMGUIController controller;

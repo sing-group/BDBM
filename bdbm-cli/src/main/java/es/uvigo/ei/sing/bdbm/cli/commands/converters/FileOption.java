@@ -23,7 +23,7 @@ package es.uvigo.ei.sing.bdbm.cli.commands.converters;
 
 import java.io.File;
 
-import es.uvigo.ei.sing.yaacli.StringConstructedOption;
+import es.uvigo.ei.sing.yaacli.command.option.StringConstructedOption;
 
 
 public class FileOption extends StringConstructedOption<File> {

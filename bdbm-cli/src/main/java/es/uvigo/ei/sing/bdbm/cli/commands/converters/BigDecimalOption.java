@@ -23,7 +23,7 @@ package es.uvigo.ei.sing.bdbm.cli.commands.converters;
 
 import java.math.BigDecimal;
 
-import es.uvigo.ei.sing.yaacli.DefaultValuedStringConstructedOption;
+import es.uvigo.ei.sing.yaacli.command.option.DefaultValuedStringConstructedOption;
 
 public class BigDecimalOption extends DefaultValuedStringConstructedOption<BigDecimal> {
 	public BigDecimalOption(

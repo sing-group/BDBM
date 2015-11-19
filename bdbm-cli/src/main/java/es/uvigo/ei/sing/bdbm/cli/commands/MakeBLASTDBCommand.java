@@ -28,9 +28,9 @@ import es.uvigo.ei.sing.bdbm.cli.commands.converters.SequenceTypeOptionConverter
 import es.uvigo.ei.sing.bdbm.controller.BDBMController;
 import es.uvigo.ei.sing.bdbm.environment.SequenceType;
 import es.uvigo.ei.sing.bdbm.persistence.entities.AbstractFasta;
-import es.uvigo.ei.sing.yaacli.Option;
-import es.uvigo.ei.sing.yaacli.Parameters;
-import es.uvigo.ei.sing.yaacli.StringOption;
+import es.uvigo.ei.sing.yaacli.command.option.Option;
+import es.uvigo.ei.sing.yaacli.command.option.StringOption;
+import es.uvigo.ei.sing.yaacli.command.parameter.Parameters;
 
 public class MakeBLASTDBCommand extends BDBMCommand {
 	public static final Option<SequenceType> OPTION_DB_TYPE = 

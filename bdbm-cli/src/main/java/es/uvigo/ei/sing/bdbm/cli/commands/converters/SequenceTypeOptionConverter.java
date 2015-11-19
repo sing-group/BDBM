@@ -22,8 +22,8 @@
 package es.uvigo.ei.sing.bdbm.cli.commands.converters;
 
 import es.uvigo.ei.sing.bdbm.environment.SequenceType;
-import es.uvigo.ei.sing.yaacli.AbstractOptionConverter;
-import es.uvigo.ei.sing.yaacli.SingleParameterValue;
+import es.uvigo.ei.sing.yaacli.command.option.AbstractOptionConverter;
+import es.uvigo.ei.sing.yaacli.command.parameter.SingleParameterValue;
 
 public class SequenceTypeOptionConverter extends AbstractOptionConverter<SequenceType> {
 	@Override

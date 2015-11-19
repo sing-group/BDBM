@@ -36,9 +36,9 @@ import es.uvigo.ei.sing.bdbm.gui.command.CommandDialog;
 import es.uvigo.ei.sing.bdbm.gui.command.ParameterValuesReceiver;
 import es.uvigo.ei.sing.bdbm.gui.command.input.BuildComponent;
 import es.uvigo.ei.sing.bdbm.persistence.entities.Database;
-import es.uvigo.ei.sing.yaacli.Option;
-import es.uvigo.ei.sing.yaacli.Parameters;
-import es.uvigo.ei.sing.yaacli.SingleParameterValue;
+import es.uvigo.ei.sing.yaacli.command.option.Option;
+import es.uvigo.ei.sing.yaacli.command.parameter.Parameters;
+import es.uvigo.ei.sing.yaacli.command.parameter.SingleParameterValue;
 
 public class RetrieveSearchEntryCommandDialog extends CommandDialog {
 	private static final long serialVersionUID = 1L;
