@@ -48,4 +48,8 @@ public enum BLASTType {
 			return null;
 		}
 	}
+	
+	public String configName() {
+		return this.name().toLowerCase();
+	}
 }

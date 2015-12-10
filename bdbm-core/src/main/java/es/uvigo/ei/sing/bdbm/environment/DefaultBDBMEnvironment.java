@@ -27,10 +27,10 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import es.uvigo.ei.sing.bdbm.environment.BDBMEnvironment;
 import es.uvigo.ei.sing.bdbm.environment.binaries.BLASTBinaries;
 import es.uvigo.ei.sing.bdbm.environment.binaries.BedToolsBinaries;
 import es.uvigo.ei.sing.bdbm.environment.binaries.CompartBinaries;
@@ -93,7 +93,8 @@ public class DefaultBDBMEnvironment implements BDBMEnvironment {
 			new File(this.getProperty(RepositoryPaths.BASE_DIRECTORY_PROP))
 		);
 		this.blastBinaries = new DefaultBLASTBinaries(
-			this.getProperty(BLASTBinaries.BASE_DIRECTORY_PROP)
+			this.getProperty(BLASTBinaries.BASE_DIRECTORY_PROP),
+			defaultPropertiesFor(BLASTBinaries.BLAST_PREFIX)
 		);
 		this.embossBinaries = new DefaultEMBOSSBinaries(
 			this.getProperty(EMBOSSBinaries.BASE_DIRECTORY_PROP)
@@ -141,6 +142,25 @@ public class DefaultBDBMEnvironment implements BDBMEnvironment {
 			new FileWriter(this.propertiesFile), 
 			"Configuration modified by BDBM"
 		);
+	}
+	
+	private Map<String, String> defaultPropertiesFor(String toolPrefix) {
+		final Map<String, String> properties = new HashMap<>();
+		
+		for (Object key : defaultProperties.keySet()) {
+			final String keyStr = key.toString();
+			final String prefix = toolPrefix + "default.";
+			
+			if (keyStr.startsWith(prefix)) {
+				final String param = keyStr.substring(prefix.length());
+				
+				if (!param.isEmpty()) {
+					properties.put(param, defaultProperties.getProperty(keyStr));
+				}
+			}
+		}
+		
+		return properties;
 	}
 	
 	@Override
@@ -343,7 +363,7 @@ public class DefaultBDBMEnvironment implements BDBMEnvironment {
 
 	@Override
 	public DefaultBLASTBinaries createBLASTBinaries(String path) {
-		return new DefaultBLASTBinaries(path);
+		return new DefaultBLASTBinaries(path, defaultPropertiesFor(BLASTBinaries.BLAST_PREFIX));
 	}
 
 	@Override

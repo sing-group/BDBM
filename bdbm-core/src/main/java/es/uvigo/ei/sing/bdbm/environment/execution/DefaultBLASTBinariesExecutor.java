@@ -21,6 +21,8 @@
  */
 package es.uvigo.ei.sing.bdbm.environment.execution;
 
+import static java.util.Arrays.asList;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -28,8 +30,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -37,21 +41,17 @@ import org.slf4j.LoggerFactory;
 
 import es.uvigo.ei.sing.bdbm.environment.binaries.BLASTBinaries;
 import es.uvigo.ei.sing.bdbm.environment.binaries.BLASTType;
-import es.uvigo.ei.sing.bdbm.environment.execution.BLASTBinariesExecutor;
-import es.uvigo.ei.sing.bdbm.environment.execution.BinaryCheckException;
-import es.uvigo.ei.sing.bdbm.environment.execution.ExecutionException;
-import es.uvigo.ei.sing.bdbm.environment.execution.ExecutionResult;
 import es.uvigo.ei.sing.bdbm.persistence.entities.Database;
 import es.uvigo.ei.sing.bdbm.persistence.entities.Export;
+import es.uvigo.ei.sing.bdbm.persistence.entities.Export.ExportEntry;
 import es.uvigo.ei.sing.bdbm.persistence.entities.NucleotideDatabase;
 import es.uvigo.ei.sing.bdbm.persistence.entities.NucleotideExport;
 import es.uvigo.ei.sing.bdbm.persistence.entities.NucleotideSearchEntry;
 import es.uvigo.ei.sing.bdbm.persistence.entities.ProteinDatabase;
 import es.uvigo.ei.sing.bdbm.persistence.entities.ProteinExport;
 import es.uvigo.ei.sing.bdbm.persistence.entities.ProteinSearchEntry;
-import es.uvigo.ei.sing.bdbm.persistence.entities.SearchEntry;
-import es.uvigo.ei.sing.bdbm.persistence.entities.Export.ExportEntry;
 import es.uvigo.ei.sing.bdbm.persistence.entities.ProteinSearchEntry.ProteinQuery;
+import es.uvigo.ei.sing.bdbm.persistence.entities.SearchEntry;
 
 public class DefaultBLASTBinariesExecutor
 extends AbstractBinariesExecutor<BLASTBinaries>
@@ -88,7 +88,7 @@ implements BLASTBinariesExecutor {
 	public ExecutionResult executeMakeBlastDB(
 		File inputFasta, Database database
 	) throws InterruptedException, ExecutionException {
-		return AbstractBinariesExecutor.executeCommand(
+		return executeCommand(
 			LOG,
 			this.binaries.getMakeBlastDB(),
 			"-in", inputFasta.getAbsolutePath(),
@@ -100,20 +100,22 @@ implements BLASTBinariesExecutor {
 
 	@Override
 	public ExecutionResult executeBlastDBAliasTool(
-		Database database, Database[] databases)
-	throws InterruptedException, ExecutionException, IOException {
+		Database database, Database[] databases
+	) throws InterruptedException, ExecutionException, IOException {
 		final StringBuilder sbDBList = new StringBuilder();
 		
 		for (Database inputDB : databases) {
 			if (sbDBList.length() > 0) sbDBList.append(' ');
-			sbDBList.append(new File(inputDB.getDirectory(), inputDB.getName()).getAbsolutePath());
+			
+			final File inputFile = new File(inputDB.getDirectory(), inputDB.getName());
+			sbDBList.append(inputFile.getAbsolutePath());
 		}
 		
 		final File dbFile = new File(database.getDirectory(), database.getName());
 		if (!dbFile.isDirectory() && !dbFile.mkdirs())
 			throw new IOException("Database directory could not be created: " + dbFile);
 		
-		return AbstractBinariesExecutor.executeCommand(
+		return executeCommand(
 			LOG,
 			this.binaries.getBlastDBAliasTool(),
 			"-dblist", sbDBList.toString(),
@@ -127,7 +129,7 @@ implements BLASTBinariesExecutor {
 	public ExecutionResult executeBlastDBCMD(
 		Database database, SearchEntry searchEntry, String entry
 	) throws InterruptedException, ExecutionException {
-		return AbstractBinariesExecutor.executeCommand(
+		return executeCommand(
 			LOG,
 			this.binaries.getBlastDBCmd(),
 			"-db", new File(database.getDirectory(), database.getName()).getAbsolutePath(),
@@ -141,7 +143,7 @@ implements BLASTBinariesExecutor {
 	public ExecutionResult executeBlastDBCMD(
 		Database database, ExportEntry exportEntry, String entry
 	) throws InterruptedException, ExecutionException {
-		return AbstractBinariesExecutor.executeCommand(
+		return executeCommand(
 			LOG,
 			this.binaries.getBlastDBCmd(),
 			"-db", database.getDirectory().getAbsolutePath(),
@@ -168,52 +170,70 @@ implements BLASTBinariesExecutor {
 			throw new IOException("Output directory could not be created: " + outDirectory);
 		}
 		
-//		final File[] subFastas = FastaUtils.splitFastaIntoFiles(queryFile);
-//		if (subFastas.length == 1) {
-			return AbstractBinariesExecutor.executeCommand(
-				LOG,
-				this.binaries.getBlast(blastType), 
-				"-query", queryFile.getAbsolutePath(),
-				"-db", database.getDirectory().getAbsolutePath(),
-				"-evalue", expectedValue.toPlainString(),
-				blastType.getFilterParam(), filter ? "yes" : "no",
-				"-out", outFile.getAbsolutePath()
-			);
-//		} else {
-//			final StringBuilder sbOutput = new StringBuilder();
-//			final StringBuilder sbError = new StringBuilder();
-//			int exitStatus = 0;
-//			
-//			for (File fastaFile : subFastas) {
-//				final File outTmpFile = File.createTempFile("bdbm", "out");
-//				outTmpFile.deleteOnExit();
-//				
-//				final ExecutionResult result = AbstractBinariesExecutor.executeCommand(
-//					LOG,
-//					this.binaries.getBlast(blastType), 
-//					"-query", fastaFile.getAbsolutePath(),
-//					"-db", database.getDirectory().getAbsolutePath(),
-//					"-evalue", expectedValue.toPlainString(),
-//					blastType.getFilterParam(), filter ? "yes" : "no",
-//					"-out", outTmpFile.getAbsolutePath()
-//				);
-//				
-//				
-//				if (result.getExitStatus() != 0)
-//					exitStatus = result.getExitStatus();
-//				sbOutput.append(result.getOutput()).append('\n');
-//				sbError.append(result.getError()).append('\n');
-//				
-//				FileUtils.writeLines(outFile, FileUtils.readLines(outTmpFile), true);
-//				
-//				outTmpFile.delete();
-//				fastaFile.delete();
-//			}
-//			
-//			return new DefaultExecutionResult(exitStatus, sbOutput.toString(), sbOutput.toString());
-//		}
+		final List<String> parameters = getBlastAdditionalParameters(blastType, "query", "db", "evalue", "out"); 
+		parameters.addAll(asList( 
+			"-query", queryFile.getAbsolutePath(),
+			"-db", database.getDirectory().getAbsolutePath(),
+			"-evalue", expectedValue.toPlainString(),
+			blastType.getFilterParam(), filter ? "yes" : "no",
+			"-out", outFile.getAbsolutePath()
+		));
+		
+		return executeCommand(
+			LOG,
+			this.binaries.getBlast(blastType), 
+			parameters.toArray(new String[parameters.size()])
+		);
 	}
 
+	private List<String> getBlastAdditionalParameters(BLASTType blastType, String ... invalid) {
+		final Map<String, String> parameters = new HashMap<>();
+		
+		final Set<String> invalidParams = new HashSet<>(asList(invalid));
+		invalidParams.add(blastType.getFilterParam());
+
+		final Map<String, String> configParams = this.binaries.getConfigurationParameters();
+		for (Map.Entry<String, String> entry : configParams.entrySet()) {
+			final String param = entry.getKey();
+			
+			if (!invalidParams.contains(param) && !isABlastTypeAdditionalParam(param)) {
+				parameters.put(param, entry.getValue());
+			}
+		}
+		
+		// Specific params have preference over general params.
+		final String blastPrefix = blastType.configName() + ".";
+		for (Map.Entry<String, String> entry : configParams.entrySet()) {
+			final String fullParam = entry.getKey();
+			
+			if (fullParam.startsWith(blastPrefix)) {
+				final String param = fullParam.substring(blastPrefix.length());
+				
+				if (!invalidParams.contains(param)) {
+					parameters.put(param, entry.getValue());
+				}
+			}
+		}
+		
+		final List<String> additionalParams = new ArrayList<>();
+		for (Map.Entry<String, String> param : parameters.entrySet()) {
+			additionalParams.add("-" + param.getKey());
+			additionalParams.add(param.getValue());
+		}
+		
+		return additionalParams;
+	}
+	
+	private static boolean isABlastTypeAdditionalParam(String param) {
+		for (BLASTType type : BLASTType.values()) {
+			if (param.startsWith(type.configName() + ".")) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
 	@Override
 	public ExecutionResult executeBlast(
 		BLASTType blastType, 
@@ -224,7 +244,15 @@ implements BLASTBinariesExecutor {
 		boolean filter,
 		String outputName
 	) throws InterruptedException, ExecutionException, IOException {
-		return this.executeBlast(blastType, database, query.getBaseFile(), export, expectedValue, filter, outputName);
+		return this.executeBlast(
+			blastType,
+			database,
+			query.getBaseFile(),
+			export,
+			expectedValue,
+			filter,
+			outputName
+		);
 	}
 
 	@Override

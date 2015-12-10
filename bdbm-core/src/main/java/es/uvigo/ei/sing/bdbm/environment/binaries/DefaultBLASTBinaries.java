@@ -22,6 +22,7 @@
 package es.uvigo.ei.sing.bdbm.environment.binaries;
 
 import static es.uvigo.ei.sing.bdbm.util.DirectoryUtils.getAbsolutePath;
+import static java.util.Collections.emptyMap;
 
 import java.io.File;
 import java.util.Map;
@@ -38,16 +39,21 @@ public class DefaultBLASTBinaries implements BLASTBinaries {
 	private String tBlastX;
 	private String tBlastN;
 	
+	private final Map<String, String> configurationParameters;
+	
 	public DefaultBLASTBinaries() {
 		this.setBaseDirectory((File) null);
+		this.configurationParameters = emptyMap();
 	}
 	
-	public DefaultBLASTBinaries(File baseDirectory) {
+	public DefaultBLASTBinaries(File baseDirectory, Map<String, String> configurationParameters) {
 		this.setBaseDirectory(baseDirectory);
+		this.configurationParameters = configurationParameters;
 	}
 	
-	public DefaultBLASTBinaries(String baseDirectoryPath) {
+	public DefaultBLASTBinaries(String baseDirectoryPath, Map<String, String> configurationParameters) {
 		this.setBaseDirectory(baseDirectoryPath);
+		this.configurationParameters = configurationParameters;
 	}
 	
 	public DefaultBLASTBinaries(
@@ -58,7 +64,8 @@ public class DefaultBLASTBinaries implements BLASTBinaries {
 		String blastN,
 		String blastP,
 		String tBlastX,
-		String tBlastN
+		String tBlastN,
+		Map<String, String> configurationParameters
 	) {
 		this.baseDirectory = baseDirectory;
 		this.makeBlastDB = makeBlastDB;
@@ -68,6 +75,7 @@ public class DefaultBLASTBinaries implements BLASTBinaries {
 		this.blastP = blastP;
 		this.tBlastX = tBlastX;
 		this.tBlastN = tBlastN;
+		this.configurationParameters = configurationParameters;
 	}
 	
 	public void setBaseDirectory(String path) {
@@ -84,6 +92,11 @@ public class DefaultBLASTBinaries implements BLASTBinaries {
 		this.blastP = getAbsolutePath(this.baseDirectory, defaultBlastP());
 		this.tBlastX = getAbsolutePath(this.baseDirectory, defaultTBlastX());
 		this.tBlastN = getAbsolutePath(this.baseDirectory, defaultTBlastN());
+	}
+	
+	@Override
+	public Map<String, String> getConfigurationParameters() {
+		return this.configurationParameters;
 	}
 
 	@Override

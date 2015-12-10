@@ -21,27 +21,28 @@
  */
 package es.uvigo.ei.sing.bdbm.environment.binaries;
 
+import java.util.Map;
 
 public interface BLASTBinaries extends Binaries {
-	public final static String BLAST_BINARIES_PREFIX = "blast.";
+	public final static String BLAST_PREFIX = "blast.";
 	
 	public final static String BASE_DIRECTORY_PROP = 
-		BLAST_BINARIES_PREFIX + "binDir";
+		BLAST_PREFIX + "binDir";
 	
 	public final static String MAKE_BLAST_DB_PROP = 
-		BLAST_BINARIES_PREFIX + "makeblastdb";
+		BLAST_PREFIX + "makeblastdb";
 	public final static String BLASTDB_ALIASTOOL_PROP = 
-		BLAST_BINARIES_PREFIX + "blastdb_aliastool";
+		BLAST_PREFIX + "blastdb_aliastool";
 	public final static String BLASTDB_CMD_PROP = 
-		BLAST_BINARIES_PREFIX + "blastdbcmd";
+		BLAST_PREFIX + "blastdbcmd";
 	public final static String BLAST_N_PROP = 
-		BLAST_BINARIES_PREFIX + "blastn";
+		BLAST_PREFIX + "blastn";
 	public final static String BLAST_P_PROP = 
-		BLAST_BINARIES_PREFIX + "blastp";
+		BLAST_PREFIX + "blastp";
 	public final static String T_BLAST_X_PROP = 
-		BLAST_BINARIES_PREFIX + "tblastx";
+		BLAST_PREFIX + "tblastx";
 	public final static String T_BLAST_N_PROP = 
-		BLAST_BINARIES_PREFIX + "tblastn";
+		BLAST_PREFIX + "tblastn";
 
 	public abstract String getMakeBlastDB();
 	public abstract String getBlastDBAliasTool();
@@ -51,4 +52,5 @@ public interface BLASTBinaries extends Binaries {
 	public abstract String getTBlastX();
 	public abstract String getTBlastN();
 	public abstract String getBlast(BLASTType blastType);
+	public abstract Map<String, String> getConfigurationParameters();
 }
