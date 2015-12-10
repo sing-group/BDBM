@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>es.uvigo.ei.sing</groupId>
 		<artifactId>bdbm-project</artifactId>
-		<version>0.12.0</version>
+		<version>0.13.0-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -14,43 +14,33 @@
 	<name>BDBM Core</name>
 	
 	<properties>
-		<slf4j.version>1.7.12</slf4j.version>
-		<logback.version>1.1.3</logback.version>
-		<janino.version>2.7.8</janino.version>
-		<commons-io.version>2.4</commons-io.version>
 	</properties>
 
 	<dependencies>
 		<dependency>
 			<groupId>es.uvigo.ei.sing</groupId>
 			<artifactId>bdbm-api</artifactId>
-			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-			<version>${slf4j.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-core</artifactId>
-			<version>${logback.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
-			<version>${logback.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.codehaus.janino</groupId>
 			<artifactId>janino</artifactId>
-			<version>${janino.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
-			<version>${commons-io.version}</version>
 		</dependency>
 	</dependencies>
 </project>

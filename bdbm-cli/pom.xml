@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>es.uvigo.ei.sing</groupId>
 		<artifactId>bdbm-project</artifactId>
-		<version>0.12.0</version>
+		<version>0.13.0-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -13,25 +13,15 @@
 	<packaging>jar</packaging>
 	<name>BDBM CLI</name>
 
-	<properties>
-		<!-- Plugins -->
-		<maven-assembly-plugin.version>2.5.4</maven-assembly-plugin.version>
-	
-		<!-- Dependencies -->
-		<yaacli.version>0.1.0-SNAPSHOT</yaacli.version>
-	</properties>
-
 	<dependencies>
 		<dependency>
 			<groupId>es.uvigo.ei.sing</groupId>
 			<artifactId>bdbm-core</artifactId>
-			<version>${project.version}</version>
 		</dependency>
 		
 		<dependency>
 			<groupId>es.uvigo.ei.sing</groupId>
 			<artifactId>yaacli</artifactId>
-			<version>${yaacli.version}</version>
 		</dependency>
 	</dependencies>
 
@@ -39,7 +29,6 @@
 		<plugins>
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
-				<version>${maven-assembly-plugin.version}</version>
 				<configuration>
 					<descriptor>assembly/bin.xml</descriptor>
 					<appendAssemblyId>false</appendAssemblyId>

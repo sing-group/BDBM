@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>es.uvigo.ei.sing</groupId>
 		<artifactId>bdbm-project</artifactId>
-		<version>0.12.0</version>
+		<version>0.13.0-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -14,8 +14,6 @@
 	<name>BDBM GUI</name>
 	
 	<properties>
-		<!-- Plugins -->
-		<maven-assembly-plugin.version>2.5.4</maven-assembly-plugin.version>
 	
 		<!-- Dependencies -->
 		<jfontchooser.version>1.0.5</jfontchooser.version>
@@ -27,23 +25,19 @@
 		<dependency>
 			<groupId>es.uvigo.ei.sing</groupId>
 			<artifactId>bdbm-cli</artifactId>
-			<version>${project.version}</version>
 		</dependency>
 		
 		<dependency>
 			<groupId>say.swing</groupId>
 			<artifactId>jfontchooser</artifactId>
-			<version>${jfontchooser.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
-			<version>${commons-lang3.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.help</groupId>
 			<artifactId>javahelp</artifactId>
-			<version>${javahelp.version}</version>
 		</dependency>
 	</dependencies>
 
@@ -51,7 +45,6 @@
 		<plugins>
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
-				<version>${maven-assembly-plugin.version}</version>
 				<configuration>
 					<descriptor>assembly/bin.xml</descriptor>
 					<appendAssemblyId>false</appendAssemblyId>
