@@ -29,15 +29,18 @@ import es.uvigo.ei.sing.yaacli.command.option.Option;
 import es.uvigo.ei.sing.yaacli.command.parameter.Parameters;
 
 public class ImportFastaCommand extends BDBMCommand {
+	public static final String OPTION_IMPORT_TYPE_SHORT_NAME = "type";
+	public static final String OPTION_INPUT_FILE_SHORT_NAME = "file";
+	
 	public static final Option<SequenceType> OPTION_IMPORT_TYPE = 
 		new Option<SequenceType>(
-			"Type", "type", "Fasta type: auto, nucl (nucleotides) or prot (proteins)", 
+			"Type", OPTION_IMPORT_TYPE_SHORT_NAME, "Fasta type: auto, nucl (nucleotides) or prot (proteins)", 
 			false, true, 
 			new SequenceTypeOptionConverter()
 		);
 	public static final FileOption OPTION_INPUT_FILE = 
 		new FileOption(
-			"File", "file", "Fasta file", 
+			"File", OPTION_INPUT_FILE_SHORT_NAME, "Fasta file", 
 			false, true
 		);
 	

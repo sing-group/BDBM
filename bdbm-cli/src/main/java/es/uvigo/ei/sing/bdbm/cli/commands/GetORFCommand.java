@@ -32,27 +32,33 @@ import es.uvigo.ei.sing.yaacli.command.option.StringOption;
 import es.uvigo.ei.sing.yaacli.command.parameter.Parameters;
 
 public class GetORFCommand extends BDBMCommand {
+	public static final String OPTION_FASTA_SHORT_NAME = "fasta";
+	public static final String OPTION_MIN_SHORT_NAME = "min";
+	public static final String OPTION_MAX_SHORT_NAME = "max";
+	public static final String OPTION_REMOVE_NEWLINES_SHORT_NAME = "nonl";
+	public static final String OPTION_OUTPUT_SHORT_NAME = "output";
+	
 	public static final FileOption OPTION_FASTA = 
 		new FileOption(
-			"Fasta", "fasta", "Input fasta (nucleotide) file",
+			"Fasta", OPTION_FASTA_SHORT_NAME, "Input fasta (nucleotide) file",
 			false, true
 		);
 	public static final IntegerOption OPTION_MIN_SIZE =
 		new IntegerOption(
-			"Min. Size", "min", "Minimum ORF size", "300"
+			"Min. Size", OPTION_MIN_SHORT_NAME, "Minimum ORF size", "300"
 		);
 	public static final IntegerOption OPTION_MAX_SIZE =
 		new IntegerOption(
-			"Max. Size", "max", "Maximum ORF size", "10000"
+			"Max. Size", OPTION_MAX_SHORT_NAME, "Maximum ORF size", "10000"
 		);
 	public static final DefaultValueBooleanOption OPTION_REMOVE_NEWLINES =
 		new DefaultValueBooleanOption(
-			"Remove new lines", "nonl", "Delete the new line characters from the sequences", 
+			"Remove new lines", OPTION_REMOVE_NEWLINES_SHORT_NAME, "Delete the new line characters from the sequences", 
 			false
 		);
 	public static final StringOption OPTION_OUTPUT_NAME = 
 		new StringOption(
-			"Output name", "output", "Output name", 
+			"Output name", OPTION_OUTPUT_SHORT_NAME, "Output name", 
 			false, true
 		);
 	

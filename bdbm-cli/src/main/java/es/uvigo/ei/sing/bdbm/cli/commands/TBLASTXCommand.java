@@ -24,47 +24,12 @@ package es.uvigo.ei.sing.bdbm.cli.commands;
 import java.io.File;
 import java.math.BigDecimal;
 
-import es.uvigo.ei.sing.bdbm.cli.commands.converters.BigDecimalOption;
-import es.uvigo.ei.sing.bdbm.cli.commands.converters.BooleanOption;
-import es.uvigo.ei.sing.bdbm.cli.commands.converters.DefaultValueBooleanOption;
-import es.uvigo.ei.sing.bdbm.cli.commands.converters.FileOption;
 import es.uvigo.ei.sing.bdbm.controller.BDBMController;
 import es.uvigo.ei.sing.bdbm.persistence.entities.DefaultNucleotideDatabase;
 import es.uvigo.ei.sing.bdbm.persistence.entities.DefaultNucleotideSearchEntry;
-import es.uvigo.ei.sing.yaacli.command.option.StringOption;
 import es.uvigo.ei.sing.yaacli.command.parameter.Parameters;
 
-public class TBLASTXCommand extends BDBMCommand {
-	public static final FileOption OPTION_DATABASE = 
-		new FileOption(
-			"Database", "db", "Database from which the search entry will be retrieved",
-			false, true
-		);
-	public static final FileOption OPTION_QUERY =
-		new FileOption(
-			"Query", "query", "Fasta file to be used as query", 
-			false, true
-		);
-	public static final BigDecimalOption OPTION_EXPECTED_VALUE =
-		new BigDecimalOption(
-			"Expected value", "evalue", "Expected value blastn parameter", "0.05"
-		);
-	public static final BooleanOption OPTION_FILTER = 
-		new BooleanOption(
-			"Filter", "filter", "Filter results", 
-			false, true 
-		);
-	public static final StringOption OPTION_OUTPUT_NAME = 
-		new StringOption(
-			"Output name", "output", "Output name", 
-			false, true
-		);
-	public static final DefaultValueBooleanOption OPTION_KEEP_SINGLE_SEQUENCE_FILES = 
-		new DefaultValueBooleanOption(
-			"Keep single sequences", "keep_seqs", "Keep single sequence file", 
-			false
-		);
-	
+public class TBLASTXCommand extends BLASTPCommand {
 	public TBLASTXCommand() {
 		super();
 	}

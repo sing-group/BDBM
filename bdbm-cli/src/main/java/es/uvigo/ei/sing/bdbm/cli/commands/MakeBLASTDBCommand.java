@@ -33,20 +33,24 @@ import es.uvigo.ei.sing.yaacli.command.option.StringOption;
 import es.uvigo.ei.sing.yaacli.command.parameter.Parameters;
 
 public class MakeBLASTDBCommand extends BDBMCommand {
+	public static final String OPTION_DB_TYPE_SHORT_NAME = "dbtype";
+	public static final String OPTION_INPUT_SHORT_NAME = "in";
+	public static final String OPTION_OUTPUT_SHORT_NAME = "out";
+	
 	public static final Option<SequenceType> OPTION_DB_TYPE = 
 		new Option<SequenceType>(
-			"DB Type", "dbtype", "Database type: prot (proteins) or nucl (nucleotides)", 
+			"DB Type", OPTION_DB_TYPE_SHORT_NAME, "Database type: prot (proteins) or nucl (nucleotides)", 
 			false, true, 
 			new SequenceTypeOptionConverter()
 		);
 	public static final FileOption OPTION_INPUT = 
 		new FileOption(
-			"Input fasta", "in", "Input FASTA file", 
+			"Input fasta", OPTION_INPUT_SHORT_NAME, "Input FASTA file", 
 			false, true
 		);
 	public static final StringOption OPTION_OUTPUT = 
 		new StringOption(
-			"Output name", "out", "Output database name", 
+			"Output name", OPTION_OUTPUT_SHORT_NAME, "Output database name", 
 			false, true
 		);
 	

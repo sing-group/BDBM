@@ -232,7 +232,7 @@ public class GUI implements Observer {
 		final BDBMCommandAction retrieveSearchEntryCA = new BDBMCommandAction(
 			bdbmController,
 			new RetrieveSearchEntryCommand(bdbmController), 
-			RetrieveSearchEntryCommandDialog.class			
+			RetrieveSearchEntryCommandDialog.class
 		);
 	
 		retrieveSearchEntryCA.addParamValue(boolean.class, controller.getEnvironment().isAccessionInferEnabled());

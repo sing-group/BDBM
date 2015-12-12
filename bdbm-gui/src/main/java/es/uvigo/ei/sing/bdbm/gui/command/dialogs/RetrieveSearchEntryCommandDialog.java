@@ -30,15 +30,18 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 
 import es.uvigo.ei.sing.bdbm.cli.commands.RetrieveSearchEntryCommand;
+import es.uvigo.ei.sing.bdbm.cli.commands.converters.FileOption;
 import es.uvigo.ei.sing.bdbm.controller.BDBMController;
 import es.uvigo.ei.sing.bdbm.environment.SequenceType;
 import es.uvigo.ei.sing.bdbm.gui.command.CommandDialog;
+import es.uvigo.ei.sing.bdbm.gui.command.ComponentForOption;
 import es.uvigo.ei.sing.bdbm.gui.command.ParameterValuesReceiver;
-import es.uvigo.ei.sing.bdbm.gui.command.input.BuildComponent;
+import es.uvigo.ei.sing.bdbm.gui.command.dialogs.ComponentFactory.DatabaseValuesProvider;
+import es.uvigo.ei.sing.bdbm.gui.command.dialogs.ComponentFactory.ValueCallback;
 import es.uvigo.ei.sing.bdbm.persistence.entities.Database;
 import es.uvigo.ei.sing.yaacli.command.option.Option;
+import es.uvigo.ei.sing.yaacli.command.option.StringOption;
 import es.uvigo.ei.sing.yaacli.command.parameter.Parameters;
-import es.uvigo.ei.sing.yaacli.command.parameter.SingleParameterValue;
 
 public class RetrieveSearchEntryCommandDialog extends CommandDialog {
 	private static final long serialVersionUID = 1L;
@@ -46,10 +49,7 @@ public class RetrieveSearchEntryCommandDialog extends CommandDialog {
 	private final boolean accessionInfer;
 	
 	private JComboBox<Database> cmbDatabases;
-	private ActionListener alDatabases;
-
 	private JComboBox<String> cmbAccessions;
-	private ActionListener alAccessions;
 	
 	public RetrieveSearchEntryCommandDialog(
 		BDBMController controller, 
@@ -65,126 +65,88 @@ public class RetrieveSearchEntryCommandDialog extends CommandDialog {
 		Parameters defaultParameters,
 		boolean accessionInfer
 	) {
-		super(controller, command, defaultParameters);
+		super(controller, command, defaultParameters, false);
 		
 		this.accessionInfer = accessionInfer;
 		
+		this.init();
 		this.pack();
 	}
 
 	private Database getSelectedDatabase() {
-		return (Database) this.cmbDatabases.getSelectedItem();
+		return this.cmbDatabases.getItemAt(this.cmbDatabases.getSelectedIndex());
 	}
 	
 	@Override
-	protected <T> Component createComponentForOption(
-		final Option<T> option, 
+	protected void preComponentsCreation() {
+		this.cmbDatabases = new JComboBox<>();
+	}
+
+	@ComponentForOption(RetrieveSearchEntryCommand.OPTION_DB_TYPE_SHORT_NAME)
+	protected Component createComponentForDBTypeOption(
+		final Option<SequenceType> option, 
 		final ParameterValuesReceiver receiver
 	) {
-		if (this.cmbDatabases == null) {
-			 this.cmbDatabases = new JComboBox<>();
-		}
-		
-		if (option.equals(RetrieveSearchEntryCommand.OPTION_DB_TYPE)) {
-			final ParameterValuesReceiver pvr = new ParameterValuesReceiverWrapper(receiver) {
+		return ComponentFactory.createComponentForSequenceType(
+			this, option, receiver, cmbDatabases,
+			new DatabaseValuesProvider(this.controller),
+			this.getDefaultOptionString(option)
+		);
+	}
+
+	@ComponentForOption(RetrieveSearchEntryCommand.OPTION_DATABASE_SHORT_NAME)
+	protected Component createComponentForDatabaseOption(
+		final FileOption option, 
+		final ParameterValuesReceiver receiver
+	) {
+		return ComponentFactory.createComponentForSequenceEntityValues(
+			option, receiver, this.cmbDatabases,
+			this.getDefaultOptionString(option),
+			new ValueCallback<Database>() {
 				@Override
-				public void setValue(Option<?> option, String value) {
-					super.setValue(option, value);
-					
-					if (value == null) {
-						cmbDatabases.setModel(new DefaultComboBoxModel<Database>());
-					} else {
-						final Object convertedValue = 
-							option.getConverter().convert(new SingleParameterValue(value));
-						
-						final Database[] databases;
-						if (convertedValue == SequenceType.NUCLEOTIDE) {
-							databases = controller.listNucleotideDatabases();
-						} else if (convertedValue == SequenceType.PROTEIN) {
-							databases = controller.listProteinDatabases();
-						} else {
-							throw new IllegalArgumentException("Unknown option: " + convertedValue);
-						}
-						
-						cmbDatabases.setModel(new DefaultComboBoxModel<>(databases));
-						
-						if (alDatabases != null)
-							alDatabases.actionPerformed(null);
+				public void callback(Database database) {
+					if (cmbAccessions != null) {
+						cmbAccessions.setModel(new DefaultComboBoxModel<String>(
+							new Vector<String>(database.listAccessions())
+						));
+
+						cmbAccessions.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "Model Changed"));
 					}
 				}
-			};
+			}
+		);
+	}
+
+	@ComponentForOption(RetrieveSearchEntryCommand.OPTION_ACCESSION_SHORT_NAME)
+	protected Component createComponentForAccessionOption(
+		final StringOption option, 
+		final ParameterValuesReceiver receiver
+	) {
+		if (this.accessionInfer) {
+			final Database database = this.getSelectedDatabase();
 			
-			pvr.setValue(option, this.getDefaultOptionString(option));
+			if (database == null) {
+				this.cmbAccessions = new JComboBox<>();
+			} else {
+				this.cmbAccessions = new JComboBox<>(new Vector<String>(
+					database.listAccessions()
+				));
+			}
 			
-			return BuildComponent.forEnum(this, option, pvr);
-		} else if (option.equals(RetrieveSearchEntryCommand.OPTION_DATABASE)) {
-			this.alDatabases = new ActionListener() {
+			final ActionListener alAccessions = new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					final Database database = (Database) cmbDatabases.getSelectedItem();
-					
-					if (database == null) {
-						receiver.setValue(option, (String) null);
-					} else {
-						receiver.setValue(option, database.getDirectory().getAbsolutePath());
-						
-						if (cmbAccessions != null && alAccessions != null) {
-							cmbAccessions.setModel(new DefaultComboBoxModel<String>(new Vector<String>(
-								database.listAccessions()
-							)));
-							
-							alAccessions.actionPerformed(null);
-						}
-					}
+					if (cmbAccessions.getSelectedItem() != null)
+						receiver.setValue(option, (String) cmbAccessions.getSelectedItem());
 				}
 			};
 			
-			if (this.hasDefaultOption(option)) {
-				final String dbPath = this.getDefaultOptionString(option);
-				final int size = this.cmbDatabases.getItemCount();
-				
-				for (int i = 0; i < size; i++) {
-					final Database database = (Database) this.cmbDatabases.getItemAt(i);
-					
-					if (database.getDirectory().getAbsolutePath().equals(dbPath)) {
-						this.cmbDatabases.setSelectedIndex(i);
-						break;
-					}
-				}
-			}
+			alAccessions.actionPerformed(null);
+			this.cmbAccessions.addActionListener(alAccessions);
 			
-			this.alDatabases.actionPerformed(null);
-			this.cmbDatabases.addActionListener(alDatabases);
-			
-			return cmbDatabases;
-		} else if (option.equals(RetrieveSearchEntryCommand.OPTION_ACCESSION)) {
-			if (this.accessionInfer) {
-				final Database database = this.getSelectedDatabase();
-				if (database == null) {
-					this.cmbAccessions = new JComboBox<>();
-				} else {
-					this.cmbAccessions = new JComboBox<>(new Vector<String>(
-						database.listAccessions()
-					));
-				}
-				
-				this.alAccessions = new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						if (cmbAccessions.getSelectedItem() != null)
-							receiver.setValue(option, (String) cmbAccessions.getSelectedItem());
-					}
-				};
-				
-				this.alAccessions.actionPerformed(null);
-				this.cmbAccessions.addActionListener(this.alAccessions);
-				
-				return cmbAccessions;
-			} else {
-				return super.createComponentForOption(option, receiver);
-			}
+			return cmbAccessions;
 		} else {
-			return super.createComponentForOption(option, receiver);
+			return null;
 		}
 	}
 }

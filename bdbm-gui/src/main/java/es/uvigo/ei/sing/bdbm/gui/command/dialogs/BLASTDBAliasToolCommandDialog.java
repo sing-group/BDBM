@@ -23,7 +23,6 @@ package es.uvigo.ei.sing.bdbm.gui.command.dialogs;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -40,6 +39,7 @@ import es.uvigo.ei.sing.bdbm.cli.commands.converters.FileOption;
 import es.uvigo.ei.sing.bdbm.controller.BDBMController;
 import es.uvigo.ei.sing.bdbm.environment.SequenceType;
 import es.uvigo.ei.sing.bdbm.gui.command.CommandDialog;
+import es.uvigo.ei.sing.bdbm.gui.command.ComponentForOption;
 import es.uvigo.ei.sing.bdbm.gui.command.ParameterValuesReceiver;
 import es.uvigo.ei.sing.bdbm.gui.command.input.BuildComponent;
 import es.uvigo.ei.sing.bdbm.persistence.entities.Database;
@@ -51,10 +51,11 @@ public class BLASTDBAliasToolCommandDialog extends CommandDialog {
 	private static final long serialVersionUID = 1L;
 
 	private JComboBox<Database> cmbDatabases;
-	private JComboBox<SequenceType> inputDBType;
+	private JComboBox<SequenceType> cmbDBType;
 
-	private DefaultListModel<Database> lmDatabases;
-	private ActionListener alDatabases;
+	private DefaultListModel<Object> lmDatabases;
+	
+	private SequenceType sequenceType;
 	
 	public BLASTDBAliasToolCommandDialog(
 		BDBMController controller, 
@@ -69,6 +70,8 @@ public class BLASTDBAliasToolCommandDialog extends CommandDialog {
 		Parameters defaultParameters
 	) {
 		super(controller, command, defaultParameters);
+		
+		this.sequenceType = null;
 		
 		this.pack();
 	}
@@ -111,7 +114,7 @@ public class BLASTDBAliasToolCommandDialog extends CommandDialog {
 		DefaultListModel<Object> listModel
 	) {
 		if (option.equals(BLASTDBAliasToolCommand.OPTION_DATABASES)) {
-			this.lmDatabases = new DefaultListModel<>();
+			this.lmDatabases = listModel;
 			
 			for (Object value : listModel.toArray()) {
 				if (value instanceof Database) {
@@ -125,7 +128,7 @@ public class BLASTDBAliasToolCommandDialog extends CommandDialog {
 			
 			if (defaultST != null) {
 				final List<String> values = 
-					this.getDefaulOptionStringList(option);
+					this.getDefaultOptionStringList(option);
 				
 				for (Database db : this.getRegularDatabases(defaultST)) {
 					if (values.contains(db.getDirectory().getAbsolutePath())) {
@@ -141,8 +144,8 @@ public class BLASTDBAliasToolCommandDialog extends CommandDialog {
 	protected SequenceType getDefaultSequenceType() {
 		final FileOption option = BLASTDBAliasToolCommand.OPTION_DATABASES;
 		
-		if (this.hasDefaultOption(option)) {
-			final List<String> values = this.getDefaulOptionStringList(option);
+		if (this.hasDefaultValue(option)) {
+			final List<String> values = this.getDefaultOptionStringList(option);
 			
 			for (SequenceType type : SequenceType.values()) {
 				for (Database db : this.getRegularDatabases(type)) {
@@ -154,16 +157,6 @@ public class BLASTDBAliasToolCommandDialog extends CommandDialog {
 		}
 		
 		return null;
-	}
-	
-	protected SequenceType getCurrentSequenceType() {
-		if (this.lmDatabases == null || this.lmDatabases.isEmpty()) {
-			return null;
-		} else {
-			final Database db = this.lmDatabases.getElementAt(0);
-			
-			return db.getType();
-		}
 	}
 	
 	protected Database getDatabase(String databaseDirectory) {
@@ -179,108 +172,85 @@ public class BLASTDBAliasToolCommandDialog extends CommandDialog {
 	}
 	
 	@Override
-	protected <T> Component createComponentForOption(
-		final Option<T> option, 
+	protected void preComponentsCreation() {
+		 this.cmbDatabases = new JComboBox<>();
+	}
+	
+	@ComponentForOption(BLASTDBAliasToolCommand.OPTION_DB_TYPE_SHORT_NAME)
+	private Component createComponentForDBTypeOption(
+		final Option<SequenceType> option,
 		final ParameterValuesReceiver receiver
 	) {
-		if (this.cmbDatabases == null)
-			 this.cmbDatabases = new JComboBox<>();
-		
-		if (option.isMultiple()) {
-			return super.createComponentForOption(option, receiver);
-		} else if (option.equals(BLASTDBAliasToolCommand.OPTION_DB_TYPE)) {
-			final ParameterValuesReceiver pvr = new ParameterValuesReceiverWrapper(receiver) {
-				@Override
-				public void setValue(Option<?> option, String value) {
-					if (value == null) {
-						throw new IllegalStateException("Illegal sequence type value");
-					} else {
-						final SequenceType currentSequenceType = getCurrentSequenceType();
-						final SequenceType newSequenceType = BLASTDBAliasToolCommand.OPTION_DB_TYPE
-							.getConverter().convert(new SingleParameterValue(value));
+		final ParameterValuesReceiver pvr = new ParameterValuesReceiverWrapper(receiver) {
+			@Override
+			public void setValue(Option<?> option, String value) {
+				if (value == null) {
+					throw new IllegalStateException("Illegal sequence type value");
+				} else {
+					final SequenceType newSequenceType = BLASTDBAliasToolCommand.OPTION_DB_TYPE
+						.getConverter().convert(new SingleParameterValue(value));
+					
+					if (sequenceType != newSequenceType) {
+						sequenceType = newSequenceType;
 						
-						if (lmDatabases != null && !lmDatabases.isEmpty() && 
-							currentSequenceType != newSequenceType
-						) {
+						if (lmDatabases != null && !lmDatabases.isEmpty()) {
 							final int answer = confirmDatabaseTypeChange();
 							
 							if (answer == JOptionPane.NO_OPTION) {
-								inputDBType.setSelectedItem(currentSequenceType);
+								cmbDBType.setSelectedItem(sequenceType);
 								return;
 							} else {
 								lmDatabases.clear();
 								receiver.setValue(BLASTDBAliasToolCommand.OPTION_DATABASES, (List<String>) null);
 							}
 						}
-						
-						super.setValue(option, value);
-						
-						final Vector<Database> databases = getRegularDatabases(newSequenceType);
-						cmbDatabases.setModel(new DefaultComboBoxModel<>(databases));
-						
-						if (alDatabases != null)
-							alDatabases.actionPerformed(null);
 					}
-				}
-
-				private int confirmDatabaseTypeChange() {
-					final int answer = JOptionPane.showConfirmDialog(
-						BLASTDBAliasToolCommandDialog.this, 
-						"Changing database type will clear the database selection list. Do you wish to continue?",
-						"Database Type Change",
-						JOptionPane.YES_NO_OPTION,
-						JOptionPane.QUESTION_MESSAGE
-					);
-					return answer;
-				}
-			};
-			
-			if (this.hasDefaultOption(option)) {
-				pvr.setValue(option, this.getDefaultOptionString(option));
-			} else {
-				final SequenceType defaultST = this.getDefaultSequenceType();
-				if (defaultST != null) 
-					pvr.setValue(option, defaultST.name());
-			}
-			
-			return this.inputDBType = BuildComponent.forEnum(
-				this, BLASTDBAliasToolCommand.OPTION_DB_TYPE, pvr
-			);
-		} else if (option.getParamName().equals(BLASTDBAliasToolCommand.OPTION_DATABASES.getParamName())) {
-			this.alDatabases = new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					Object item = cmbDatabases.getSelectedItem();
 					
-					if (item == null) {
-						receiver.setValue(option, (String) null);
-					} else if (item instanceof Database) {
-						receiver.setValue(option, ((Database) item).getDirectory().getAbsolutePath());
-					}
-				}
-			};
-			this.cmbDatabases.addActionListener(alDatabases);
-			
-			if (this.hasDefaultOption(option)) {
-				final String dbPath = this.getDefaultOptionString(option);
-				final int size = this.cmbDatabases.getItemCount();
-				
-				for (int i = 0; i < size; i++) {
-					final Database db = (Database) this.cmbDatabases.getItemAt(i);
-					if (db.getDirectory().getAbsoluteFile().equals(dbPath)) {
-						this.cmbDatabases.setSelectedIndex(i);
-						break;
-					}
+					super.setValue(option, value);
+					
+					final Vector<Database> databases = getRegularDatabases(newSequenceType);
+					cmbDatabases.setModel(new DefaultComboBoxModel<>(databases));
+					
+					if (databases.isEmpty())
+						cmbDatabases.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "Model changed"));
+					else
+						cmbDatabases.setSelectedIndex(0);
 				}
 			}
-			
-			this.alDatabases.actionPerformed(null);
-			this.cmbDatabases.addActionListener(alDatabases);
-			
-			return cmbDatabases;
+
+			private int confirmDatabaseTypeChange() {
+				final int answer = JOptionPane.showConfirmDialog(
+					BLASTDBAliasToolCommandDialog.this, 
+					"Changing database type will clear the database selection list. Do you wish to continue?",
+					"Database Type Change",
+					JOptionPane.YES_NO_OPTION,
+					JOptionPane.QUESTION_MESSAGE
+				);
+				
+				return answer;
+			}
+		};
+		
+		if (this.hasDefaultValue(option)) {
+			pvr.setValue(option, this.getDefaultOptionString(option));
 		} else {
-			return super.createComponentForOption(option, receiver);
+			final SequenceType defaultST = this.getDefaultSequenceType();
+			if (defaultST != null) 
+				pvr.setValue(option, defaultST.name());
 		}
+		
+		return this.cmbDBType = BuildComponent.forEnum(this, option, pvr);
+	}
+	
+	@ComponentForOption(BLASTDBAliasToolCommand.OPTION_DATABASES_SHORT_NAME)
+	private Component createComponentForDatabasesOption(
+		final Option<?> option,
+		final ParameterValuesReceiver receiver
+	) {
+		return ComponentFactory.createComponentForSequenceEntityValues(
+			option, receiver, this.cmbDatabases,
+			this.getDefaultOptionString(option)
+		);
 	}
 
 	protected Vector<Database> getRegularDatabases(final SequenceType sequenceType) {

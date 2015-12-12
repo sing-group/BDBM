@@ -43,21 +43,32 @@ import es.uvigo.ei.sing.yaacli.command.option.StringOption;
 import es.uvigo.ei.sing.yaacli.command.parameter.Parameters;
 
 public class ReformatFastaCommand extends BDBMCommand {
+	public static final String OPTION_FASTA_TYPE_SHORT_NAME = "fastatype";
+	public static final String OPTION_FASTA_SHORT_NAME = "fastatype";
+	public static final String OPTION_FRAGMENT_LENGTH_SHORT_NAME = "length";
+	public static final String OPTION_RENAMING_MODE_SHORT_NAME = "mode";
+	public static final String OPTION_INDEXES_SHORT_NAME = "indexes";
+	public static final String OPTION_PREFIX_SHORT_NAME = "prefix";
+	public static final String OPTION_KEEP_NAMES_WHEN_PREFIX_SHORT_NAME = "keep_names";
+	public static final String OPTION_ADD_INDEX_WHEN_PREFIX_SHORT_NAME = "add_index";
+	public static final String OPTION_SEPARATOR_SHORT_NAME = "separator";
+	
 	public static final Option<SequenceType> OPTION_FASTA_TYPE = 
 		new Option<SequenceType>(
-			"Fasta Type", "fastatype", "Fasta type: prot (proteins) or nucl (nucleotides)", 
+			"Fasta Type", OPTION_FASTA_TYPE_SHORT_NAME, "Fasta type: prot (proteins) or nucl (nucleotides)", 
 			false, true, 
 			new SequenceTypeOptionConverter()
 		);
+	
 	public static final FileOption OPTION_FASTA = 
 		new FileOption(
-			"Fasta", "fasta", "Source fasta file",
+			"Fasta", OPTION_FASTA_SHORT_NAME, "Source fasta file",
 			false, true
 		);
 	
 	public static final IntegerOption OPTION_FRAGMENT_LENGTH = 
 		new IntegerOption(
-			"Sequence Fragment Length", "length", 
+			"Sequence Fragment Length", OPTION_FRAGMENT_LENGTH_SHORT_NAME, 
 			"Length of the sequence fragments (Negative values mean no changes, and zero value means no line break)", 
 			-1
 		);
@@ -65,7 +76,7 @@ public class ReformatFastaCommand extends BDBMCommand {
 	public static final EnumOption<FastaUtils.RenameMode> OPTION_RENAMING_MODE =
 		new EnumOption<>(
 			"Renaming Mode", 
-			"mode", 
+			OPTION_RENAMING_MODE_SHORT_NAME, 
 			"Renaming mode:\n"
 			+ "\tNONE: No renaming\n" 
 			+ "\tSMART: Recognices and summarizes the most common sequence name formats\n"
@@ -78,7 +89,7 @@ public class ReformatFastaCommand extends BDBMCommand {
 	public static final StringConstructedOption<Integer> OPTION_INDEXES =
 		new StringConstructedOption<Integer>(
 			"Indexes",
-			"indexes",
+			OPTION_INDEXES_SHORT_NAME,
 			"Indexes selected for the \"Generic\" renaming method",
 			true, true, true
 		) {};
@@ -86,7 +97,7 @@ public class ReformatFastaCommand extends BDBMCommand {
 	public static final StringOption OPTION_PREFIX =
 		new StringOption(
 			"Prefix", 
-			"prefix", 
+			OPTION_PREFIX_SHORT_NAME, 
 			"Prefix for the \"Prefix\" renaming method", 
 			true, true
 		);
@@ -94,7 +105,7 @@ public class ReformatFastaCommand extends BDBMCommand {
 	public static final DefaultValueBooleanOption OPTION_KEEP_NAMES_WHEN_PREFIX =
 		new DefaultValueBooleanOption(
 			"Keep Names", 
-			"keep_names", 
+			OPTION_KEEP_NAMES_WHEN_PREFIX_SHORT_NAME,
 			"Keep names when using the \"Prefix\" renaming method", 
 			true
 		);
@@ -102,7 +113,7 @@ public class ReformatFastaCommand extends BDBMCommand {
 	public static final DefaultValueBooleanOption OPTION_ADD_INDEX_WHEN_PREFIX =
 		new DefaultValueBooleanOption(
 			"Add Index", 
-			"add_index", 
+			OPTION_ADD_INDEX_WHEN_PREFIX_SHORT_NAME, 
 			"Add index after the prefix when using the \"Prefix\" renaming method", 
 			true
 		);
@@ -110,7 +121,7 @@ public class ReformatFastaCommand extends BDBMCommand {
 	public static final DefaultValuedStringOption OPTION_SEPARATOR =
 		new DefaultValuedStringOption(
 			"Separator", 
-			"separator", 
+			OPTION_SEPARATOR_SHORT_NAME, 
 			"Separator of the parts of new names", 
 			"_"
 		);

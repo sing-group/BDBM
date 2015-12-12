@@ -24,6 +24,7 @@ package es.uvigo.ei.sing.bdbm.gui.command;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
@@ -33,7 +34,9 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -60,6 +63,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.uvigo.ei.sing.bdbm.controller.BDBMController;
 import es.uvigo.ei.sing.bdbm.gui.command.input.DefaultInputComponentBuilder;
@@ -71,6 +76,7 @@ import es.uvigo.ei.sing.yaacli.command.parameter.Parameters;
 
 public class CommandDialog extends JDialog {
 	private final static long serialVersionUID = 1L;
+	private final static Logger LOG = LoggerFactory.getLogger(CommandDialog.class);
 	
 	private final static ImageIcon ICON_HELP = 
 		new ImageIcon(CommandDialog.class.getResource("images/help-about.png"));
@@ -94,35 +100,41 @@ public class CommandDialog extends JDialog {
 	}
 	
 	public CommandDialog(BDBMController controller, Command command, Parameters defaultParameters) {
+		this(controller, command, defaultParameters, true);
+	}
+	
+	public CommandDialog(BDBMController controller, Command command, Parameters defaultParameters, boolean init) {
 		this.controller = controller;
 		this.command = command;
 		this.defaultParameters = defaultParameters;
 		
-		this.init();
+		if (init)
+			this.init();
 	}
 	
-	protected boolean hasDefaultOption(Option<?> option) {
+	protected boolean hasDefaultValue(Option<?> option) {
 		return this.defaultParameters != null && this.defaultParameters.hasOption(option);
 	}
 	
 	protected String getDefaultOptionString(Option<?> option) {
-		if (this.hasDefaultOption(option)) {
+		if (this.hasDefaultValue(option)) {
 			return this.defaultParameters.getSingleValueString(option);
 		} else {
 			return null;
 		}
 	}
 	
-	protected List<String> getDefaulOptionStringList(Option<?> option) {
-		if (this.hasDefaultOption(option)) {
+	protected List<String> getDefaultOptionStringList(Option<?> option) {
+		if (this.hasDefaultValue(option)) {
 			return this.defaultParameters.getAllValuesString(option);
 		} else {
 			return null;
 		}
 	}
 
-	private void init() {
+	protected void init() {
 		this.setTitle(this.command.getDescriptiveName());
+		this.setMinimumSize(new Dimension(400, 200));
 		
 		final JPanel panel = new JPanel(new BorderLayout());
 		panel.setLayout(new BorderLayout());
@@ -166,6 +178,7 @@ public class CommandDialog extends JDialog {
 				CommandDialog.this.updateButtonOk();
 			}
 		});
+		this.preComponentsCreation();
 		for (Option<?> option : this.command.getOptions()) {
 			final JLabel lblName = new JLabel(option.getParamName());
 			lblName.setBorder(BorderFactory.createEmptyBorder(6, 0, 0, 0));
@@ -177,7 +190,10 @@ public class CommandDialog extends JDialog {
 			
 			lblDescription.setToolTipText("<html>" + description + "</html>");
 			
+			this.preComponentCreation(option, parameterValues);
 			final Component inputComponent = this.createComponentForOption(option, parameterValues);
+			this.postComponentCreation(inputComponent, option, parameterValues);
+			
 			verticalGroup.addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER, false)
 				.addComponent(lblName, Alignment.LEADING)
 				.addComponent(inputComponent)
@@ -204,6 +220,7 @@ public class CommandDialog extends JDialog {
 			lblName.setVisible(inputComponent.isVisible());
 			lblDescription.setVisible(inputComponent.isVisible());
 		}
+		this.postComponentsCreation();
 		
 		panel.add(taDescription, BorderLayout.NORTH);
 		panel.add(panelOptions, BorderLayout.CENTER);
@@ -250,7 +267,6 @@ public class CommandDialog extends JDialog {
 		@Override
 		public boolean hasOption(Option<?> option) {
 			return this.option != null && this.option.equals(option);
-//			throw new UnsupportedOperationException();
 		}
 		
 		@Override
@@ -301,7 +317,7 @@ public class CommandDialog extends JDialog {
 		}
 	}
 	
-	protected static  List<String> listModelToList(ListModel<Object> listModel) {
+	protected static List<String> listModelToList(ListModel<Object> listModel) {
 		final List<String> list = new ArrayList<String>(listModel.getSize());
 		
 		for (int i = 0; i < listModel.getSize(); i++) {
@@ -311,7 +327,83 @@ public class CommandDialog extends JDialog {
 		return list;
 	}
 	
-	protected <T> Component createComponentForOption(
+	protected <T> List<Method> getComponentForOptionMethods(
+		final Option<T> option, final ParameterValuesReceiver receiver
+	) {
+		final List<Method> methods = new LinkedList<>();
+		
+		for (Class<?> clazz = this.getClass(); clazz != null; clazz = clazz.getSuperclass()) {
+			for (Method method : clazz.getDeclaredMethods()) {
+				if (method.isAnnotationPresent(ComponentForOption.class)) {
+					final Class<?>[] paramTypes = method.getParameterTypes();
+					
+					if (Component.class.isAssignableFrom(method.getReturnType())
+						&& paramTypes.length == 2
+						&& paramTypes[0].isAssignableFrom(option.getClass())
+						&& paramTypes[1].isAssignableFrom(receiver.getClass())
+					) {
+						methods.add(method);
+					}
+				}
+			}
+		}
+		
+		return methods;
+	}
+	
+	private static <T> boolean creatorIsValidForOption(Method method, Option<T> option) {
+		final ComponentForOption cfoAnnotation =
+			method.getAnnotation(ComponentForOption.class);
+			
+		for (String value : cfoAnnotation.value()) {
+			if (value.equals(option.getShortName())
+				&& (!option.isMultiple() || cfoAnnotation.allowsMultiple())) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	protected <T> Component customComponentCreation(
+		final Option<T> option, final ParameterValuesReceiver receiver
+	) {
+		for (Method method : getComponentForOptionMethods(option, receiver)) {
+			if (creatorIsValidForOption(method, option)) {
+				final boolean accesible = method.isAccessible();
+				try {
+					method.setAccessible(true);
+					return (Component) method.invoke(this, option, receiver);
+				} catch (Exception e) {
+					LOG.error("Error invoking method: " + method, e);
+					return null;
+				} finally {
+					method.setAccessible(accesible);
+				}
+			}
+		}
+		
+		return null;
+	}
+	
+	protected void preComponentsCreation() {
+	}
+	
+	protected void postComponentsCreation() {
+	}
+	
+	protected <T> void preComponentCreation(
+		final Option<T> option,
+		final ParameterValuesReceiver receiver
+	) {}
+
+	protected <T> void postComponentCreation(
+		final Component component,
+		final Option<T> option,
+		final ParameterValuesReceiver receiver
+	) {}
+	
+	protected <T> Component createComponentForOptionNoReflection(
 		final Option<T> option, final ParameterValuesReceiver receiver
 	) {
 		if (option.isMultiple()) {
@@ -329,11 +421,11 @@ public class CommandDialog extends JDialog {
 			final Component singleInputComponent = 
 				this.createComponentForOption(
 					new Option<T>(
-						option.getParamName(), 
-						option.getShortName(), 
-						option.getDescription(), 
-						option.isOptional(), 
-						option.requiresValue(), 
+						option.getParamName(),
+						option.getShortName(),
+						option.getDescription(),
+						option.isOptional(),
+						option.requiresValue(),
 						false,
 						option.getConverter()
 					),
@@ -355,6 +447,7 @@ public class CommandDialog extends JDialog {
 			final DefaultListModel<Object> listModel = new DefaultListModel<>();
 			this.setMultipleDefaultParameters(option, receiver, listModel);
 			final JList<Object> listValues = new JList<>(listModel);
+			listValues.setVisibleRowCount(6);
 			
 			panelInner.add(panelButtons, BorderLayout.NORTH);
 			panelInner.add(new JScrollPane(listValues), BorderLayout.CENTER);
@@ -433,6 +526,18 @@ public class CommandDialog extends JDialog {
 			this.setSingleDefaultValueOption(option, receiver);
 			
 			return builder.createFor(this, option, receiver);
+		}
+	}
+	
+	protected <T> Component createComponentForOption(
+		final Option<T> option, final ParameterValuesReceiver receiver
+	) {
+		final Component component = customComponentCreation(option, receiver);
+		
+		if (component != null) {
+			return component;
+		} else {
+			return createComponentForOptionNoReflection(option, receiver);
 		}
 	}
 	

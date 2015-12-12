@@ -31,22 +31,27 @@ import es.uvigo.ei.sing.yaacli.command.option.StringOption;
 import es.uvigo.ei.sing.yaacli.command.parameter.Parameters;
 
 public class SplignCompartCommand extends BDBMCommand {
+	public static final String OPTION_GENOME_FASTA_SHORT_NAME = "gfasta";
+	public static final String OPTION_CDS_SHORT_NAME = "cfasta";
+	public static final String OPTION_CONCATENATE_SHORT_NAME = "conc_exons";
+	public static final String OPTION_OUTPUT_SHORT_NAME = "output";
+	
 	public static final FileOption OPTION_GENOME_FASTA = 
 		new FileOption(
-			"Genome Fasta", "gfasta", "Genome fasta file",
+			"Genome Fasta", OPTION_GENOME_FASTA_SHORT_NAME, "Genome fasta file",
 			false, true
 		);
 	public static final FileOption OPTION_CDS_FASTA = 
 		new FileOption(
-			"CDS Fasta", "cfasta", "CDS fasta file",
+			"CDS Fasta", OPTION_CDS_SHORT_NAME, "CDS fasta file",
 			false, true
 		);
 	public static final DefaultValueBooleanOption OPTION_CONCATENATE_EXONS = new DefaultValueBooleanOption(
-		"Concatenate Exons", "conc_exons", "Concatenate the exons that are, apparently, from the same genes", true
+		"Concatenate Exons", OPTION_CONCATENATE_SHORT_NAME, "Concatenate the exons that are, apparently, from the same genes", true
 	);
 	public static final StringOption OPTION_OUTPUT_NAME = 
 		new StringOption(
-			"Output name", "output", "Output name", 
+			"Output name", OPTION_OUTPUT_SHORT_NAME, "Output name", 
 			false, true
 		);
 	

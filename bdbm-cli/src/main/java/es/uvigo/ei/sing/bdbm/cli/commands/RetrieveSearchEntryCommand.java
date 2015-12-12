@@ -33,20 +33,24 @@ import es.uvigo.ei.sing.yaacli.command.option.StringOption;
 import es.uvigo.ei.sing.yaacli.command.parameter.Parameters;
 
 public class RetrieveSearchEntryCommand extends BDBMCommand {
+	public static final String OPTION_DB_TYPE_SHORT_NAME = "dbtype";
+	public static final String OPTION_DATABASE_SHORT_NAME = "db";
+	public static final String OPTION_ACCESSION_SHORT_NAME = "accession";
+	
 	public static final Option<SequenceType> OPTION_DB_TYPE = 
 		new Option<SequenceType>(
-			"DB Type", "dbtype", "Database type: prot (proteins) or nucl (nucleotides)", 
+			"DB Type", OPTION_DB_TYPE_SHORT_NAME, "Database type: prot (proteins) or nucl (nucleotides)", 
 			false, true, 
 			new SequenceTypeOptionConverter()
 		);
 	public static final FileOption OPTION_DATABASE = 
 		new FileOption(
-			"Database", "db", "Database from which the search entry will be retrieved",
+			"Database", OPTION_DATABASE_SHORT_NAME, "Database from which the search entry will be retrieved",
 			false, true
 		);
 	public static final StringOption OPTION_ACCESSION = 
 		new StringOption(
-			"Accession", "accession", "Accession name", 
+			"Accession", OPTION_ACCESSION_SHORT_NAME, "Accession name", 
 			false, true
 		);
 	

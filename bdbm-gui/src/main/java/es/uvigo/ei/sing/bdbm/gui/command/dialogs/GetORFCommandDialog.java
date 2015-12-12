@@ -22,17 +22,15 @@
 package es.uvigo.ei.sing.bdbm.gui.command.dialogs;
 
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.JComboBox;
 
 import es.uvigo.ei.sing.bdbm.cli.commands.GetORFCommand;
+import es.uvigo.ei.sing.bdbm.cli.commands.converters.FileOption;
 import es.uvigo.ei.sing.bdbm.controller.BDBMController;
 import es.uvigo.ei.sing.bdbm.gui.command.CommandDialog;
+import es.uvigo.ei.sing.bdbm.gui.command.ComponentForOption;
 import es.uvigo.ei.sing.bdbm.gui.command.ParameterValuesReceiver;
-import es.uvigo.ei.sing.bdbm.persistence.entities.NucleotideFasta;
-import es.uvigo.ei.sing.yaacli.command.option.Option;
 import es.uvigo.ei.sing.yaacli.command.parameter.Parameters;
 
 public class GetORFCommandDialog extends CommandDialog {
@@ -54,59 +52,16 @@ public class GetORFCommandDialog extends CommandDialog {
 		
 		this.pack();
 	}
-
-	@Override
-	protected <T> Component createComponentForOption(
-		final Option<T> option, 
+	
+	@ComponentForOption(GetORFCommand.OPTION_FASTA_SHORT_NAME)
+	private Component createComponentForFastaOption(
+		final FileOption option,
 		final ParameterValuesReceiver receiver
 	) {
-		if (option.equals(GetORFCommand.OPTION_FASTA)) {
-			final NucleotideFasta[] nucleotideFasta = 
-				this.controller.listNucleotideFastas();
-			final JComboBox<NucleotideFasta> cmbFastas =
-				new JComboBox<>(nucleotideFasta);
-			
-			if (this.hasDefaultOption(option)) {
-				final String defaultFasta = this.getDefaultOptionString(option);
-				for (NucleotideFasta fasta : nucleotideFasta) {
-					if (fasta.getFile().getAbsolutePath().equals(defaultFasta)) {
-						cmbFastas.setSelectedItem(fasta);
-					}
-				}
-			}/* else {
-				final Object value = cmbFastas.getSelectedItem();
-
-				if (value != null) {
-					final NucleotideFasta fasta = (NucleotideFasta) value;
-					receiver.setValue(
-						option, 
-						fasta.getFile().getAbsolutePath()
-					); 
-				}
-			}*/
-			
-			final ActionListener alFastas = new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					final Object item = cmbFastas.getSelectedItem();
-					
-					if (item == null) {
-						receiver.setValue(option, (String) null);
-					} else if (item instanceof NucleotideFasta) {
-						final NucleotideFasta fasta = (NucleotideFasta) item;
-						receiver.setValue(
-							option, fasta.getFile().getAbsolutePath()
-						);
-					}
-				}
-			};
-			alFastas.actionPerformed(null);
-			
-			cmbFastas.addActionListener(alFastas);
-			
-			return cmbFastas;
-		} else {
-			return super.createComponentForOption(option, receiver);
-		}
+		return ComponentFactory.createComponentForSequenceEntityValues(
+			option, receiver,
+			new JComboBox<>(this.controller.listNucleotideFastas()),
+			this.getDefaultOptionString(option)
+		);
 	}
 }

@@ -162,10 +162,7 @@ public class ParameterValues extends Observable implements ParameterValuesReceiv
 		public boolean isComplete() {
 			for (Option<?> option : this.options) {
 				if (!option.isOptional() &&
-					(!this.values.containsKey(option) ||
-					 (option.isMultiple() && !option.getConverter().canConvert((MultipleParameterValue) this.values.get(option))) ||
-					 (!option.isMultiple() && !option.getConverter().canConvert((SingleParameterValue) this.values.get(option)))
-					)
+					(!this.values.containsKey(option) || !option.canConvert(this.values.get(option)))
 				) {
 					return false;
 				}

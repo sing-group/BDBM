@@ -22,28 +22,21 @@
 package es.uvigo.ei.sing.bdbm.gui.command.dialogs;
 
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-
-import javax.swing.JComboBox;
 
 import es.uvigo.ei.sing.bdbm.cli.commands.BLASTPCommand;
+import es.uvigo.ei.sing.bdbm.cli.commands.converters.FileOption;
 import es.uvigo.ei.sing.bdbm.controller.BDBMController;
-import es.uvigo.ei.sing.bdbm.gui.command.CommandDialog;
 import es.uvigo.ei.sing.bdbm.gui.command.ParameterValuesReceiver;
-import es.uvigo.ei.sing.bdbm.persistence.entities.ProteinDatabase;
-import es.uvigo.ei.sing.yaacli.command.option.Option;
 import es.uvigo.ei.sing.yaacli.command.parameter.Parameters;
 
-public class ExternalBLASTPCommandDialog extends CommandDialog {
+public class ExternalBLASTPCommandDialog extends BLASTPCommandDialog {
 	private static final long serialVersionUID = 1L;
 
 	public ExternalBLASTPCommandDialog(
 		BDBMController controller, 
 		BLASTPCommand command
 	) {
-		this(controller, command, null);
+		super(controller, command);
 	}
 	
 	public ExternalBLASTPCommandDialog(
@@ -52,63 +45,12 @@ public class ExternalBLASTPCommandDialog extends CommandDialog {
 		Parameters defaultParameters
 	) {
 		super(controller, command, defaultParameters);
-		
-		this.pack();
 	}
-
+	
 	@Override
-	protected <T> Component createComponentForOption(
-		final Option<T> option, 
-		final ParameterValuesReceiver receiver
+	protected Component createComponentForQueryOption(
+		FileOption option, ParameterValuesReceiver receiver
 	) {
-		if (option.equals(BLASTPCommand.OPTION_DATABASE)) {
-			final ProteinDatabase[] proteinDatabases = 
-				this.controller.listProteinDatabases();
-			final JComboBox<ProteinDatabase> cmbDatabases =
-				new JComboBox<>(proteinDatabases);
-			
-			if (receiver.hasOption(option)) {
-				for (ProteinDatabase database : proteinDatabases) {
-					if (database.getName().equals(receiver.getValue(option))) {
-						cmbDatabases.setSelectedItem(database);
-						break;
-					}
-				}
-			} else {
-				final Object value = cmbDatabases.getSelectedItem();
-
-				if (value != null) {
-					final ProteinDatabase database = (ProteinDatabase) value;
-					receiver.setValue(
-						option, 
-						new File(database.getDirectory(), database.getName()).getAbsolutePath()
-					); 
-				}
-			}
-			
-			final ActionListener alDatabases = new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					final Object item = cmbDatabases.getSelectedItem();
-					
-					if (item == null) {
-						receiver.setValue(option, (String) null);
-					} else if (item instanceof ProteinDatabase) {
-						final ProteinDatabase database = (ProteinDatabase) item;
-						final File dbDirectory = database.getDirectory();
-						receiver.setValue(
-							option, new File(dbDirectory, database.getName()).getAbsolutePath()
-						);
-					}
-				}
-			};
-			alDatabases.actionPerformed(null);
-			
-			cmbDatabases.addActionListener(alDatabases);
-			
-			return cmbDatabases;
-		} else {
-			return super.createComponentForOption(option, receiver);
-		}
+		return null;
 	}
 }

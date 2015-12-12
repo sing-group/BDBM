@@ -22,28 +22,25 @@
 package es.uvigo.ei.sing.bdbm.gui.command.dialogs;
 
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 
 import es.uvigo.ei.sing.bdbm.cli.commands.MakeBLASTDBCommand;
+import es.uvigo.ei.sing.bdbm.cli.commands.converters.FileOption;
 import es.uvigo.ei.sing.bdbm.controller.BDBMController;
 import es.uvigo.ei.sing.bdbm.environment.SequenceType;
 import es.uvigo.ei.sing.bdbm.gui.command.CommandDialog;
+import es.uvigo.ei.sing.bdbm.gui.command.ComponentForOption;
 import es.uvigo.ei.sing.bdbm.gui.command.ParameterValuesReceiver;
-import es.uvigo.ei.sing.bdbm.gui.command.input.BuildComponent;
+import es.uvigo.ei.sing.bdbm.gui.command.dialogs.ComponentFactory.FastaValuesProvider;
 import es.uvigo.ei.sing.bdbm.persistence.entities.Fasta;
 import es.uvigo.ei.sing.yaacli.command.option.Option;
 import es.uvigo.ei.sing.yaacli.command.parameter.Parameters;
-import es.uvigo.ei.sing.yaacli.command.parameter.SingleParameterValue;
 
 public class MakeBLASTDBCommandDialog extends CommandDialog {
 	private static final long serialVersionUID = 1L;
 
 	private JComboBox<Fasta> cmbFastas;
-	private ActionListener alFastas;
 	
 	public MakeBLASTDBCommandDialog(
 		BDBMController controller, 
@@ -61,82 +58,32 @@ public class MakeBLASTDBCommandDialog extends CommandDialog {
 		
 		this.pack();
 	}
-
+	
 	@Override
-	protected <T> Component createComponentForOption(
-		final Option<T> option, 
+	protected void preComponentsCreation() {
+		this.cmbFastas = new JComboBox<Fasta>();
+	}
+	
+	@ComponentForOption(MakeBLASTDBCommand.OPTION_DB_TYPE_SHORT_NAME)
+	private Component createComponentForDBTypeOption(
+		final Option<SequenceType> option,
 		final ParameterValuesReceiver receiver
 	) {
-		if (this.cmbFastas == null) {
-			this.cmbFastas = new JComboBox<Fasta>();
-		}
-		
-		if (option.equals(MakeBLASTDBCommand.OPTION_DB_TYPE)) {
-			final ParameterValuesReceiver pvr = new ParameterValuesReceiverWrapper(receiver) {
-				@Override
-				public void setValue(Option<?> option, String value) {
-					super.setValue(option, value);
-					
-					if (value == null) {
-						cmbFastas.setModel(new DefaultComboBoxModel<Fasta>());
-					} else {
-						final Object convertedValue = 
-							option.getConverter().convert(new SingleParameterValue(value));
-						
-						final Fasta[] fastas;
-						if (convertedValue == SequenceType.NUCLEOTIDE) {
-							fastas = controller.listNucleotideFastas();
-						} else if (convertedValue == SequenceType.PROTEIN) {
-							fastas = controller.listProteinFastas();
-						} else {
-							throw new IllegalArgumentException("Unknown option: " + convertedValue);
-						}
-						
-						cmbFastas.setModel(new DefaultComboBoxModel<>(fastas));
-						
-						if (alFastas != null)
-							alFastas.actionPerformed(null);
-					}
-				}
-			};
-			
-			pvr.setValue(option, this.getDefaultOptionString(option));
-			
-			return BuildComponent.forEnum(this, option, pvr);
-		} else if (option.equals(MakeBLASTDBCommand.OPTION_INPUT)) {
-			this.alFastas = new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					final Object item = cmbFastas.getSelectedItem();
-					
-					if (item == null) {
-						receiver.setValue(option, (String) null);
-					} else if (item instanceof Fasta) {
-						receiver.setValue(option, ((Fasta) item).getFile().getAbsolutePath());
-					}
-				}
-			};
-			
-			if (this.hasDefaultOption(option)) {
-				final String fastaPath = this.getDefaultOptionString(option);
-				final int size = this.cmbFastas.getItemCount();
-				
-				for (int i = 0; i < size; i++) {
-					final Fasta fasta = (Fasta) this.cmbFastas.getItemAt(i);
-					
-					if (fasta.getFile().getAbsolutePath().equals(fastaPath)) {
-						this.cmbFastas.setSelectedIndex(i);
-						break;
-					}
-				}
-			}
-			
-			this.alFastas.actionPerformed(null);
-			this.cmbFastas.addActionListener(alFastas);
-			
-			return cmbFastas;
-		} else {
-			return super.createComponentForOption(option, receiver);
-		}
+		return ComponentFactory.createComponentForSequenceType(
+			this, option, receiver, this.cmbFastas,
+			new FastaValuesProvider(this.controller),
+			this.getDefaultOptionString(option)
+		);
+	}
+	
+	@ComponentForOption(MakeBLASTDBCommand.OPTION_INPUT_SHORT_NAME)
+	private Component createComponentForInputOption(
+		final FileOption option,
+		final ParameterValuesReceiver receiver
+	) {
+		return ComponentFactory.createComponentForSequenceEntityValues(
+			option, receiver, this.cmbFastas,
+			this.getDefaultOptionString(option)
+		);
 	}
 }
