@@ -23,6 +23,7 @@ package es.uvigo.ei.sing.bdbm.gui.command.dialogs;
 
 import es.uvigo.ei.sing.bdbm.cli.commands.BLASTNCommand;
 import es.uvigo.ei.sing.bdbm.controller.BDBMController;
+import es.uvigo.ei.sing.bdbm.environment.binaries.BLASTType;
 import es.uvigo.ei.sing.bdbm.persistence.entities.Database;
 import es.uvigo.ei.sing.bdbm.persistence.entities.SearchEntry;
 import es.uvigo.ei.sing.yaacli.command.parameter.Parameters;
@@ -53,5 +54,10 @@ public class BLASTNCommandDialog extends BLASTCommandDialog {
 	@Override
 	protected SearchEntry[] listSearchEntries() {
 		return this.controller.listNucleotideSearchEntries();
+	}
+	
+	@Override
+	protected BLASTType getBlastType() {
+		return BLASTType.BLASTN;
 	}
 }

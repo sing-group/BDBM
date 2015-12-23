@@ -27,7 +27,7 @@ import es.uvigo.ei.sing.yaacli.CommandLine;
 public class CLI extends CommandLine {
 	@Override
 	protected Class<? extends CLIApplication> getCLIApplication() {
-		return BDBMcli.class;
+		return BDBMCli.class;
 	}
 	
 	public static void main(String[] args) {

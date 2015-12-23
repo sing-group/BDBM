@@ -25,20 +25,21 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 import es.uvigo.ei.sing.bdbm.environment.binaries.BLASTBinaries;
 import es.uvigo.ei.sing.bdbm.environment.binaries.BLASTType;
 import es.uvigo.ei.sing.bdbm.persistence.entities.Database;
 import es.uvigo.ei.sing.bdbm.persistence.entities.Export;
+import es.uvigo.ei.sing.bdbm.persistence.entities.Export.ExportEntry;
 import es.uvigo.ei.sing.bdbm.persistence.entities.NucleotideDatabase;
 import es.uvigo.ei.sing.bdbm.persistence.entities.NucleotideExport;
 import es.uvigo.ei.sing.bdbm.persistence.entities.NucleotideSearchEntry;
 import es.uvigo.ei.sing.bdbm.persistence.entities.ProteinDatabase;
 import es.uvigo.ei.sing.bdbm.persistence.entities.ProteinExport;
 import es.uvigo.ei.sing.bdbm.persistence.entities.ProteinSearchEntry;
-import es.uvigo.ei.sing.bdbm.persistence.entities.SearchEntry;
-import es.uvigo.ei.sing.bdbm.persistence.entities.Export.ExportEntry;
 import es.uvigo.ei.sing.bdbm.persistence.entities.ProteinSearchEntry.ProteinQuery;
+import es.uvigo.ei.sing.bdbm.persistence.entities.SearchEntry;
 
 public interface BLASTBinariesExecutor extends BinariesExecutor<BLASTBinaries> {
 	public boolean checkBLASTBinaries(BLASTBinaries bBinaries);
@@ -55,34 +56,14 @@ public interface BLASTBinariesExecutor extends BinariesExecutor<BLASTBinaries> {
 	public ExecutionResult executeBlastDBCMD(Database database, ExportEntry exportEntry, String entry)
 	throws InterruptedException, ExecutionException, IOException;
 
-	public ExecutionResult executeBlast(
-		BLASTType blastType, 
-		Database database,
-		File queryFile, 
-		Export export, 
-		BigDecimal expectedValue,
-		boolean filter, 
-		String outputName
-	) throws InterruptedException, ExecutionException, IOException;
-	
-	public ExecutionResult executeBlast(
-		BLASTType blastType, 
-		Database database, 
-		SearchEntry.Query query,
-		Export export,
-		BigDecimal expectedValue, 
-		boolean filter,
-		String outputName
-	) throws InterruptedException, ExecutionException, IOException;
-
-
 	public ExecutionResult executeBlastN(
 		NucleotideDatabase database, 
 		File queryFile,
 		NucleotideExport export,
 		BigDecimal expectedValue, 
 		boolean filter,
-		String outputName
+		String outputName,
+		Map<String, String> additionalParameters
 	) throws InterruptedException, ExecutionException, IOException;
 	
 	public ExecutionResult executeBlastN(
@@ -91,7 +72,8 @@ public interface BLASTBinariesExecutor extends BinariesExecutor<BLASTBinaries> {
 		NucleotideExport export,
 		BigDecimal expectedValue, 
 		boolean filter,
-		String outputName
+		String outputName,
+		Map<String, String> additionalParameters
 	) throws InterruptedException, ExecutionException, IOException;
 	
 	public ExecutionResult executeBlastP(
@@ -100,7 +82,8 @@ public interface BLASTBinariesExecutor extends BinariesExecutor<BLASTBinaries> {
 		ProteinExport export,
 		BigDecimal expectedValue,
 		boolean filter,
-		String outputName
+		String outputName,
+		Map<String, String> additionalParameters
 	) throws InterruptedException, ExecutionException, IOException;
 
 	public ExecutionResult executeBlastP(
@@ -109,7 +92,8 @@ public interface BLASTBinariesExecutor extends BinariesExecutor<BLASTBinaries> {
 		ProteinExport export,
 		BigDecimal expectedValue,
 		boolean filter,
-		String outputName
+		String outputName,
+		Map<String, String> additionalParameters
 	) throws InterruptedException, ExecutionException, IOException;
 	
 	public ExecutionResult executeTBlastX(
@@ -118,7 +102,8 @@ public interface BLASTBinariesExecutor extends BinariesExecutor<BLASTBinaries> {
 		NucleotideExport export,
 		BigDecimal expectedValue, 
 		boolean filter,
-		String outputName
+		String outputName,
+		Map<String, String> additionalParameters
 	) throws InterruptedException, ExecutionException, IOException;
 	
 	public ExecutionResult executeTBlastX(
@@ -127,7 +112,8 @@ public interface BLASTBinariesExecutor extends BinariesExecutor<BLASTBinaries> {
 		NucleotideExport export,
 		BigDecimal expectedValue, 
 		boolean filter,
-		String outputName
+		String outputName,
+		Map<String, String> additionalParameters
 	) throws InterruptedException, ExecutionException, IOException;
 	
 	public ExecutionResult executeTBlastN(
@@ -136,7 +122,8 @@ public interface BLASTBinariesExecutor extends BinariesExecutor<BLASTBinaries> {
 		NucleotideExport export,
 		BigDecimal expectedValue, 
 		boolean filter,
-		String outputName
+		String outputName,
+		Map<String, String> additionalParameters
 	) throws InterruptedException, ExecutionException, IOException;
 	
 	public ExecutionResult executeTBlastN(
@@ -145,10 +132,12 @@ public interface BLASTBinariesExecutor extends BinariesExecutor<BLASTBinaries> {
 		NucleotideExport export,
 		BigDecimal expectedValue, 
 		boolean filter,
-		String outputName
+		String outputName,
+		Map<String, String> additionalParameters
 	) throws InterruptedException, ExecutionException, IOException;
 	
 	public List<String> extractSignificantSequences(Export.ExportEntry entry)
 	throws InterruptedException, ExecutionException, IOException;
 
+	public Map<String, String> getBlastAdditionalParameters(BLASTType blastType);
 }

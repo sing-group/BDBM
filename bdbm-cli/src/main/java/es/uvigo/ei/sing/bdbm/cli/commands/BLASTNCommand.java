@@ -68,7 +68,8 @@ public class BLASTNCommand extends BLASTCommand {
 			expectedValue, 
 			filter,
 			keepSingleSequences,
-			outputName
+			outputName,
+			getAdditionalParameters(parameters)
 		);
 	}
 }

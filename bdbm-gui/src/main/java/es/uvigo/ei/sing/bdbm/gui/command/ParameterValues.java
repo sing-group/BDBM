@@ -170,4 +170,16 @@ public class ParameterValues extends Observable implements ParameterValuesReceiv
 			
 			return true;
 		}
+		
+		public void removeNonDefaultOptions() {
+			for (Option<?> option : listOptions()) {
+				if (!this.options.contains(option))
+					this.removeValue(option);
+			}
+		}
+
+		@Override
+		public List<Option<?>> listOptions() {
+			return new ArrayList<>(this.values.keySet());
+		}
 	}

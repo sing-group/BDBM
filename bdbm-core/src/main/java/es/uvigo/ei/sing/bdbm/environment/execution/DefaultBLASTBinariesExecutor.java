@@ -58,6 +58,8 @@ extends AbstractBinariesExecutor<BLASTBinaries>
 implements BLASTBinariesExecutor {
 	private final static Logger LOG = LoggerFactory.getLogger(DefaultBLASTBinariesExecutor.class);
 	
+	private final static String[] BLAST_UNMODIFIABLE_PARAMS = { "query", "db", "evalue", "out", "filter" };
+	
 	public DefaultBLASTBinariesExecutor() {}
 
 	public DefaultBLASTBinariesExecutor(BLASTBinaries bBinaries)
@@ -153,15 +155,15 @@ implements BLASTBinariesExecutor {
 		);
 	}
 
-	@Override
-	public ExecutionResult executeBlast(
+	private ExecutionResult executeBlast(
 		BLASTType blastType, 
 		Database database, 
 		File queryFile,
 		Export export, 
 		BigDecimal expectedValue, 
 		boolean filter,
-		String outputName
+		String outputName,
+		Map<String, String> additionalParameters
 	) throws InterruptedException, ExecutionException, IOException {
 		final File outDirectory = new File(export.getBaseFile(), outputName);
 		final File outFile = new File(outDirectory, outputName + ".out");
@@ -170,7 +172,7 @@ implements BLASTBinariesExecutor {
 			throw new IOException("Output directory could not be created: " + outDirectory);
 		}
 		
-		final List<String> parameters = getBlastAdditionalParameters(blastType, "query", "db", "evalue", "out"); 
+		final List<String> parameters = getBlastAdditionalParameters(blastType, additionalParameters); 
 		parameters.addAll(asList( 
 			"-query", queryFile.getAbsolutePath(),
 			"-db", database.getDirectory().getAbsolutePath(),
@@ -186,18 +188,21 @@ implements BLASTBinariesExecutor {
 		);
 	}
 
-	private List<String> getBlastAdditionalParameters(BLASTType blastType, String ... invalid) {
+	@Override
+	public Map<String, String> getBlastAdditionalParameters(BLASTType blastType) {
 		final Map<String, String> parameters = new HashMap<>();
 		
-		final Set<String> invalidParams = new HashSet<>(asList(invalid));
+		final Set<String> invalidParams = new HashSet<>(asList(BLAST_UNMODIFIABLE_PARAMS));
 		invalidParams.add(blastType.getFilterParam());
 
 		final Map<String, String> configParams = this.binaries.getConfigurationParameters();
+		// General params
 		for (Map.Entry<String, String> entry : configParams.entrySet()) {
 			final String param = entry.getKey();
 			
 			if (!invalidParams.contains(param) && !isABlastTypeAdditionalParam(param)) {
-				parameters.put(param, entry.getValue());
+				final String value = entry.getValue().trim();
+				parameters.put(param, value.isEmpty() ? null : value);
 			}
 		}
 		
@@ -210,15 +215,36 @@ implements BLASTBinariesExecutor {
 				final String param = fullParam.substring(blastPrefix.length());
 				
 				if (!invalidParams.contains(param)) {
-					parameters.put(param, entry.getValue());
+					final String value = entry.getValue().trim();
+					parameters.put(param, value.isEmpty() ? null : value);
 				}
+			}
+		}
+		
+		return parameters;
+	}
+
+	private List<String> getBlastAdditionalParameters(BLASTType blastType, Map<String, String> additionalParameters) {
+		final Map<String, String> parameters = getBlastAdditionalParameters(blastType);
+		
+		final Set<String> invalidParams = new HashSet<>(asList(BLAST_UNMODIFIABLE_PARAMS));
+		invalidParams.add(blastType.getFilterParam());
+		
+		// Additional params have preference over general and specific params.
+		for (Map.Entry<String, String> entry : additionalParameters.entrySet()) {
+			final String param = entry.getKey();
+			
+			if (!invalidParams.contains(param) && !isABlastTypeAdditionalParam(param)) {
+				parameters.put(param, entry.getValue());
 			}
 		}
 		
 		final List<String> additionalParams = new ArrayList<>();
 		for (Map.Entry<String, String> param : parameters.entrySet()) {
 			additionalParams.add("-" + param.getKey());
-			additionalParams.add(param.getValue());
+			
+			if (param.getValue() != null)
+				additionalParams.add(param.getValue());
 		}
 		
 		return additionalParams;
@@ -234,15 +260,15 @@ implements BLASTBinariesExecutor {
 		return false;
 	}
 	
-	@Override
-	public ExecutionResult executeBlast(
+	private ExecutionResult executeBlast(
 		BLASTType blastType, 
 		Database database, 
 		SearchEntry.Query query,
 		Export export, 
 		BigDecimal expectedValue, 
 		boolean filter,
-		String outputName
+		String outputName,
+		Map<String, String> additionalParameters
 	) throws InterruptedException, ExecutionException, IOException {
 		return this.executeBlast(
 			blastType,
@@ -251,7 +277,8 @@ implements BLASTBinariesExecutor {
 			export,
 			expectedValue,
 			filter,
-			outputName
+			outputName,
+			additionalParameters
 		);
 	}
 
@@ -262,7 +289,8 @@ implements BLASTBinariesExecutor {
 		NucleotideExport export, 
 		BigDecimal expectedValue,
 		boolean filter, 
-		String outputName
+		String outputName,
+		Map<String, String> additionalParameters
 	) throws InterruptedException, ExecutionException, IOException {
 		return this.executeBlast(
 			BLASTType.BLASTN, 
@@ -271,7 +299,8 @@ implements BLASTBinariesExecutor {
 			export, 
 			expectedValue, 
 			filter,
-			outputName
+			outputName,
+			additionalParameters
 		);
 	}
 	
@@ -282,7 +311,8 @@ implements BLASTBinariesExecutor {
 		NucleotideExport export, 
 		BigDecimal expectedValue,
 		boolean filter,
-		String outputName
+		String outputName,
+		Map<String, String> additionalParameters
 	) throws InterruptedException, ExecutionException, IOException {
 		return this.executeBlast(
 			BLASTType.BLASTN, 
@@ -291,7 +321,8 @@ implements BLASTBinariesExecutor {
 			export, 
 			expectedValue, 
 			filter,
-			outputName
+			outputName,
+			additionalParameters
 		);
 	}
 
@@ -302,7 +333,8 @@ implements BLASTBinariesExecutor {
 		ProteinExport export, 
 		BigDecimal expectedValue,
 		boolean filter,
-		String outputName
+		String outputName,
+		Map<String, String> additionalParameters
 	) throws InterruptedException, ExecutionException, IOException {
 		return this.executeBlast(
 			BLASTType.BLASTP, 
@@ -311,7 +343,8 @@ implements BLASTBinariesExecutor {
 			export, 
 			expectedValue, 
 			filter,
-			outputName
+			outputName,
+			additionalParameters
 		);
 	}
 
@@ -322,7 +355,8 @@ implements BLASTBinariesExecutor {
 		ProteinExport export, 
 		BigDecimal expectedValue,
 		boolean filter,
-		String outputName
+		String outputName,
+		Map<String, String> additionalParameters
 	) throws InterruptedException, ExecutionException, IOException {
 		return this.executeBlast(
 			BLASTType.BLASTP, 
@@ -331,7 +365,8 @@ implements BLASTBinariesExecutor {
 			export, 
 			expectedValue, 
 			filter,
-			outputName
+			outputName,
+			additionalParameters
 		);
 	}
 
@@ -342,7 +377,8 @@ implements BLASTBinariesExecutor {
 		NucleotideExport export, 
 		BigDecimal expectedValue, 
 		boolean filter,
-		String outputName
+		String outputName,
+		Map<String, String> additionalParameters
 	) throws InterruptedException ,ExecutionException, IOException {
 		return this.executeBlast(
 			BLASTType.TBLASTX, 
@@ -351,7 +387,8 @@ implements BLASTBinariesExecutor {
 			export, 
 			expectedValue, 
 			filter,
-			outputName
+			outputName,
+			additionalParameters
 		);
 	}
 
@@ -362,7 +399,8 @@ implements BLASTBinariesExecutor {
 		NucleotideExport export, 
 		BigDecimal expectedValue, 
 		boolean filter,
-		String outputName
+		String outputName,
+		Map<String, String> additionalParameters
 	) throws InterruptedException ,ExecutionException, IOException {
 		return this.executeBlast(
 			BLASTType.TBLASTX, 
@@ -371,7 +409,8 @@ implements BLASTBinariesExecutor {
 			export, 
 			expectedValue, 
 			filter,
-			outputName
+			outputName,
+			additionalParameters
 		);
 	}
 
@@ -382,7 +421,8 @@ implements BLASTBinariesExecutor {
 		NucleotideExport export, 
 		BigDecimal expectedValue, 
 		boolean filter,
-		String outputName
+		String outputName,
+		Map<String, String> additionalParameters
 	) throws InterruptedException, ExecutionException, IOException {
 		return this.executeBlast(
 			BLASTType.TBLASTN,  
@@ -391,7 +431,8 @@ implements BLASTBinariesExecutor {
 			export, 
 			expectedValue, 
 			filter,
-			outputName
+			outputName,
+			additionalParameters
 		);
 	}
 
@@ -402,7 +443,8 @@ implements BLASTBinariesExecutor {
 		NucleotideExport export, 
 		BigDecimal expectedValue, 
 		boolean filter,
-		String outputName
+		String outputName,
+		Map<String, String> additionalParameters
 	) throws InterruptedException, ExecutionException, IOException {
 		return this.executeBlast(
 			BLASTType.TBLASTN,  
@@ -411,7 +453,8 @@ implements BLASTBinariesExecutor {
 			export, 
 			expectedValue, 
 			filter,
-			outputName
+			outputName,
+			additionalParameters
 		);
 	}
 	

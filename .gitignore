@@ -6,3 +6,6 @@
 # Maven
 bdbm-*/target
 **/pom.xml.versionsBackup
+
+# Tools
+splign.log

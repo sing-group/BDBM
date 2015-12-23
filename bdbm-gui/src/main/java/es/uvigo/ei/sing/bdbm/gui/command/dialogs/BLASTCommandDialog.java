@@ -21,20 +21,32 @@
  */
 package es.uvigo.ei.sing.bdbm.gui.command.dialogs;
 
+import java.awt.CardLayout;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.io.File;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 
 import es.uvigo.ei.sing.bdbm.cli.commands.BLASTCommand;
 import es.uvigo.ei.sing.bdbm.cli.commands.BLASTNCommand;
 import es.uvigo.ei.sing.bdbm.cli.commands.converters.FileOption;
 import es.uvigo.ei.sing.bdbm.controller.BDBMController;
+import es.uvigo.ei.sing.bdbm.environment.binaries.BLASTType;
 import es.uvigo.ei.sing.bdbm.gui.command.CommandDialog;
 import es.uvigo.ei.sing.bdbm.gui.command.ComponentForOption;
 import es.uvigo.ei.sing.bdbm.gui.command.ParameterValuesReceiver;
@@ -42,11 +54,14 @@ import es.uvigo.ei.sing.bdbm.gui.command.dialogs.ComponentFactory.ValueCallback;
 import es.uvigo.ei.sing.bdbm.persistence.entities.Database;
 import es.uvigo.ei.sing.bdbm.persistence.entities.SearchEntry;
 import es.uvigo.ei.sing.bdbm.persistence.entities.SearchEntry.Query;
+import es.uvigo.ei.sing.yaacli.command.option.StringOption;
 import es.uvigo.ei.sing.yaacli.command.parameter.Parameters;
 
 public abstract class BLASTCommandDialog extends CommandDialog {
 	private static final long serialVersionUID = 1L;
-
+	
+	private JTextArea taAdditionalParameters;
+	
 	public BLASTCommandDialog(
 		BDBMController controller, 
 		BLASTCommand command
@@ -61,11 +76,13 @@ public abstract class BLASTCommandDialog extends CommandDialog {
 	) {
 		super(controller, command, defaultParameters);
 		
+		this.setMinimumSize(new Dimension(500, 200));
 		this.pack();
 	}
 	
 	protected abstract Database[] listDatabases();
 	protected abstract SearchEntry[] listSearchEntries();
+	protected abstract BLASTType getBlastType();
 	
 	@ComponentForOption(BLASTCommand.OPTION_DATABASE_SHORT_NAME)
 	protected Component createComponentForDatabaseOption(
@@ -73,8 +90,18 @@ public abstract class BLASTCommandDialog extends CommandDialog {
 		final ParameterValuesReceiver receiver
 	) {
 		return ComponentFactory.createComponentForSequenceEntityValues(
-			option, receiver, new JComboBox<Database>(this.listDatabases()),
-			this.getDefaultOptionString(option)
+			option, new JComboBox<Database>(this.listDatabases()),
+			this.getDefaultOptionString(option),
+			new ValueCallback<Database>() {
+				@Override
+				public void callback(Database value) {
+					if (value == null) {
+						receiver.setValue(option, (String) null);
+					} else {
+						receiver.setValue(option, new File(value.getBaseFile(), value.getName()).getAbsolutePath());
+					}
+				}
+			}
 		);
 	}
 
@@ -86,6 +113,15 @@ public abstract class BLASTCommandDialog extends CommandDialog {
 		final JPanel panel = new JPanel(new GridLayout(2, 1));
 
 		final JComboBox<Query> cmbQueries = new JComboBox<>();
+		
+		cmbQueries.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				final Query query = cmbQueries.getItemAt(cmbQueries.getSelectedIndex());
+				
+				BLASTCommandDialog.this.updateQuery(query, receiver);
+			}
+		});
 		
 		final JComboBox<SearchEntry> cmbSearchEntries =
 			ComponentFactory.createComponentForSequenceEntityValues(
@@ -106,15 +142,6 @@ public abstract class BLASTCommandDialog extends CommandDialog {
 				}
 			);
 		
-		cmbQueries.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				final Query query = cmbQueries.getItemAt(cmbQueries.getSelectedIndex());
-				
-				BLASTCommandDialog.this.updateQuery(query, receiver);
-			}
-		});
-		
 		panel.add(cmbSearchEntries);
 		panel.add(cmbQueries);
 		
@@ -129,5 +156,146 @@ public abstract class BLASTCommandDialog extends CommandDialog {
 		}
 		
 		this.updateButtonOk();
+	}
+	
+	
+	@Override
+	protected void postComponentsCreation() {
+		final JButton btnShow = new JButton("Show additional parameters");
+		
+		taAdditionalParameters = new JTextArea(getAdditionalParametersString());
+		taAdditionalParameters.setLineWrap(true);
+		taAdditionalParameters.setWrapStyleWord(true);
+		taAdditionalParameters.setRows(1);
+		
+		
+		final JPanel panel = new JPanel();
+		final CardLayout layout = new CardLayout();
+		panel.setLayout(layout);
+		
+		panel.add(btnShow);
+		panel.add(new JScrollPane(taAdditionalParameters));
+		super.createOptionRow(
+			"Additional parameters",
+			"This option allows you to introduce additional parameters to the blast operation.",
+			panel
+		);
+		
+		btnShow.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (JOptionPane.showConfirmDialog(
+					BLASTCommandDialog.this,
+					"<html>"
+					+ "Using custom additional parameters may cause execution<br/>"
+					+ "fails or output files incompatible with other BDBM options.<br/>"
+					+ "Therefore, it is recommended to use this option carefully <br/>"
+					+ "and only by advanced BLAST users.<br/><br/>"
+					+ "Do you still want to continue?"
+					+ "</html>",
+					"BLAST Advanced Options",
+					JOptionPane.YES_NO_OPTION,
+					JOptionPane.WARNING_MESSAGE
+				) == JOptionPane.YES_OPTION) {
+					layout.next(panel);
+					taAdditionalParameters.setRows(4);
+					BLASTCommandDialog.this.pack();
+				}
+			}
+		});
+
+		taAdditionalParameters.addFocusListener(new FocusListener() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				parameterValues.removeNonDefaultOptions();
+			}
+			
+			@Override
+			public void focusLost(FocusEvent e) {
+				if (areAdditionalParametersValid()) {
+					final Map<String, String> parameters = getAdditionalParameters();
+					
+					for (Map.Entry<String, String> parameter : parameters.entrySet()) {
+						final boolean requiresValue = parameter.getValue() != null;
+						final String paramName = parameter.getKey();
+						
+						parameterValues.setValue(
+							new StringOption(paramName, paramName, paramName, false, requiresValue),
+							requiresValue ? parameter.getValue() : ""
+						);
+					}
+				} else {
+					JOptionPane.showMessageDialog(
+						BLASTCommandDialog.this,
+						"The format of the additional parameters is invalid. Please, fix them before continue.",
+						"Invalid Format",
+						JOptionPane.ERROR_MESSAGE
+					);
+				}
+				
+				updateButtonOk();
+			}
+		});
+	}
+
+	@Override
+	protected void updateButtonOk() {
+		this.btnOk.setEnabled(this.parameterValues.isComplete() && areAdditionalParametersValid());
+	}
+
+	private String getAdditionalParametersString() {
+		final StringBuilder sb = new StringBuilder();
+		
+		final Map<String, String> additionalParameters =
+			this.controller.getBlastAdditionalParameters(getBlastType());
+		for (Map.Entry<String, String> entry : additionalParameters.entrySet()) {
+			sb.append(" -").append(entry.getKey().trim());
+			
+			final String value = entry.getValue();
+			if (value != null) {
+				sb.append(' ').append(value);
+			}
+		}
+		
+		return sb.toString().trim();
+	}
+	
+	private Map<String, String> getAdditionalParameters() {
+		final String[] params = this.taAdditionalParameters.getText().trim().split("\\s+");
+		
+		final Map<String, String> parameters = new LinkedHashMap<>();
+		for (int i = 0; i < params.length; i++) {
+			if (!params[i].startsWith("-")) {
+				throw new IllegalArgumentException("Invalid parameters format");
+			}
+			
+			final String paramName = params[i].substring(1);
+			if (i < params.length - 1 && !params[i + 1].startsWith("-")) {
+				parameters.put(paramName, params[i + 1]);
+				i++;
+			} else {
+				parameters.put(paramName, null);
+			}
+		}
+		
+		return parameters;
+	}
+	
+	private boolean areAdditionalParametersValid() {
+		if (taAdditionalParameters.getText().trim().isEmpty()) {
+			return true;
+		} else {
+			final String[] params = this.taAdditionalParameters.getText().trim().split("\\s+");
+			
+			for (int i = 0; i < params.length; i++) {
+				if (!params[i].startsWith("-")) {
+					return false;
+				} else if (i < params.length - 1 && !params[i + 1].startsWith("-")) {
+					i++;
+				}
+			}
+			
+			return true;
+		}
 	}
 }

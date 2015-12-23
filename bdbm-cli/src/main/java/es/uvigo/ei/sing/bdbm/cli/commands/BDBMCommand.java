@@ -23,7 +23,7 @@ package es.uvigo.ei.sing.bdbm.cli.commands;
 
 import es.uvigo.ei.sing.bdbm.controller.BDBMController;
 
-public abstract class BDBMCommand extends AbstractOptionCommand {
+public abstract class BDBMCommand extends BDBMOptionCommand {
 	protected BDBMController controller;
 
 	public BDBMCommand() {

@@ -68,7 +68,8 @@ public class TBLASTXCommand extends BLASTPCommand {
 			expectedValue, 
 			filter, 
 			keepSingleSequences,
-			outputName
+			outputName,
+			getAdditionalParameters(parameters)
 		);
 	}
 }

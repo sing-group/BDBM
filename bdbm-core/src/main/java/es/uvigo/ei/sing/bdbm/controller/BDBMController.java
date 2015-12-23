@@ -27,6 +27,7 @@ import java.math.BigDecimal;
 import java.util.Map;
 
 import es.uvigo.ei.sing.bdbm.environment.SequenceType;
+import es.uvigo.ei.sing.bdbm.environment.binaries.BLASTType;
 import es.uvigo.ei.sing.bdbm.environment.execution.BLASTBinariesExecutor;
 import es.uvigo.ei.sing.bdbm.environment.execution.BedToolsBinariesExecutor;
 import es.uvigo.ei.sing.bdbm.environment.execution.CompartBinariesExecutor;
@@ -102,7 +103,8 @@ public interface BDBMController {
 		BigDecimal expectedValue, 
 		boolean filter,
 		boolean keepSingleSequenceFiles,
-		String outputName
+		String outputName,
+		Map<String, String> additionalParameters
 	) throws IOException, InterruptedException, ExecutionException, IllegalStateException;
 	
 	public abstract NucleotideExport blastn(
@@ -111,7 +113,8 @@ public interface BDBMController {
 		BigDecimal expectedValue, 
 		boolean filter, 
 		boolean keepSingleSequenceFiles,
-		String outputName
+		String outputName,
+		Map<String, String> additionalParameters
 	) throws IOException, InterruptedException, ExecutionException, IllegalStateException;
 
 	public abstract ProteinExport blastp(
@@ -120,7 +123,8 @@ public interface BDBMController {
 		BigDecimal expectedValue, 
 		boolean keepSingleSequenceFiles,
 		boolean filter,
-		String outputName
+		String outputName,
+		Map<String, String> additionalParameters
 	) throws IOException, InterruptedException, ExecutionException, IllegalStateException;
 	
 	public abstract ProteinExport blastp(
@@ -129,7 +133,8 @@ public interface BDBMController {
 		BigDecimal expectedValue, 
 		boolean filter,
 		boolean keepSingleSequenceFiles,
-		String outputName
+		String outputName,
+		Map<String, String> additionalParameters
 	) throws IOException, InterruptedException, ExecutionException, IllegalStateException;
 
 	public abstract NucleotideExport tblastx(
@@ -138,7 +143,8 @@ public interface BDBMController {
 		BigDecimal expectedValue, 
 		boolean filter, 
 		boolean keepSingleSequenceFiles,
-		String outputName
+		String outputName,
+		Map<String, String> additionalParameters
 	) throws IOException, InterruptedException, ExecutionException, IllegalStateException;
 
 	public abstract NucleotideExport tblastx(
@@ -147,7 +153,8 @@ public interface BDBMController {
 		BigDecimal expectedValue, 
 		boolean filter, 
 		boolean keepSingleSequenceFiles,
-		String outputName
+		String outputName,
+		Map<String, String> additionalParameters
 	) throws IOException, InterruptedException, ExecutionException, IllegalStateException;
 
 	public abstract NucleotideExport tblastn(
@@ -156,7 +163,8 @@ public interface BDBMController {
 		BigDecimal expectedValue,
 		boolean filter,
 		boolean keepSingleSequenceFiles,
-		String outputName
+		String outputName,
+		Map<String, String> additionalParameters
 	) throws IOException, InterruptedException, ExecutionException, IllegalStateException;
 
 	public abstract NucleotideExport tblastn(
@@ -165,8 +173,11 @@ public interface BDBMController {
 		BigDecimal expectedValue,
 		boolean filter,
 		boolean keepSingleSequenceFiles,
-		String outputName
+		String outputName,
+		Map<String, String> additionalParameters
 	) throws IOException, InterruptedException, ExecutionException, IllegalStateException;
+	
+	public Map<String, String> getBlastAdditionalParameters(BLASTType blastType);
 
 	public abstract NucleotideFasta getORF(
 		NucleotideFasta fasta, 

@@ -38,8 +38,8 @@ import es.uvigo.ei.sing.bdbm.persistence.DefaultBDBMRepositoryManager;
 import es.uvigo.ei.sing.yaacli.CLIApplication;
 import es.uvigo.ei.sing.yaacli.command.Command;
 
-public class BDBMcli extends CLIApplication {
-	public BDBMcli() {
+public class BDBMCli extends CLIApplication {
+	public BDBMCli() {
 		super(true, false);
 		
 		this.loadCommands();

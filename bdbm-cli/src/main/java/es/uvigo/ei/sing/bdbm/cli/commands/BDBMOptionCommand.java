@@ -21,27 +21,28 @@
  */
 package es.uvigo.ei.sing.bdbm.cli.commands;
 
+import static java.lang.reflect.Modifier.isStatic;
+
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.LinkedList;
 import java.util.List;
 
 import es.uvigo.ei.sing.yaacli.command.AbstractCommand;
 import es.uvigo.ei.sing.yaacli.command.option.Option;
 
-public abstract class AbstractOptionCommand extends AbstractCommand {
+public abstract class BDBMOptionCommand extends AbstractCommand {
 	private static final String REFLECTION_OPTION_PREFIX = "OPTION_";
 
 	@Override
 	protected List<Option<?>> createOptions() {
-		final Class<? extends AbstractOptionCommand> clazz = this.getClass();
+		final Class<? extends BDBMOptionCommand> clazz = this.getClass();
 		
 		final Field[] fields = clazz.getFields();
 		final List<Option<?>> options = new LinkedList<Option<?>>();
 		for (Field field : fields) {
-			if (Modifier.isStatic(field.getModifiers()) &&
-				field.getName().startsWith(AbstractOptionCommand.REFLECTION_OPTION_PREFIX) &&
-				Option.class.isAssignableFrom(field.getType())
+			if (isStatic(field.getModifiers())
+				&& field.getName().startsWith(REFLECTION_OPTION_PREFIX)
+				&& Option.class.isAssignableFrom(field.getType())
 			) {
 				try {
 					options.add((Option<?>) field.get(null));
