@@ -25,6 +25,12 @@
 			<organizationUrl>http://sing.ei.uvigo.es/</organizationUrl>
 			<email>hlfernandez@uvigo.es</email>
 		</developer>
+		<developer>
+			<name>Noé Vázquez González</name>
+			<organization>SING Group - University of Vigo</organization>
+			<organizationUrl>http://sing.ei.uvigo.es/</organizationUrl>
+			<email>nvazquezg@gmail.com</email>
+		</developer>
 	</developers>
 	<contributors>
 		<contributor>
@@ -91,7 +97,7 @@
 		
 		<!-- license-maven-plugin configuration -->
 		<license.licenseName>gpl_v3</license.licenseName>
-		<license.copyrightOwners>Miguel Reboiro-Jato, Critina P. Vieira, Hugo López-Fdez, Florentino Fdez-Riverola and Jorge Vieira</license.copyrightOwners>
+		<license.copyrightOwners>Miguel Reboiro-Jato, Critina P. Vieira, Hugo López-Fdez, Noé Vázquez González, Florentino Fdez-Riverola and Jorge Vieira</license.copyrightOwners>
 		<license.organizationName>Instituto de Biologia Molecular e Celular (Universidade do Porto) and SING Group (University of Vigo)</license.organizationName>
 		<license.addJavaLicenseAfterPackage>false</license.addJavaLicenseAfterPackage>
 	</properties>

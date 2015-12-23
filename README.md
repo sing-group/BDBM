@@ -22,3 +22,4 @@ This project is an idea and is developed by:
 * Cristina P. Vieira [Molecular Evolution Group](http://evolution.ibmc.up.pt)
 * Florentino Fdez-Riverola [SING Group](http://sing.ei.uvigo.es)
 * Hugo López-Fdez [SING Group](http://sing.ei.uvigo.es)
+* Noé Vázquez-Fdez [SING Group](http://sing.ei.uvigo.es)
