@@ -21,19 +21,42 @@
  */
 package es.uvigo.ei.sing.bdbm.gui;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Observable;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.uvigo.ei.sing.bdbm.BDBMManager;
 import es.uvigo.ei.sing.bdbm.controller.BDBMController;
 import es.uvigo.ei.sing.bdbm.environment.BDBMEnvironment;
+import es.uvigo.ei.sing.bdbm.gui.command.input.FileInputComponentBuilder;
 import es.uvigo.ei.sing.bdbm.gui.configuration.PathsConfiguration;
 
 public class BDBMGUIController extends Observable {
+	private static final Logger LOG = LoggerFactory.getLogger(BDBMGUIController.class);
+	private static final String DEFAULT_DIRECTORY = "bdbm.default.directory";
 	private final BDBMManager manager;
 
 	public BDBMGUIController(BDBMManager manager) {
 		this.manager = manager;
+		
+		if (this.manager.getEnvironment().hasProperty(DEFAULT_DIRECTORY)) {
+			final File defaultDirectory = new File(
+				this.manager.getEnvironment().getProperty(DEFAULT_DIRECTORY)
+			);
+			
+			if (defaultDirectory.canRead() && defaultDirectory.isDirectory()) {
+				FileInputComponentBuilder.setCurrentDirectory(defaultDirectory);
+			} else {
+				LOG.warn(String.format(
+					"Default directory '%s' is not a valid directory. Please, "
+					+ "check that the directory exists and can be read.",
+					defaultDirectory.getAbsolutePath()
+				));
+			}
+		}
 	}
 
 	public BDBMManager getManager() {

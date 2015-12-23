@@ -38,6 +38,10 @@ import es.uvigo.ei.sing.yaacli.command.option.Option;
 public class FileInputComponentBuilder implements InputComponentBuilder {
 	private final static JFileChooser FILE_CHOOSER = new JFileChooser(new File("."));
 	
+	public static void setCurrentDirectory(File directory) {
+		FILE_CHOOSER.setCurrentDirectory(directory);
+	}
+	
 	@Override
 	public boolean canHandle(Option<?> option) {
 		return !option.isMultiple() && File.class.equals(option.getConverter().getTargetClass());
@@ -54,16 +58,8 @@ public class FileInputComponentBuilder implements InputComponentBuilder {
 		
 		final JPanel panel = new JPanel(new BorderLayout());
 		final JTextField txtLocation = new JTextField(20);
-//		lblLocation.setHorizontalAlignment(SwingConstants.TRAILING);
 		txtLocation.setEditable(false);
 		
-//		if (option instanceof DefaultValuedOption) {
-//			final DefaultValuedOption<T> dvOption = (DefaultValuedOption<T>) option;
-//			final String defaultValue = dvOption.getDefaultValue();
-//			
-//			txtLocation.setText(defaultValue);
-//			txtLocation.setToolTipText(defaultValue);
-//		}
 		if (receiver.hasOption(option)) {
 			txtLocation.setText(receiver.getValue(option));
 			txtLocation.setToolTipText(receiver.getValue(option));
