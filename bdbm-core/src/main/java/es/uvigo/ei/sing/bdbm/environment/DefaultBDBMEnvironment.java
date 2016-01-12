@@ -110,7 +110,8 @@ public class DefaultBDBMEnvironment implements BDBMEnvironment {
 		);
 	}
 	
-	private boolean changeProperty(String propertyName, String propertyValue, boolean persist) throws IOException {
+	private boolean changeProperty(String propertyName, String propertyValue, boolean persist)
+	throws IOException {
 		if (propertyValue == null)
 			throw new IllegalArgumentException("New value can't be null");
 		
@@ -210,7 +211,7 @@ public class DefaultBDBMEnvironment implements BDBMEnvironment {
 	}
 	
 	public boolean initializeRepositoryPaths() throws IOException {
-		if (this.repositoryPaths.checkBaseDirectory(this.repositoryPaths.getBaseDirectory())) {
+		if (this.repositoryPaths.isValid()) {
 			return false;	// Already exists
 		} else {
 			this.repositoryPaths.buildBaseDirectory(this.repositoryPaths.getBaseDirectory());
@@ -225,7 +226,7 @@ public class DefaultBDBMEnvironment implements BDBMEnvironment {
 
 	@Override
 	public boolean changeRepositoryPath(File repositoryPath, boolean persist)
-			throws IOException {
+	throws IOException {
 		if (this.changeProperty(
 			RepositoryPaths.BASE_DIRECTORY_PROP, 
 			repositoryPath.getAbsolutePath(),

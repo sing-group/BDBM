@@ -60,6 +60,7 @@ public interface RepositoryPaths {
 	public abstract boolean checkBaseDirectory(File baseDirectory);
 	public abstract void buildBaseDirectory(File baseDirectory) 
 	throws IOException;
+	public abstract boolean isValid();
 	
 	public abstract File getDBProteinsDirectory();
 	public abstract File getDBNucleotidesDirectory();

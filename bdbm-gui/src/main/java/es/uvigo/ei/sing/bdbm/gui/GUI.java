@@ -620,40 +620,58 @@ public class GUI implements Observer {
 		}
 	}
 
-	private static boolean checkRepositoryPaths(final DefaultBDBMEnvironment env, final Component parent) {
+	private static boolean checkRepositoryPaths(
+		final DefaultBDBMEnvironment env, final Component parent
+	) {
 		final RepositoryPaths repositoryPaths = env.getRepositoryPaths();
-		if (repositoryPaths.checkBaseDirectory(repositoryPaths.getBaseDirectory())) {
-			return true;
-		} else {
-			final JFileChooser chooser = new JFileChooser(repositoryPaths.getBaseDirectory());
-			chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-			chooser.setMultiSelectionEnabled(false);
-			
-			while (!repositoryPaths.checkBaseDirectory(repositoryPaths.getBaseDirectory())) {
-				if (askForRepositoryPath(parent) && 
-					chooser.showOpenDialog(parent) == JFileChooser.APPROVE_OPTION
-				) {
-					final File repositoryPath = chooser.getSelectedFile();
-					
-					try {
-						if (repositoryPaths.checkBaseDirectory(repositoryPath)) {
-							env.changeRepositoryPath(repositoryPath);
-						} else if (repositoryPath.canWrite()) {
-							if (askForCreatingRepositoryIn(parent, repositoryPath)) {
-								repositoryPaths.buildBaseDirectory(repositoryPath);
-								env.changeRepositoryPath(repositoryPath);
-							}
-						}
-					} catch (IOException ioe) {
-						showIOError(parent, ioe);
-					}
-				} else {
-					return false;
-				}
-			}
-			
+		final String defaultPath = env.getProperty(RepositoryPaths.BASE_DIRECTORY_PROP);
+		
+		if (repositoryPaths.isValid()) {
 			return true;
 		}
+		
+		if (!defaultPath.isEmpty()) {
+			final File repositoryPath = new File(defaultPath);
+			if (askForCreatingRepositoryIn(parent, repositoryPath)) {
+				try {
+					repositoryPaths.buildBaseDirectory(repositoryPath);
+					env.changeRepositoryPath(repositoryPath);
+					
+					return true;
+				} catch (IOException ioe) {
+					showIOError(parent, ioe);
+				}
+			}
+		}
+		
+		final JFileChooser chooser = new JFileChooser(repositoryPaths.getBaseDirectory());
+		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		chooser.setMultiSelectionEnabled(false);
+		
+		while (!repositoryPaths.isValid()) {
+			if (askForRepositoryPath(parent) && 
+				chooser.showOpenDialog(parent) == JFileChooser.APPROVE_OPTION
+			) {
+				final File repositoryPath = chooser.getSelectedFile();
+				
+				try {
+					if (repositoryPaths.checkBaseDirectory(repositoryPath)) {
+						env.changeRepositoryPath(repositoryPath);
+					} else if (repositoryPath.canWrite()) {
+						if (askForCreatingRepositoryIn(parent, repositoryPath)) {
+							repositoryPaths.buildBaseDirectory(repositoryPath);
+							env.changeRepositoryPath(repositoryPath);
+						}
+					}
+				} catch (IOException ioe) {
+					showIOError(parent, ioe);
+				}
+			} else {
+				return false;
+			}
+		}
+		
+		return true;
 	}
 
 	private static void showIOError(final Component parent, IOException ioe) {

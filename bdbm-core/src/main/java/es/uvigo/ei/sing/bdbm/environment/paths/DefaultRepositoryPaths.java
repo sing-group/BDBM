@@ -27,7 +27,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import es.uvigo.ei.sing.bdbm.environment.SequenceType;
-import es.uvigo.ei.sing.bdbm.environment.paths.RepositoryPaths;
 
 
 public class DefaultRepositoryPaths implements RepositoryPaths {
@@ -50,11 +49,11 @@ public class DefaultRepositoryPaths implements RepositoryPaths {
 		
 		this.baseDirectory = baseDirectory;
 		
-		this.dbDirectories = new HashMap<SequenceType, File>();
-		this.fastaDirectories = new HashMap<SequenceType, File>();
-		this.entryDirectories = new HashMap<SequenceType, File>();
-		this.exportDirectories = new HashMap<SequenceType, File>();
-		this.orfDirectories = new HashMap<SequenceType, File>();
+		this.dbDirectories = new HashMap<>();
+		this.fastaDirectories = new HashMap<>();
+		this.entryDirectories = new HashMap<>();
+		this.exportDirectories = new HashMap<>();
+		this.orfDirectories = new HashMap<>();
 		
 		this.updateDefaultDirectories();
 	}
@@ -104,22 +103,24 @@ public class DefaultRepositoryPaths implements RepositoryPaths {
 	
 	@Override
 	public boolean checkBaseDirectory(File baseDirectory) {
-		
-		if (baseDirectory.isDirectory()) {
-			final DefaultRepositoryPaths stub = 
-				new DefaultRepositoryPaths(baseDirectory);
-			
-			return stub.getDBNucleotidesDirectory().isDirectory() &&
-				stub.getDBProteinsDirectory().isDirectory() &&
-				stub.getFastaNucleotidesDirectory().isDirectory() &&
-				stub.getFastaProteinsDirectory().isDirectory() &&
-				stub.getSearchEntryNucleotidesDirectory().isDirectory() &&
-				stub.getSearchEntryProteinsDirectory().isDirectory() &&
-				stub.getExportNucleotidesDirectory().isDirectory() &&
-				stub.getExportProteinsDirectory().isDirectory();
-		} else {
-			return false;
-		}
+		return baseDirectory.isDirectory() &&
+			checkRepositoryPaths(new DefaultRepositoryPaths(baseDirectory));
+	}
+	
+	@Override
+	public boolean isValid() {
+		return checkRepositoryPaths(this);
+	}
+	
+	private static boolean checkRepositoryPaths(DefaultRepositoryPaths paths) {
+		return paths.getDBNucleotidesDirectory().isDirectory() &&
+			paths.getDBProteinsDirectory().isDirectory() &&
+			paths.getFastaNucleotidesDirectory().isDirectory() &&
+			paths.getFastaProteinsDirectory().isDirectory() &&
+			paths.getSearchEntryNucleotidesDirectory().isDirectory() &&
+			paths.getSearchEntryProteinsDirectory().isDirectory() &&
+			paths.getExportNucleotidesDirectory().isDirectory() &&
+			paths.getExportProteinsDirectory().isDirectory();
 	}
 	
 	@Override
