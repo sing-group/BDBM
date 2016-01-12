@@ -74,6 +74,16 @@ public class BDBMGUIController extends Observable {
 	public boolean isAccessionInferEnabled() {
 		return this.manager.getEnvironment().isAccessionInferEnabled();
 	}
+	
+	public boolean showConfiguration() {
+		final BDBMEnvironment environment = this.manager.getEnvironment();
+		
+		if (environment.hasProperty(GUI.SHOW_CONFIGURATION)) {
+			return Boolean.parseBoolean(environment.getProperty(GUI.SHOW_CONFIGURATION));
+		} else {
+			return true;
+		}
+	}
 
 	public boolean changePaths(PathsConfiguration configuration)
 	throws IOException {

@@ -97,8 +97,11 @@ import es.uvigo.ei.sing.bdbm.gui.configuration.PathsConfiguration;
 import es.uvigo.ei.sing.bdbm.persistence.DefaultBDBMRepositoryManager;
 
 public class GUI implements Observer {
+	public final static String SHOW_CONFIGURATION = "gui.configuration.visible";
+	
 	private final static Logger LOG = LoggerFactory.getLogger(GUI.class);
-	private final static ImageIcon IMAGE_BDBM = new ImageIcon(BDBMSplash.class.getResource("images/bdbm.png"));
+	private final static ImageIcon IMAGE_BDBM =
+		new ImageIcon(BDBMSplash.class.getResource("images/bdbm.png"));
 	
 	private BDBMManager manager;
 	private BDBMGUIController guiController;
@@ -186,23 +189,33 @@ public class GUI implements Observer {
 		return new BDBMMainPanel(controller);
 	}
 	
-	private static final JMenuBar createMenuBar(final BDBMGUIController controller, final Frame parent) {
+	private static final JMenuBar createMenuBar(
+		final BDBMGUIController controller, final Frame parent
+	) {
+		final BDBMController bdbmController = controller.getController();
+
 		final JMenuBar menuBar = new JMenuBar();
 		
 		final JMenu menuFile = new JMenu("File");
-		menuFile.add(new AbstractAction("Configuration") {
-			private static final long serialVersionUID = 1L;
-	
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				new ConfigurationDialog(
-					controller,
-					parent,
-					"Configuration",
-					ModalityType.APPLICATION_MODAL
-				).setVisible(true);
-			}
-		});
+		menuFile.add(new BDBMCommandAction(
+			bdbmController, 
+			new ImportFastaCommand(bdbmController)
+		));
+		if (controller.showConfiguration()) {
+			menuFile.add(new AbstractAction("Configuration") {
+				private static final long serialVersionUID = 1L;
+		
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					new ConfigurationDialog(
+						controller,
+						parent,
+						"Configuration",
+						ModalityType.APPLICATION_MODAL
+					).setVisible(true);
+				}
+			});
+		}
 		menuFile.addSeparator();
 		menuFile.add(new AbstractAction("Exit") {
 			private static final long serialVersionUID = 1L;
@@ -214,11 +227,6 @@ public class GUI implements Observer {
 		});
 		
 		final JMenu menuOperations = new JMenu("Operations");
-		final BDBMController bdbmController = controller.getController();
-		menuOperations.add(new BDBMCommandAction(
-			bdbmController, 
-			new ImportFastaCommand(bdbmController)
-		));
 		menuOperations.add(new BDBMCommandAction(
 			bdbmController,
 			new MakeBLASTDBCommand(bdbmController), 
