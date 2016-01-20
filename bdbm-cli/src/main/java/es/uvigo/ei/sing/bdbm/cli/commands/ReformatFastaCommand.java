@@ -21,6 +21,8 @@
  */
 package es.uvigo.ei.sing.bdbm.cli.commands;
 
+import static es.uvigo.ei.sing.bdbm.persistence.entities.AbstractFasta.newFasta;
+
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
@@ -35,7 +37,6 @@ import es.uvigo.ei.sing.bdbm.controller.BDBMController;
 import es.uvigo.ei.sing.bdbm.environment.SequenceType;
 import es.uvigo.ei.sing.bdbm.fasta.FastaUtils;
 import es.uvigo.ei.sing.bdbm.fasta.ReformatFastaParameters;
-import es.uvigo.ei.sing.bdbm.persistence.entities.AbstractFasta;
 import es.uvigo.ei.sing.yaacli.command.option.DefaultValuedStringOption;
 import es.uvigo.ei.sing.yaacli.command.option.Option;
 import es.uvigo.ei.sing.yaacli.command.option.StringConstructedOption;
@@ -55,7 +56,8 @@ public class ReformatFastaCommand extends BDBMCommand {
 	
 	public static final Option<SequenceType> OPTION_FASTA_TYPE = 
 		new Option<SequenceType>(
-			"Fasta Type", OPTION_FASTA_TYPE_SHORT_NAME, "Fasta type: prot (proteins) or nucl (nucleotides)", 
+			"Fasta Type", OPTION_FASTA_TYPE_SHORT_NAME,
+			"Fasta type: prot (proteins) or nucl (nucleotides)", 
 			false, true, 
 			new SequenceTypeOptionConverter()
 		);
@@ -146,8 +148,8 @@ public class ReformatFastaCommand extends BDBMCommand {
 
 	@Override
 	public String getDescription() {
-		return "Reformats a Fasta file to change the sequence fragments length. "
-			+ "Zero or negative length means no fragmented sequences";
+		return "Reformats a Fasta file to change the sequence names, the "
+			+ "sequence fragments length and remove empty lines.";
 	}
 
 	@Override
@@ -198,8 +200,8 @@ public class ReformatFastaCommand extends BDBMCommand {
 		
 		this.controller.reformatFasta(
 			renameMode, 
-			AbstractFasta.newFasta(fastaType, fastaFile), 
-			fragmentLength == null ? -1 : fragmentLength, 
+			newFasta(fastaType, fastaFile), 
+			fragmentLength == null ? -1 : fragmentLength,
 			additionalParameters
 		);
 	}

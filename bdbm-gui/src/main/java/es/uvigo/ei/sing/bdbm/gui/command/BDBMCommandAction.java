@@ -85,8 +85,8 @@ public class BDBMCommandAction extends BDBMAction {
 		this.commandDialog = commandDialogClass;
 		this.defaultParameters = defaultParameters;
 		
-		this.paramClasses = new ArrayList<Class<?>>(10);
-		this.paramValues = new ArrayList<Object>(10);
+		this.paramClasses = new ArrayList<>(10);
+		this.paramValues = new ArrayList<>(10);
 	}
 
 	public BDBMCommandAction(String name, BDBMController controller, Command command, Class<? extends CommandDialog> commandDialogClass, Parameters defaultParameters) {
@@ -96,8 +96,8 @@ public class BDBMCommandAction extends BDBMAction {
 		this.commandDialog = commandDialogClass;
 		this.defaultParameters = defaultParameters;
 		
-		this.paramClasses = new ArrayList<Class<?>>(10);
-		this.paramValues = new ArrayList<Object>(10);
+		this.paramClasses = new ArrayList<>(10);
+		this.paramValues = new ArrayList<>(10);
 	}
 
 	public BDBMCommandAction(String name, Icon icon, BDBMController controller, Command command, Class<? extends CommandDialog> commandDialogClass, Parameters defaultParameters) {
@@ -107,8 +107,8 @@ public class BDBMCommandAction extends BDBMAction {
 		this.commandDialog = commandDialogClass;
 		this.defaultParameters = defaultParameters;
 		
-		this.paramClasses = new ArrayList<Class<?>>(10);
-		this.paramValues = new ArrayList<Object>(10);
+		this.paramClasses = new ArrayList<>(10);
+		this.paramValues = new ArrayList<>(10);
 	}
 	
 	public <T> void addParamValue(Class<? super T> paramClass, T paramValue) {
@@ -118,8 +118,8 @@ public class BDBMCommandAction extends BDBMAction {
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		final List<Class<?>> paramClasses = new ArrayList<Class<?>>(12);
-		final List<Object> paramValues = new ArrayList<Object>(12);
+		final List<Class<?>> paramClasses = new ArrayList<>(12);
+		final List<Object> paramValues = new ArrayList<>(12);
 		
 		paramClasses.add(BDBMController.class);
 		paramValues.add(this.getController());

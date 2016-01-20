@@ -21,13 +21,14 @@
  */
 package es.uvigo.ei.sing.bdbm.controller;
 
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Map;
 
@@ -712,15 +713,22 @@ public class DefaultBDBMController implements BDBMController {
 		}
 	}
 	
-	public void reformatFasta(RenameMode mode, Fasta fasta, int fragmentLength, Map<ReformatFastaParameters, Object> additionalParameters) 
-	throws FastaParseException, IOException {
+	public void reformatFasta(
+		RenameMode mode,
+		Fasta fasta,
+		int fragmentLength,
+		Map<ReformatFastaParameters, Object> additionalParameters
+	) throws FastaParseException, IOException {
 		final Path tmpPath = Files.createTempFile("bdbm", "rename.fasta");
 		
 		try (final PrintWriter writer = new PrintWriter(tmpPath.toFile())) {
-			FastaUtils.fastaSequenceRenaming(mode, fasta.getFile(), fragmentLength, writer, additionalParameters);
+			FastaUtils.fastaSequenceRenaming(
+				mode, fasta.getFile(), fragmentLength,
+				writer, additionalParameters
+			);
 		}
 		
-		Files.move(tmpPath, fasta.getFile().toPath(), StandardCopyOption.REPLACE_EXISTING);
+		Files.move(tmpPath, fasta.getFile().toPath(), REPLACE_EXISTING);
 	};
 
 	@Override

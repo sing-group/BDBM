@@ -194,7 +194,8 @@ public interface BDBMController {
 	) throws IOException, InterruptedException, ExecutionException, IllegalStateException, FastaParseException;
 	
 	public abstract void reformatFasta(
-		RenameMode mode, Fasta fasta, int fragmentLength, Map<ReformatFastaParameters, Object> additionalParameters
+		RenameMode mode, Fasta fasta, int fragmentLength,
+		Map<ReformatFastaParameters, Object> additionalParameters
 	) throws FastaParseException, IOException;
 	
 	public abstract void mergeFastas(Fasta[] fastas, String outputFasta) throws FastaParseException, IOException;

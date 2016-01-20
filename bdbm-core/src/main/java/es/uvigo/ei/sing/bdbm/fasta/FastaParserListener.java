@@ -29,5 +29,6 @@ public interface FastaParserListener {
 	public abstract void sequenceNameRead(File file, String sequenceName) throws FastaParseException;
 	public abstract void sequenceFragmentRead(File file, String sequenceFragment) throws FastaParseException;
 	public abstract void sequenceEnd(File file) throws FastaParseException;
+	public abstract void emptyLine(File file);
 	public abstract void parseEnd(File file) throws FastaParseException;
 }

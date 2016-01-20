@@ -77,7 +77,11 @@ public class ReformatFastaCommandDialog extends CommandDialog {
 	}
 	
 	@Override
-	protected <T> void postComponentCreation(Component component, Option<T> option, ParameterValuesReceiver receiver) {
+	protected <T> void postComponentCreation(
+		Component component,
+		Option<T> option,
+		ParameterValuesReceiver receiver
+	) {
 		if (option.equals(ReformatFastaCommand.OPTION_SEPARATOR)) {
 			this.cmpSeparator = component;
 			component.setVisible(false);

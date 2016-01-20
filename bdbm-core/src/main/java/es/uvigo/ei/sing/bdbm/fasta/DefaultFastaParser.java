@@ -51,7 +51,7 @@ public class DefaultFastaParser implements FastaParser {
 				lineCount++;
 				
 				if (line.isEmpty()) {
-					throwInvalidFormatException(file, lineCount, "empty line");
+					notifyEmptyLine(file);
 				} else {
 					switch (state) {
 						case START:
@@ -103,6 +103,13 @@ public class DefaultFastaParser implements FastaParser {
 				file.getAbsolutePath(), lineCount, formatError
 			)
 		);
+	}
+	
+	protected void notifyEmptyLine(File file) 
+	throws FastaParseException {
+		for (FastaParserListener listener : this.listeners) {
+			listener.emptyLine(file);
+		}
 	}
 	
 	protected void notifySequenceNameRead(File file, String sequenceName) 

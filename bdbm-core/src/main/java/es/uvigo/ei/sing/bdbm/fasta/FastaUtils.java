@@ -21,6 +21,9 @@
  */
 package es.uvigo.ei.sing.bdbm.fasta;
 
+import static es.uvigo.ei.sing.bdbm.fasta.naming.NameSummarizerFactory.createGenericNameSummarizer;
+import static es.uvigo.ei.sing.bdbm.fasta.naming.NameSummarizerFactory.createStandardNameSummarizer;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -37,7 +40,6 @@ import java.util.List;
 import java.util.Map;
 
 import es.uvigo.ei.sing.bdbm.fasta.naming.GenericNameSummarizer;
-import es.uvigo.ei.sing.bdbm.fasta.naming.NameSummarizerFactory;
 import es.uvigo.ei.sing.bdbm.fasta.naming.StandardNameSummarizer;
 
 public class FastaUtils {
@@ -45,7 +47,8 @@ public class FastaUtils {
 		NONE, SMART, GENERIC, PREFIX;
 	}
 
-	public static File[] splitFastaIntoFiles(File fastaFile) throws IOException, FastaParseException {
+	public static File[] splitFastaIntoFiles(File fastaFile)
+	throws IOException, FastaParseException {
 		final List<File> files = new ArrayList<>();
 		
 		final FastaParser parser = new DefaultFastaParser();
@@ -92,13 +95,21 @@ public class FastaUtils {
 		}
 	}
 	
-	public static void fastaSequenceRenaming(RenameMode mode, File fastaFile, PrintWriter writer, Map<ReformatFastaParameters, Object> additionalParameters)
-	throws FastaParseException, IOException {
+	public static void fastaSequenceRenaming(
+		RenameMode mode,
+		File fastaFile,
+		PrintWriter writer,
+		Map<ReformatFastaParameters, Object> additionalParameters
+	) throws FastaParseException, IOException {
 		fastaSequenceRenaming(mode, fastaFile, 0, writer, additionalParameters);
 	}
 	
 	public static void fastaSequenceRenaming(
-		RenameMode mode, File fastaFile, int fragmentLength, PrintWriter writer, Map<ReformatFastaParameters, Object> additionalParameters
+		RenameMode mode,
+		File fastaFile,
+		int fragmentLength,
+		PrintWriter writer,
+		Map<ReformatFastaParameters, Object> additionalParameters
 	) throws FastaParseException, IOException {
 		switch(mode) {
 		case GENERIC: {
@@ -111,7 +122,13 @@ public class FastaUtils {
 				throw new IllegalArgumentException("Invalid separator value");
 			}
 			
-			genericFastaSequenceRenaming(fastaFile, (int[]) paramIndexes, (String) paramSeparator, fragmentLength, writer);
+			genericFastaSequenceRenaming(
+				fastaFile,
+				(int[]) paramIndexes,
+				(String) paramSeparator,
+				fragmentLength,
+				writer
+			);
 			break;
 		}
 		case PREFIX: {
@@ -133,8 +150,12 @@ public class FastaUtils {
 			}
 			
 			prefixFastaSequenceRenaming(fastaFile, 
-				(String) paramPrefix, (Boolean) paramKeepName, (Boolean) paramAddIndex, (String) paramSeparator, 
-				fragmentLength, writer
+				(String) paramPrefix,
+				(Boolean) paramKeepName,
+				(Boolean) paramAddIndex,
+				(String) paramSeparator, 
+				fragmentLength,
+				writer
 			);
 			break;
 		}
@@ -144,7 +165,12 @@ public class FastaUtils {
 				throw new IllegalArgumentException("Invalid separator value");
 			}
 			
-			smartFastaSequenceRenaming(fastaFile, (String) paramSeparator, fragmentLength, writer);
+			smartFastaSequenceRenaming(
+				fastaFile,
+				(String) paramSeparator,
+				fragmentLength,
+				writer
+			);
 			break;
 		}
 		case NONE:
@@ -153,13 +179,26 @@ public class FastaUtils {
 		}
 	}
 	
-	public static void prefixFastaSequenceRenaming(File fastaFile, final String prefix, final boolean keepNames, final boolean addIndex, final String separator, final PrintWriter writer)
-	throws FastaParseException, IOException {
+	public static void prefixFastaSequenceRenaming(
+		final File fastaFile,
+		final String prefix,
+		final boolean keepNames,
+		final boolean addIndex,
+		final String separator,
+		final PrintWriter writer
+	) throws FastaParseException, IOException {
 		prefixFastaSequenceRenaming(fastaFile, prefix, keepNames, addIndex, separator, 0, writer);
 	}
 	
-	public static void prefixFastaSequenceRenaming(File fastaFile, final String prefix, final boolean keepNames, final boolean addIndex, final String separator, final int fragmentLength, final PrintWriter writer)
-	throws FastaParseException, IOException {
+	public static void prefixFastaSequenceRenaming(
+		final File fastaFile,
+		final String prefix,
+		final boolean keepNames,
+		final boolean addIndex,
+		final String separator,
+		final int fragmentLength,
+		final PrintWriter writer
+	) throws FastaParseException, IOException {
 		if (prefix == null && !addIndex && !keepNames) {
 			throw new IllegalArgumentException("At least prefix must be not null or addIndex true or keepNames true");
 		}
@@ -196,19 +235,24 @@ public class FastaUtils {
 		parser.parse(fastaFile);
 	}
 	
-	public static void smartFastaSequenceRenaming(File fastaFile, final String separator, final PrintWriter writer)
-	throws FastaParseException, IOException {
+	public static void smartFastaSequenceRenaming(
+		final File fastaFile, final String separator, final PrintWriter writer
+	) throws FastaParseException, IOException {
 		smartFastaSequenceRenaming(fastaFile, separator, 0, writer);
 	}
 	
-	public static void smartFastaSequenceRenaming(File fastaFile, final String separator, final int fragmentLength, final PrintWriter writer)
-	throws FastaParseException, IOException {
+	public static void smartFastaSequenceRenaming(
+		final File fastaFile,
+		final String separator,
+		final int fragmentLength,
+		final PrintWriter writer
+	) throws FastaParseException, IOException {
 		final FastaParser parser = new DefaultFastaParser();
 		
 		parser.addParseListener(createFastaParser(fragmentLength, new SequenceRenamer() {
 			@Override
 			public void sequenceNameRead(File file, String sequenceName) {
-				final StandardNameSummarizer summarizer = NameSummarizerFactory.createStandardNameSummarizer(sequenceName);
+				final StandardNameSummarizer summarizer = createStandardNameSummarizer(sequenceName);
 				if (summarizer == null)
 					throw new RuntimeException("Unrecognized sequence name: " + sequenceName);
 				summarizer.setSeparator(separator);
@@ -225,15 +269,24 @@ public class FastaUtils {
 		parser.parse(fastaFile);
 	}
 	
-	public static void genericFastaSequenceRenaming(File fastaFile, int[] indexes, String separator, final PrintWriter writer)
-	throws FastaParseException, IOException {
+	public static void genericFastaSequenceRenaming(
+		final File fastaFile,
+		final int[] indexes,
+		final String separator,
+		final PrintWriter writer
+	) throws FastaParseException, IOException {
 		genericFastaSequenceRenaming(fastaFile, indexes, separator, 0, writer);
 	}
 	
-	public static void genericFastaSequenceRenaming(File fastaFile, final int[] indexes, final String separator, final int fragmentLength, final PrintWriter writer)
-	throws FastaParseException, IOException {
+	public static void genericFastaSequenceRenaming(
+		final File fastaFile,
+		final int[] indexes,
+		final String separator,
+		final int fragmentLength,
+		final PrintWriter writer
+	) throws FastaParseException, IOException {
 		final FastaParser parser = new DefaultFastaParser();
-		final GenericNameSummarizer summarizer = NameSummarizerFactory.createGenericNameSummarizer(indexes);
+		final GenericNameSummarizer summarizer = createGenericNameSummarizer(indexes);
 		summarizer.setSeparator(separator);
 		
 		parser.addParseListener(createFastaParser(fragmentLength, new SequenceRenamer() {
@@ -252,7 +305,9 @@ public class FastaUtils {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static void mergeFastas(final File[] fastaFiles, File outputFile) throws FastaParseException, IOException {
+	public static void mergeFastas(
+		final File[] fastaFiles, final File outputFile
+	) throws FastaParseException, IOException {
 		final Map<String, List<int[]>[]> indexes = new LinkedHashMap<>();
 		
 		final RandomAccessFile[] rafs = new RandomAccessFile[fastaFiles.length];
@@ -302,7 +357,8 @@ public class FastaUtils {
 		}
 	}
 	
-	public static Map<String, List<int[]>> indexFastaFile(File fasta) throws FastaParseException, IOException {
+	public static Map<String, List<int[]>> indexFastaFile(File fasta)
+	throws FastaParseException, IOException {
 		final Map<String, List<int[]>> indexes = new LinkedHashMap<>();
 		final int newLineSize = newLineSize(fasta);
 		
@@ -335,6 +391,11 @@ public class FastaUtils {
 			}
 			
 			@Override
+			public void emptyLine(File file) {
+				this.index += newLineSize;
+			}
+			
+			@Override
 			public void sequenceEnd(File file) throws FastaParseException {
 				this.currentIndexes[1] = this.index;
 				
@@ -348,8 +409,11 @@ public class FastaUtils {
 		return indexes;
 	}
 	
-	public static void changeSequenceLength(File fasta, final int fragmentLength, final PrintWriter pw)
-	throws IOException, FastaParseException {
+	public static void changeSequenceLength(
+		final File fasta,
+		final int fragmentLength,
+		final PrintWriter pw
+	) throws IOException, FastaParseException {
 		final DefaultFastaParser parser = new DefaultFastaParser();
 		parser.addParseListener(new SequenceResizingFastaParserListener(fragmentLength) {
 			@Override
@@ -359,6 +423,7 @@ public class FastaUtils {
 			
 			@Override
 			public void sequenceEnd(File file, String resizedSequence) {
+				System.out.println(resizedSequence);
 				pw.println(resizedSequence);
 			}
 		});
@@ -416,7 +481,8 @@ public class FastaUtils {
 		return -1;
 	}
 	
-	public static abstract class SequenceResizingFastaParserListener extends FastaParserAdapter {
+	public static abstract class SequenceResizingFastaParserListener
+	extends FastaParserAdapter {
 		protected final int fragmentLength;
 		protected StringBuilder sequence;
 		
@@ -448,10 +514,12 @@ public class FastaUtils {
 		public void sequenceFragment(File file, String sequenceFragment);
 	}
 	
-	private static FastaParserListener createFastaParser(final int fragmentLength, final SequenceRenamer renamer) {
+	private static FastaParserListener createFastaParser(
+		final int fragmentLength,
+		final SequenceRenamer renamer
+	) {
 		if (fragmentLength == 0) {
 			return new FastaParserAdapter() {
-				
 				@Override
 				public void sequenceNameRead(File file, String sequenceName) {
 					renamer.sequenceNameRead(file, sequenceName);
@@ -485,8 +553,11 @@ public class FastaUtils {
 	 * @throws IOException 
 	 * @throws FastaParseException 
 	 */
-	public static void mergeSequences(File inputFasta, PrintWriter writer, String ... ignoreSequences)
-	throws FastaParseException, IOException {
+	public static void mergeSequences(
+		final File inputFasta,
+		final PrintWriter writer,
+		final String ... ignoreSequences
+	) throws FastaParseException, IOException {
 		final Map<String, List<int[]>> index = indexFastaFile(inputFasta);
 		
 		try (final RandomAccessFile inputFastaFile = new RandomAccessFile(inputFasta, "r")) {
@@ -508,8 +579,12 @@ public class FastaUtils {
 			}
 		}
 	}
-	public static void mergeConsecutiveSequences(final File inputFasta, final PrintWriter writer, final String ... ignoreSequences)
-	throws FastaParseException, IOException {
+	
+	public static void mergeConsecutiveSequences(
+		final File inputFasta,
+		final PrintWriter writer,
+		final String ... ignoreSequences
+	) throws FastaParseException, IOException {
 		Arrays.sort(ignoreSequences);
 		
 		final FastaParser parser = new DefaultFastaParser();
@@ -558,8 +633,11 @@ public class FastaUtils {
 		parser.parse(inputFasta);
 	}
 
-	public static void removeSequences(final File inputFasta, final PrintWriter writer, final String ... sequences)
-	throws FastaParseException, IOException {
+	public static void removeSequences(
+		final File inputFasta,
+		final PrintWriter writer,
+		final String ... sequences
+	) throws FastaParseException, IOException {
 		Arrays.sort(sequences);
 		
 		final FastaParser parser = new DefaultFastaParser();

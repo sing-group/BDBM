@@ -38,6 +38,9 @@ public class FastaParserAdapter implements FastaParserListener {
 
 	@Override
 	public void sequenceEnd(File file) throws FastaParseException {}
+	
+	@Override
+	public void emptyLine(File file) {}
 
 	@Override
 	public void parseEnd(File file) throws FastaParseException {}
