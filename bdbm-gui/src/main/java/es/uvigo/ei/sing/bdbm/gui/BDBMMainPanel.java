@@ -57,6 +57,8 @@ import es.uvigo.ei.sing.bdbm.gui.tabpanel.TabCloseEvent;
 import es.uvigo.ei.sing.bdbm.log.LogConfiguration;
 import es.uvigo.ei.sing.bdbm.persistence.BDBMRepositoryManager;
 
+import static es.uvigo.ei.sing.bdbm.gui.FileWatcher.Watcher;
+
 public class BDBMMainPanel extends JPanel {
 	private static final String TAB_LABEL_NUCLEOTIDE = "Nucleotide";
 	private static final String TAB_LABEL_PROTEIN = "Protein";
@@ -145,7 +147,6 @@ public class BDBMMainPanel extends JPanel {
 		
 			componentMain = splitMain;
 		} else {
-			System.err.println("Log configuration file not found");
 			componentMain = tbMain;
 		}
 		
@@ -198,10 +199,12 @@ public class BDBMMainPanel extends JPanel {
 	private final static class TextFileMouseListener extends MouseAdapter {
 		private final CloseableJTabbedPane tabbedPane;
 		private final Map<File, TextFileViewer> views;
+		private final Map<File, Thread> watchers;
 		
 		public TextFileMouseListener(CloseableJTabbedPane tabbedPane) {
 			this.tabbedPane = tabbedPane;
 			this.views = Collections.synchronizedMap(new HashMap<File, TextFileViewer>());
+			this.watchers = Collections.synchronizedMap(new HashMap<File, Thread>());
 			
 			this.tabbedPane.addTabCloseListener(new TabCloseAdapter() {
 				@Override
@@ -218,6 +221,7 @@ public class BDBMMainPanel extends JPanel {
 				for (Map.Entry<File, TextFileViewer> viewer : this.views.entrySet()) {
 					if (viewer.getValue().equals(component)) {
 						this.views.remove(viewer.getKey());
+						this.watchers.remove(viewer.getKey()).interrupt();
 						break;
 					}
 				}
@@ -227,11 +231,38 @@ public class BDBMMainPanel extends JPanel {
 		private TextFileViewer addView(final File file, final Icon icon, final String tabName) {
 			synchronized (this.tabbedPane) {
 				if (!this.views.containsKey(file)) {
-					TextFileViewer viewer;
+					
 					try {
-						viewer = new TextFileViewer(file);
+						final TextFileViewer viewer = new TextFileViewer(file);
 						this.tabbedPane.addTab(tabName, icon, viewer);
 						this.views.put(file, viewer);
+						
+						this.watchers.put(file, FileWatcher.watchFile(file, new Watcher() {
+							@Override
+							public boolean fileModified() {
+								if (JOptionPane.showConfirmDialog(
+									tabbedPane,
+									String.format(
+										"The file '%s' has been updated. "
+										+ "Do you want to reload the related view?",
+									tabName),
+									"File updated",
+									JOptionPane.YES_NO_OPTION
+								) == JOptionPane.YES_OPTION) {
+									try {
+										final int index = tabbedPane.indexOfTab(tabName);
+										final TextFileViewer view = new TextFileViewer(file);
+										
+										tabbedPane.setComponentAt(index, view);
+										views.put(file, view);
+									} catch (IOException e) {
+										return false;
+									}
+								}
+								
+								return true;
+							}
+						}));
 					} catch (IOException e) {
 						JOptionPane.showMessageDialog(
 							this.tabbedPane, 
@@ -269,7 +300,9 @@ public class BDBMMainPanel extends JPanel {
 					
 					final String tabName = node.getUserObject().toString();
 					
-					final TextFileViewer view = addView(node.getFile(), node.getIcon(), tabName);
+					final TextFileViewer view = addView(
+						node.getFile(), node.getIcon(), tabName
+					);
 					if (view != null)
 						this.tabbedPane.setSelectedComponent(view);
 				}

@@ -65,7 +65,6 @@ public class TextFileViewer extends JPanel {
 	private final JFontChooser fontChooser;
 	
 	private final File file;
-//	private boolean wasModified = false;
 
 	private final long fileSize;
 	
@@ -152,37 +151,6 @@ public class TextFileViewer extends JPanel {
 				changeFont();
 			}
 		});
-		
-//		this.textArea.getDocument().addDocumentListener(new DocumentListener() {
-//			@Override
-//			public void removeUpdate(DocumentEvent e) {
-//				TextFileViewer.this.wasModified = true;
-//			}
-//			
-//			@Override
-//			public void insertUpdate(DocumentEvent e) {
-//				TextFileViewer.this.wasModified = true;
-//			}
-//			
-//			@Override
-//			public void changedUpdate(DocumentEvent e) {
-//				TextFileViewer.this.wasModified = true;
-//			}
-//		});
-//		
-//		this.textArea.addFocusListener(new FocusAdapter() {
-//			@Override
-//			public void focusLost(FocusEvent e) {
-//				if (TextFileViewer.this.wasModified) {
-//					try {
-//						FileUtils.write(TextFileViewer.this.file, TextFileViewer.this.textArea.getText());
-//						TextFileViewer.this.wasModified = false;
-//					} catch (IOException e1) {
-//						e1.printStackTrace();
-//					}
-//				}
-//			}
-//		});
 		
 		final ActionListener alSearch = new ActionListener() {
 			@Override
@@ -271,14 +239,6 @@ public class TextFileViewer extends JPanel {
 		}
 	}
 	
-//	public void setEditable(boolean editable) {
-//		this.textArea.setEditable(editable);
-//	}
-//	
-//	public boolean isEditable() {
-//		return this.textArea.isEditable();
-//	}
-	
 	public String getText() {
 		return textArea.getText();
 	}
@@ -293,19 +253,8 @@ public class TextFileViewer extends JPanel {
 				// Inconsistent state
 			} else {
 				if (popLocation() != null) {
-//					try {
-//						textArea.getLineStartOffset(currentLocation.getStart());
-//		                // Scroll to make the rectangle visible
-//		                textArea.scrollRectToVisible(textArea.modelToView(currentLocation.getStart()));
-		                // Highlight the text
-		                textArea.setCaretPosition(currentLocation.getStart());
-		                textArea.moveCaretPosition(currentLocation.getEnd());
-//		                textArea.setCaretPosition(textArea.getLineOfOffset(currentLocation.getStart()));
-//		                textArea.setSelectionStart(currentLocation.getStart());
-//		                textArea.setSelectionEnd(currentLocation.getEnd());
-//					} catch (BadLocationException e1) {
-//						e1.printStackTrace();
-//					}
+	                textArea.setCaretPosition(currentLocation.getStart());
+	                textArea.moveCaretPosition(currentLocation.getEnd());
 				}
 			}
 			
