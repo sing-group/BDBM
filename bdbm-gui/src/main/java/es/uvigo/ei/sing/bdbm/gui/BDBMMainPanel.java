@@ -54,6 +54,7 @@ import es.uvigo.ei.sing.bdbm.gui.repository.RepositoryTreeRenderer;
 import es.uvigo.ei.sing.bdbm.gui.tabpanel.CloseableJTabbedPane;
 import es.uvigo.ei.sing.bdbm.gui.tabpanel.TabCloseAdapter;
 import es.uvigo.ei.sing.bdbm.gui.tabpanel.TabCloseEvent;
+import es.uvigo.ei.sing.bdbm.gui.view.TextFileViewer;
 import es.uvigo.ei.sing.bdbm.log.LogConfiguration;
 import es.uvigo.ei.sing.bdbm.persistence.BDBMRepositoryManager;
 
