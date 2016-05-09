@@ -327,7 +327,7 @@ public class SplignCompartPipeline {
 				FastaUtils.prefixFastaSequenceRenaming(tmpFile, null, true, true, "-", pw);
 			}
 		} catch (Exception e) {
-			throw new ExecutionException(-1, "Error cleaning final fasta file", e, null);
+			throw new ExecutionException(-1, "Error cleaning final FASTA file", e, null);
 		}
 	}
 	

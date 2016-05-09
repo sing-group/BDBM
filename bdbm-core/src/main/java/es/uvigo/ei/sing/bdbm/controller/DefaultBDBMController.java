@@ -688,7 +688,7 @@ public class DefaultBDBMController implements BDBMController {
 		final NucleotideFasta fasta = fastaManager.getNucleotide(outputName);
 		
 		if (fastaManager.exists(fasta)) {
-			throw new IllegalArgumentException("Fasta already exists: " + outputName);
+			throw new IllegalArgumentException("FASTA already exists: " + outputName);
 		} else {
 			final SplignCompartPipeline pipeline = new SplignCompartPipeline(
 				this.bedToolsBinariesExecutor,
@@ -713,6 +713,7 @@ public class DefaultBDBMController implements BDBMController {
 		}
 	}
 	
+	@Override
 	public void reformatFasta(
 		RenameMode mode,
 		Fasta fasta,
@@ -739,7 +740,7 @@ public class DefaultBDBMController implements BDBMController {
 			fastaManager.createProtein(outputFastaName);
 			
 		if (fastaManager.exists(outputFasta)) {
-			throw new IllegalArgumentException("Fasta file already exists: " + outputFastaName);
+			throw new IllegalArgumentException("FASTA file already exists: " + outputFastaName);
 		} else {
 			try {
 				final File[] fastaFiles = new File[fastas.length];

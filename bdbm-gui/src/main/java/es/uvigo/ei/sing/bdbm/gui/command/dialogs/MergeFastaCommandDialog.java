@@ -31,7 +31,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import es.uvigo.ei.sing.bdbm.cli.commands.MergeFastasCommand;
+import es.uvigo.ei.sing.bdbm.cli.commands.MergeFastaCommand;
 import es.uvigo.ei.sing.bdbm.cli.commands.converters.FileOption;
 import es.uvigo.ei.sing.bdbm.controller.BDBMController;
 import es.uvigo.ei.sing.bdbm.environment.SequenceType;
@@ -43,22 +43,22 @@ import es.uvigo.ei.sing.bdbm.persistence.entities.Fasta;
 import es.uvigo.ei.sing.yaacli.command.option.Option;
 import es.uvigo.ei.sing.yaacli.command.parameter.Parameters;
 
-public class MergeFastasCommandDialog extends CommandDialog {
+public class MergeFastaCommandDialog extends CommandDialog {
 	private static final long serialVersionUID = 1L;
 
 	private JList<Fasta> listFastas;
 	private ListSelectionListener lslFastas;
 	
-	public MergeFastasCommandDialog(
+	public MergeFastaCommandDialog(
 		BDBMController controller, 
-		MergeFastasCommand command
+		MergeFastaCommand command
 	) {
 		this(controller, command, null);
 	}
 	
-	public MergeFastasCommandDialog(
+	public MergeFastaCommandDialog(
 		BDBMController controller, 
-		MergeFastasCommand command,
+		MergeFastaCommand command,
 		Parameters defaultParameters
 	) {
 		super(controller, command, defaultParameters);
@@ -72,7 +72,7 @@ public class MergeFastasCommandDialog extends CommandDialog {
 		this.listFastas.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 	}
 
-	@ComponentForOption(MergeFastasCommand.OPTION_FASTA_TYPE_SHORT_NAME)
+	@ComponentForOption(MergeFastaCommand.OPTION_FASTA_TYPE_SHORT_NAME)
 	protected Component createComponentForFastaTypeOption(
 		final Option<SequenceType> option, 
 		final ParameterValuesReceiver receiver
@@ -85,7 +85,7 @@ public class MergeFastasCommandDialog extends CommandDialog {
 		);
 	}
 
-	@ComponentForOption(value = MergeFastasCommand.OPTION_FASTAS_SHORT_NAME, allowsMultiple = true)
+	@ComponentForOption(value = MergeFastaCommand.OPTION_FASTAS_SHORT_NAME, allowsMultiple = true)
 	protected Component createComponentForFastasOption(
 		final FileOption option, 
 		final ParameterValuesReceiver receiver

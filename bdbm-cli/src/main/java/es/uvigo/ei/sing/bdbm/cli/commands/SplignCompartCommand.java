@@ -38,12 +38,12 @@ public class SplignCompartCommand extends BDBMCommand {
 	
 	public static final FileOption OPTION_GENOME_FASTA = 
 		new FileOption(
-			"Genome Fasta", OPTION_GENOME_FASTA_SHORT_NAME, "Genome fasta file",
+			"Genome FASTA", OPTION_GENOME_FASTA_SHORT_NAME, "Genome FASTA file",
 			false, true
 		);
 	public static final FileOption OPTION_CDS_FASTA = 
 		new FileOption(
-			"CDS Fasta", OPTION_CDS_SHORT_NAME, "CDS fasta file",
+			"CDS FASTA", OPTION_CDS_SHORT_NAME, "CDS FASTA file",
 			false, true
 		);
 	public static final DefaultValueBooleanOption OPTION_CONCATENATE_EXONS = new DefaultValueBooleanOption(
@@ -75,7 +75,7 @@ public class SplignCompartCommand extends BDBMCommand {
 
 	@Override
 	public String getDescription() {
-		return "Applies the Splign-Compart-Bedtools pipeline";
+		return "Applies the Splign-Compart pipeline";
 	}
 
 	@Override

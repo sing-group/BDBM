@@ -56,15 +56,15 @@ public class ReformatFastaCommand extends BDBMCommand {
 	
 	public static final Option<SequenceType> OPTION_FASTA_TYPE = 
 		new Option<SequenceType>(
-			"Fasta Type", OPTION_FASTA_TYPE_SHORT_NAME,
-			"Fasta type: prot (proteins) or nucl (nucleotides)", 
+			"FASTA Type", OPTION_FASTA_TYPE_SHORT_NAME,
+			"FASTA type: prot (proteins) or nucl (nucleotides)", 
 			false, true, 
 			new SequenceTypeOptionConverter()
 		);
 	
 	public static final FileOption OPTION_FASTA = 
 		new FileOption(
-			"Fasta", OPTION_FASTA_SHORT_NAME, "Source fasta file",
+			"FASTA", OPTION_FASTA_SHORT_NAME, "Source FASTA file",
 			false, true
 		);
 	
@@ -143,12 +143,12 @@ public class ReformatFastaCommand extends BDBMCommand {
 	
 	@Override
 	public String getDescriptiveName() {
-		return "Reformat Fasta";
+		return "Reformat FASTA";
 	}
 
 	@Override
 	public String getDescription() {
-		return "Reformats a Fasta file to change the sequence names, the "
+		return "Reformats a FASTA file to change the sequence names, the "
 			+ "sequence fragments length and remove empty lines.";
 	}
 

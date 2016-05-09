@@ -40,7 +40,7 @@ public class GetORFCommand extends BDBMCommand {
 	
 	public static final FileOption OPTION_FASTA = 
 		new FileOption(
-			"Fasta", OPTION_FASTA_SHORT_NAME, "Input fasta (nucleotide) file",
+			"FASTA", OPTION_FASTA_SHORT_NAME, "Input FASTA (nucleotide) file",
 			false, true
 		);
 	public static final IntegerOption OPTION_MIN_SIZE =

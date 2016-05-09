@@ -214,8 +214,8 @@ public class OperationsRepositoryListener extends MouseAdapter {
 							}
 							
 							this.showPopupMenu(
-								"Fasta", 
-								"fasta", 
+								"FASTA", 
+								"FASTA file", 
 								tree, 
 								fasta, 
 								e.getX(), 
@@ -373,6 +373,10 @@ public class OperationsRepositoryListener extends MouseAdapter {
 			this.entityName = entityName;
 			this.parent = parent;
 		}
+		
+		private String getCapitalEntityName() {
+			return Character.toUpperCase(this.entityName.charAt(0)) + this.entityName.substring(1);
+		}
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -396,7 +400,7 @@ public class OperationsRepositoryListener extends MouseAdapter {
 					
 					JOptionPane.showMessageDialog(
 						parent,
-						this.entityName + " was correctly exported to: " + this.file.getAbsolutePath() + ".",
+						this.getCapitalEntityName() + " was correctly exported to: " + this.file.getAbsolutePath() + ".",
 						"Export Finished",
 						JOptionPane.INFORMATION_MESSAGE
 					);
@@ -433,15 +437,17 @@ public class OperationsRepositoryListener extends MouseAdapter {
 			this.sequenceEntity = sequenceEntity;
 			this.entityName = entityName;
 		}
+		
+		private String getCapitalEntityName() {
+			return Character.toUpperCase(this.entityName.charAt(0)) + this.entityName.substring(1);
+		}
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			final String lowerEntityName = this.entityName.toLowerCase();
-			
 			if (JOptionPane.showConfirmDialog(
 				parent, 
-				this.entityName + " will be deleted. Do you want to continue?",
-				"Delete " + lowerEntityName,
+				this.getCapitalEntityName() + " will be deleted. Do you want to continue?",
+				"Delete " + this.entityName,
 				JOptionPane.YES_NO_OPTION,
 				JOptionPane.QUESTION_MESSAGE
 			) == JOptionPane.YES_OPTION) {
@@ -449,15 +455,15 @@ public class OperationsRepositoryListener extends MouseAdapter {
 					this.controller.delete(sequenceEntity);
 					JOptionPane.showMessageDialog(
 						this.parent, 
-						this.entityName + " deleted",
-						"Delete " + lowerEntityName,
+						this.getCapitalEntityName() + " deleted",
+						"Delete " + this.entityName,
 						JOptionPane.INFORMATION_MESSAGE
 					);
 				} catch (IOException e1) {
 					JOptionPane.showMessageDialog(
 						parent, 
-						"Error deleting " + lowerEntityName,
-						"Delete " + lowerEntityName,
+						"Error deleting " + this.entityName,
+						"Delete " + this.entityName,
 						JOptionPane.ERROR_MESSAGE
 					);
 				}

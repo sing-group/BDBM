@@ -48,7 +48,7 @@ public abstract class BLASTCommand extends BDBMCommand {
 		);
 	public static final FileOption OPTION_QUERY =
 		new FileOption(
-			"Query", OPTION_QUERY_SHORT_NAME, "Fasta file to be used as query", 
+			"Query", OPTION_QUERY_SHORT_NAME, "FASTA file to be used as query", 
 			false, true
 		);
 	public static final BigDecimalOption OPTION_EXPECTED_VALUE =

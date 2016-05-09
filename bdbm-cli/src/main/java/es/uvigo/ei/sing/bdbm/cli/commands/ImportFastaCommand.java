@@ -34,13 +34,13 @@ public class ImportFastaCommand extends BDBMCommand {
 	
 	public static final Option<SequenceType> OPTION_IMPORT_TYPE = 
 		new Option<SequenceType>(
-			"Type", OPTION_IMPORT_TYPE_SHORT_NAME, "Fasta type: auto, nucl (nucleotides) or prot (proteins)", 
+			"Type", OPTION_IMPORT_TYPE_SHORT_NAME, "FASTA type: auto, nucl (nucleotides) or prot (proteins)", 
 			false, true, 
 			new SequenceTypeOptionConverter()
 		);
 	public static final FileOption OPTION_INPUT_FILE = 
 		new FileOption(
-			"File", OPTION_INPUT_FILE_SHORT_NAME, "Fasta file", 
+			"File", OPTION_INPUT_FILE_SHORT_NAME, "FASTA file", 
 			false, true
 		);
 	
@@ -59,12 +59,12 @@ public class ImportFastaCommand extends BDBMCommand {
 	
 	@Override
 	public String getDescriptiveName() {
-		return "Import Fasta";
+		return "Import FASTA";
 	}
 
 	@Override
 	public String getDescription() {
-		return "Imports a nucleotide or fasta file into the repository";
+		return "Imports a nucleotide or FASTA file into the repository";
 	}
 
 	@Override

@@ -45,7 +45,7 @@ public class MakeBLASTDBCommand extends BDBMCommand {
 		);
 	public static final FileOption OPTION_INPUT = 
 		new FileOption(
-			"Input fasta", OPTION_INPUT_SHORT_NAME, "Input FASTA file", 
+			"Input FASTA", OPTION_INPUT_SHORT_NAME, "Input FASTA file", 
 			false, true
 		);
 	public static final StringOption OPTION_OUTPUT = 

@@ -45,13 +45,13 @@ abstract class EntityValidator<T> {
 					if (fasta.getFile().isFile()) {
 						try {
 							if (!fasta.getType().isValidFastaFile(fasta.getFile())) {
-								throw new EntityValidationException("Invalid fasta file: " + fasta.getFile(), fasta);
+								throw new EntityValidationException("Invalid FASTA file: " + fasta.getFile(), fasta);
 							}
 						} catch (IllegalArgumentException e) {
-							throw new EntityValidationException("Unable to load Fasta file: " + fasta.getFile(), e, fasta);
+							throw new EntityValidationException("Unable to load FASTA file: " + fasta.getFile(), e, fasta);
 						}
 					} else {
-						throw new EntityValidationException("Fasta file doesn't exists or isn't a file: "  + fasta.getFile());
+						throw new EntityValidationException("FASTA file doesn't exists or isn't a file: "  + fasta.getFile());
 					}
 				}
 			}

@@ -59,7 +59,7 @@ import es.uvigo.ei.sing.bdbm.cli.commands.BLASTPCommand;
 import es.uvigo.ei.sing.bdbm.cli.commands.GetORFCommand;
 import es.uvigo.ei.sing.bdbm.cli.commands.ImportFastaCommand;
 import es.uvigo.ei.sing.bdbm.cli.commands.MakeBLASTDBCommand;
-import es.uvigo.ei.sing.bdbm.cli.commands.MergeFastasCommand;
+import es.uvigo.ei.sing.bdbm.cli.commands.MergeFastaCommand;
 import es.uvigo.ei.sing.bdbm.cli.commands.ReformatFastaCommand;
 import es.uvigo.ei.sing.bdbm.cli.commands.RetrieveSearchEntryCommand;
 import es.uvigo.ei.sing.bdbm.cli.commands.SplignCompartCommand;
@@ -86,7 +86,7 @@ import es.uvigo.ei.sing.bdbm.gui.command.dialogs.ExternalTBLASTNCommandDialog;
 import es.uvigo.ei.sing.bdbm.gui.command.dialogs.ExternalTBLASTXCommandDialog;
 import es.uvigo.ei.sing.bdbm.gui.command.dialogs.GetORFCommandDialog;
 import es.uvigo.ei.sing.bdbm.gui.command.dialogs.MakeBLASTDBCommandDialog;
-import es.uvigo.ei.sing.bdbm.gui.command.dialogs.MergeFastasCommandDialog;
+import es.uvigo.ei.sing.bdbm.gui.command.dialogs.MergeFastaCommandDialog;
 import es.uvigo.ei.sing.bdbm.gui.command.dialogs.ReformatFastaCommandDialog;
 import es.uvigo.ei.sing.bdbm.gui.command.dialogs.RetrieveSearchEntryCommandDialog;
 import es.uvigo.ei.sing.bdbm.gui.command.dialogs.SplignCompartCommandDialog;
@@ -272,8 +272,8 @@ public class GUI implements Observer {
 		
 		menuOperations.add(new BDBMCommandAction(
 			bdbmController, 
-			new MergeFastasCommand(bdbmController), 
-			MergeFastasCommandDialog.class)
+			new MergeFastaCommand(bdbmController), 
+			MergeFastaCommandDialog.class)
 		);
 		
 		final JMenu menuBlast = new JMenu("BLAST");

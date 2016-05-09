@@ -144,7 +144,7 @@ public class RepositoryTreeModel extends DefaultTreeModel {
 
 	private static SortedMutableTreeNode<String, Fasta> createFastaNodes(Fasta[] fastas) {
 		final SortedMutableTreeNode<String, Fasta> root = new SortedMutableTreeNode<>(
-			new SequenceEntityNameComparator<Fasta>(), "Fasta Files"
+			new SequenceEntityNameComparator<Fasta>(), "FASTA Files"
 		);
 		
 		for (Fasta fasta : fastas) {

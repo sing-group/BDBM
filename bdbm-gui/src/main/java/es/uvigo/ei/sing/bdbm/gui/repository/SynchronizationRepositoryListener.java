@@ -252,7 +252,7 @@ class SynchronizationRepositoryListener<T, C extends SequenceEntity> implements 
 				if (exportEntryNode.getUserObject().getOutFile().equals(modifiedFile)) {
 					throw new IllegalStateException("Inconsitent Export Entry state. Out file can't be deleted.");
 				} else if (exportEntryNode.getUserObject().getSummaryFastaFile().equals(modifiedFile)) {
-					throw new IllegalStateException("Inconsitent Export Entry state. Fasta file can't be deleted.");
+					throw new IllegalStateException("Inconsitent Export Entry state. FASTA file can't be deleted.");
 				} else {
 					final SortedMutableTreeNode<ExportEntry, String> sortedExportEntryNode =
 						(SortedMutableTreeNode<ExportEntry, String>) exportEntryNode;

@@ -99,7 +99,7 @@ public class DefaultFastaParser implements FastaParser {
 	protected void throwInvalidFormatException(File file, long lineCount, String formatError) 
 	throws FastaParseException {
 		throw new FastaParseException(
-			String.format("File '%s' has an invalid fasta format. Line %d is invalid: %s.", 
+			String.format("File '%s' has an invalid FASTA format. Line %d is invalid: %s.", 
 				file.getAbsolutePath(), lineCount, formatError
 			)
 		);

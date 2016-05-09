@@ -120,7 +120,7 @@ public enum SequenceType {
 			
 			return true;
 		} catch (IOException ioe) {
-			throw new IllegalArgumentException("Error reading input Fasta file: " + fastaFile.getAbsolutePath(), ioe);
+			throw new IllegalArgumentException("Error reading input FASTA file: " + fastaFile.getAbsolutePath(), ioe);
 		}
 	}
 	

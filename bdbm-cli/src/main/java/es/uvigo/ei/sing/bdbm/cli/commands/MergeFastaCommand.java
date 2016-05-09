@@ -34,49 +34,49 @@ import es.uvigo.ei.sing.yaacli.command.option.Option;
 import es.uvigo.ei.sing.yaacli.command.option.StringOption;
 import es.uvigo.ei.sing.yaacli.command.parameter.Parameters;
 
-public class MergeFastasCommand extends BDBMCommand {
+public class MergeFastaCommand extends BDBMCommand {
 	public static final String OPTION_FASTA_TYPE_SHORT_NAME = "fastatype";
-	public static final String OPTION_FASTAS_SHORT_NAME = "fastas";
+	public static final String OPTION_FASTAS_SHORT_NAME = "fasta";
 	public static final String OPTION_OUTPUT_SHORT_NAME = "out";
 	
 	public static final Option<SequenceType> OPTION_FASTA_TYPE = 
 		new Option<SequenceType>(
-			"Fasta Type", OPTION_FASTA_TYPE_SHORT_NAME, "Fasta type: prot (proteins) or nucl (nucleotides)", 
+			"FASTA Type", OPTION_FASTA_TYPE_SHORT_NAME, "FASTA type: prot (proteins) or nucl (nucleotides)", 
 			false, true, 
 			new SequenceTypeOptionConverter()
 		);
 	public static final FileOption OPTION_FASTAS = 
 		new FileOption(
-			"Fastas", OPTION_FASTAS_SHORT_NAME, "Fasta files to be merged",
+			"FASTA", OPTION_FASTAS_SHORT_NAME, "FASTA files to be merged",
 			false, true, true
 		);
 	public static final StringOption OPTION_OUTPUT = 
 		new StringOption(
-			"Output Fasta", OPTION_OUTPUT_SHORT_NAME, "Resulting fasta file",
+			"Output FASTA", OPTION_OUTPUT_SHORT_NAME, "Resulting FASTA file",
 			false, true
 		);
 	
-	public MergeFastasCommand() {
+	public MergeFastaCommand() {
 		super();
 	}
 	
-	public MergeFastasCommand(BDBMController controller) {
+	public MergeFastaCommand(BDBMController controller) {
 		super(controller);
 	}
 
 	@Override
 	public String getName() {
-		return "merge_fastas";
+		return "merge_fasta";
 	}
 
 	@Override
 	public String getDescriptiveName() {
-		return "Merge Fastas";
+		return "Merge FASTA";
 	}
 
 	@Override
 	public String getDescription() {
-		return "Merge two or more fasta files";
+		return "Merge two or more FASTA files";
 	}
 
 	@Override
