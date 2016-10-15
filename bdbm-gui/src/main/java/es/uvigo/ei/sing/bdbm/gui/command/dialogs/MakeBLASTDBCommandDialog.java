@@ -60,7 +60,7 @@ public class MakeBLASTDBCommandDialog extends CommandDialog {
 	}
 	
 	@Override
-	protected void preComponentsCreation() {
+	protected void preComponentsCreation(PanelOptionsBuilder panelOptionBuilder) {
 		this.cmbFastas = new JComboBox<Fasta>();
 	}
 	

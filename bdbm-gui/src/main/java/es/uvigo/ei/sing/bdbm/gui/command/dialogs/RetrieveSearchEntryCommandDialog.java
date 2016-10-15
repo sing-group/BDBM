@@ -78,7 +78,7 @@ public class RetrieveSearchEntryCommandDialog extends CommandDialog {
 	}
 	
 	@Override
-	protected void preComponentsCreation() {
+	protected void preComponentsCreation(PanelOptionsBuilder panelOptionBuilder) {
 		this.cmbDatabases = new JComboBox<>();
 	}
 

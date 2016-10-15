@@ -45,8 +45,8 @@ import es.uvigo.ei.sing.bdbm.environment.execution.ExecutionResult;
 import es.uvigo.ei.sing.bdbm.environment.execution.SplignBinariesExecutor;
 import es.uvigo.ei.sing.bdbm.fasta.FastaParseException;
 import es.uvigo.ei.sing.bdbm.fasta.FastaUtils;
-import es.uvigo.ei.sing.bdbm.fasta.FastaUtils.RenameMode;
 import es.uvigo.ei.sing.bdbm.fasta.ReformatFastaParameters;
+import es.uvigo.ei.sing.bdbm.fasta.naming.FastaSequenceRenameMode;
 import es.uvigo.ei.sing.bdbm.persistence.BDBMRepositoryManager;
 import es.uvigo.ei.sing.bdbm.persistence.DatabaseRepositoryManager;
 import es.uvigo.ei.sing.bdbm.persistence.EntityAlreadyExistsException;
@@ -666,7 +666,7 @@ public class DefaultBDBMController implements BDBMController {
 			try {
 				this.embossBinariesExecutor.executeGetORF(fasta, orf, minSize, maxSize);
 				if (noNewLines) {
-					this.reformatFasta(RenameMode.NONE, orf, 0, null);
+					this.reformatFasta(orf, 0, FastaSequenceRenameMode.NONE, null);
 				}
 				
 				return orf;
@@ -715,9 +715,9 @@ public class DefaultBDBMController implements BDBMController {
 	
 	@Override
 	public void reformatFasta(
-		RenameMode mode,
 		Fasta fasta,
 		int fragmentLength,
+		FastaSequenceRenameMode mode,
 		Map<ReformatFastaParameters, Object> additionalParameters
 	) throws FastaParseException, IOException {
 		final Path tmpPath = Files.createTempFile("bdbm", "rename.fasta");

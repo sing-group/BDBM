@@ -46,7 +46,7 @@ public class CommandExecutionDialog extends JDialog {
 	private final SwingWorker<Void, Void> worker;
 
 	public CommandExecutionDialog(
-		Window owner, 
+		final Window owner, 
 		final Command command,
 		final ParameterValues parameters
 	) {

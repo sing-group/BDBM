@@ -19,15 +19,28 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package es.uvigo.ei.sing.bdbm.fasta;
+package es.uvigo.ei.sing.bdbm.fasta.naming.standard;
 
-public enum ReformatFastaParameters {
-	INDEXES,
-	DELIMITER_STRING,
-	JOINER_STRING,
-	PREFIX,
-	KEEP_NAMES_WHEN_PREFIX,
-	ADD_INDEX_WHEN_PREFIX,
-	REMOVE_EMPTY_LINES,
-	KEEP_DESCRIPTION;
+import static java.util.Arrays.asList;
+
+import java.util.List;
+
+public class GeneralDatabaseReferenceNameSummarizer extends AbstractStandardNameSummarizer {
+	@Override
+	public String getPrefix() {
+		return "gnl";
+	}
+	
+	@Override
+	public String getDescription() {
+		return "General Database Reference";
+	}
+	
+	@Override
+	public List<MatcherNameField> getNameFields() {
+		return asList(
+			new MatcherNameField(0, "Database"),
+			new MatcherNameField(1, "(Integer|String)")
+		);
+	}
 }

@@ -2,7 +2,7 @@
  * #%L
  * BDBM Core
  * %%
- * Copyright (C) 2014 - 2015 Miguel Reboiro-Jato, Critina P. Vieira, Hugo López-Fdez, Noé Vázquez González, Florentino Fdez-Riverola and Jorge Vieira
+ * Copyright (C) 2014 - 2016 Miguel Reboiro-Jato, Critina P. Vieira, Hugo López-Fdez, Noé Vázquez González, Florentino Fdez-Riverola and Jorge Vieira
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -19,15 +19,18 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package es.uvigo.ei.sing.bdbm.fasta;
+package es.uvigo.ei.sing.bdbm.util;
 
-public enum ReformatFastaParameters {
-	INDEXES,
-	DELIMITER_STRING,
-	JOINER_STRING,
-	PREFIX,
-	KEEP_NAMES_WHEN_PREFIX,
-	ADD_INDEX_WHEN_PREFIX,
-	REMOVE_EMPTY_LINES,
-	KEEP_DESCRIPTION;
+public final class StringUtil {
+
+	private StringUtil() {}
+
+	public static boolean isInteger(String number) {
+		try {
+			Integer.parseInt(number);
+			return true;
+		} catch (NumberFormatException nfe) {
+			return false;
+		}
+	}
 }
