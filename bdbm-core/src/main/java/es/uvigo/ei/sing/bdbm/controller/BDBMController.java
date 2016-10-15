@@ -36,7 +36,7 @@ import es.uvigo.ei.sing.bdbm.environment.execution.ExecutionException;
 import es.uvigo.ei.sing.bdbm.environment.execution.SplignBinariesExecutor;
 import es.uvigo.ei.sing.bdbm.fasta.FastaParseException;
 import es.uvigo.ei.sing.bdbm.fasta.ReformatFastaParameters;
-import es.uvigo.ei.sing.bdbm.fasta.FastaUtils.RenameMode;
+import es.uvigo.ei.sing.bdbm.fasta.naming.FastaSequenceRenameMode;
 import es.uvigo.ei.sing.bdbm.persistence.BDBMRepositoryManager;
 import es.uvigo.ei.sing.bdbm.persistence.EntityAlreadyExistsException;
 import es.uvigo.ei.sing.bdbm.persistence.entities.Database;
@@ -194,7 +194,7 @@ public interface BDBMController {
 	) throws IOException, InterruptedException, ExecutionException, IllegalStateException, FastaParseException;
 	
 	public abstract void reformatFasta(
-		RenameMode mode, Fasta fasta, int fragmentLength,
+		Fasta fasta, int fragmentLength, FastaSequenceRenameMode mode,
 		Map<ReformatFastaParameters, Object> additionalParameters
 	) throws FastaParseException, IOException;
 	

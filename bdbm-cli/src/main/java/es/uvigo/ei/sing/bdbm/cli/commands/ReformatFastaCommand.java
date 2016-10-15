@@ -35,8 +35,8 @@ import es.uvigo.ei.sing.bdbm.cli.commands.converters.IntegerOption;
 import es.uvigo.ei.sing.bdbm.cli.commands.converters.SequenceTypeOptionConverter;
 import es.uvigo.ei.sing.bdbm.controller.BDBMController;
 import es.uvigo.ei.sing.bdbm.environment.SequenceType;
-import es.uvigo.ei.sing.bdbm.fasta.FastaUtils;
 import es.uvigo.ei.sing.bdbm.fasta.ReformatFastaParameters;
+import es.uvigo.ei.sing.bdbm.fasta.naming.FastaSequenceRenameMode;
 import es.uvigo.ei.sing.yaacli.command.option.DefaultValuedStringOption;
 import es.uvigo.ei.sing.yaacli.command.option.Option;
 import es.uvigo.ei.sing.yaacli.command.option.StringConstructedOption;
@@ -52,7 +52,9 @@ public class ReformatFastaCommand extends BDBMCommand {
 	public static final String OPTION_PREFIX_SHORT_NAME = "prefix";
 	public static final String OPTION_KEEP_NAMES_WHEN_PREFIX_SHORT_NAME = "keep_names";
 	public static final String OPTION_ADD_INDEX_WHEN_PREFIX_SHORT_NAME = "add_index";
-	public static final String OPTION_SEPARATOR_SHORT_NAME = "separator";
+	public static final String OPTION_JOINER_STRING_SHORT_NAME = "joiner_string";
+	public static final String OPTION_DELIMITER_STRING_NAME = "separator_string";
+	public static final String OPTION_KEEP_DESCRIPTION_NAME = "keep_description";
 	
 	public static final Option<SequenceType> OPTION_FASTA_TYPE = 
 		new Option<SequenceType>(
@@ -75,7 +77,7 @@ public class ReformatFastaCommand extends BDBMCommand {
 			-1
 		);
 	
-	public static final EnumOption<FastaUtils.RenameMode> OPTION_RENAMING_MODE =
+	public static final EnumOption<FastaSequenceRenameMode> OPTION_RENAMING_MODE =
 		new EnumOption<>(
 			"Renaming Mode", 
 			OPTION_RENAMING_MODE_SHORT_NAME, 
@@ -84,32 +86,16 @@ public class ReformatFastaCommand extends BDBMCommand {
 			+ "\tSMART: Recognices and summarizes the most common sequence name formats\n"
 			+ "\tPREFIX: Replaces sequences names with a prefix followed by a sequence id\n"
 			+ "\tGENERIC: If sequence name is in format <src>|<val0>|<val1>|<val2>..., then replaces name with the <valX> selected",
-			FastaUtils.RenameMode.NONE,
+			FastaSequenceRenameMode.NONE,
 			false, true, false
 		);
 	
-	public static final StringConstructedOption<Integer> OPTION_INDEXES =
-		new StringConstructedOption<Integer>(
-			"Indexes",
-			OPTION_INDEXES_SHORT_NAME,
-			"Indexes selected for the \"Generic\" renaming method",
-			true, true, true
-		) {};
-	
 	public static final StringOption OPTION_PREFIX =
 		new StringOption(
-			"Prefix", 
-			OPTION_PREFIX_SHORT_NAME, 
+			"Prefix",
+			OPTION_PREFIX_SHORT_NAME,
 			"Prefix for the \"Prefix\" renaming method", 
 			true, true
-		);
-	
-	public static final DefaultValueBooleanOption OPTION_KEEP_NAMES_WHEN_PREFIX =
-		new DefaultValueBooleanOption(
-			"Keep Names", 
-			OPTION_KEEP_NAMES_WHEN_PREFIX_SHORT_NAME,
-			"Keep names when using the \"Prefix\" renaming method", 
-			true
 		);
 	
 	public static final DefaultValueBooleanOption OPTION_ADD_INDEX_WHEN_PREFIX =
@@ -120,12 +106,44 @@ public class ReformatFastaCommand extends BDBMCommand {
 			true
 		);
 	
-	public static final DefaultValuedStringOption OPTION_SEPARATOR =
+	public static final DefaultValueBooleanOption OPTION_KEEP_NAMES_WHEN_PREFIX =
+		new DefaultValueBooleanOption(
+			"Keep Names", 
+			OPTION_KEEP_NAMES_WHEN_PREFIX_SHORT_NAME,
+			"Keep names when using the \"Prefix\" renaming method", 
+			true
+		);
+	
+	public static final DefaultValuedStringOption OPTION_DELIMITER_STRING =
 		new DefaultValuedStringOption(
-			"Separator", 
-			OPTION_SEPARATOR_SHORT_NAME, 
-			"Separator of the parts of new names", 
+			"Delimiter String", 
+			OPTION_DELIMITER_STRING_NAME, 
+			"Text string that delimits the parts of the original sequence name", 
+			"|"
+		);
+	
+	public static final DefaultValuedStringOption OPTION_JOINER_STRING =
+		new DefaultValuedStringOption(
+			"Joiner String", 
+			OPTION_JOINER_STRING_SHORT_NAME, 
+			"Text string to join the parts of the new sequence name", 
 			"_"
+		);
+	
+	public static final StringConstructedOption<Integer> OPTION_INDEXES =
+		new StringConstructedOption<Integer>(
+			"Selected Indexes",
+			OPTION_INDEXES_SHORT_NAME,
+			"Indexes of the name parts selected for the \"Generic\" or \"Smart\" renaming methods",
+			true, true, true
+		) {};
+	
+	public static final DefaultValueBooleanOption OPTION_KEEP_DESCRIPTION =
+		new DefaultValueBooleanOption(
+			"Keep Description", 
+			OPTION_KEEP_DESCRIPTION_NAME,
+			"Keep description (only available for if reformat mode is different from NONE)", 
+			true
 		);
 	
 	public ReformatFastaCommand() {
@@ -156,53 +174,69 @@ public class ReformatFastaCommand extends BDBMCommand {
 	public void execute(Parameters parameters) throws Exception {
 		final SequenceType fastaType = parameters.getSingleValue(OPTION_FASTA_TYPE);
 		final File fastaFile = parameters.getSingleValue(OPTION_FASTA);
-		final FastaUtils.RenameMode renameMode = parameters.getSingleValue(OPTION_RENAMING_MODE);
+		final FastaSequenceRenameMode renameMode = parameters.getSingleValue(OPTION_RENAMING_MODE);
 		final Integer fragmentLength = parameters.getSingleValue(OPTION_FRAGMENT_LENGTH);
+		final Boolean keepDescription = parameters.getSingleValue(OPTION_KEEP_DESCRIPTION);
+		final String delimiter = parameters.getSingleValue(OPTION_DELIMITER_STRING);
+		final String joiner = parameters.getSingleValue(OPTION_JOINER_STRING);
 
 		final Map<ReformatFastaParameters, Object> additionalParameters = new HashMap<>();
 		switch (renameMode) {
-			case SMART: {
-				final String separator = parameters.getSingleValue(OPTION_SEPARATOR);
-				additionalParameters.put(ReformatFastaParameters.SEPARATOR, separator == null? "" : separator);
+			case KNOWN_SEQUENCE_NAMES: {
+				final int[] selectedIndexes = extractSelectedIndexes(parameters);
+
+				if (selectedIndexes != null)
+					additionalParameters.put(ReformatFastaParameters.INDEXES, selectedIndexes);
+				additionalParameters.put(ReformatFastaParameters.JOINER_STRING, joiner == null ? "" : joiner);
+				additionalParameters.put(ReformatFastaParameters.KEEP_DESCRIPTION, keepDescription);
 				break;
 			}
 			case PREFIX: {
 				final String prefix = parameters.getSingleValue(OPTION_PREFIX);
 				final Boolean keepNameAfterPrefix = parameters.getSingleValue(OPTION_KEEP_NAMES_WHEN_PREFIX);
 				final Boolean addIndexAfterPrefix = parameters.getSingleValue(OPTION_ADD_INDEX_WHEN_PREFIX);
-				final String separator = parameters.getSingleValue(OPTION_SEPARATOR);
 				
 				additionalParameters.put(ReformatFastaParameters.PREFIX, prefix);
 				additionalParameters.put(ReformatFastaParameters.KEEP_NAMES_WHEN_PREFIX, keepNameAfterPrefix);
 				additionalParameters.put(ReformatFastaParameters.ADD_INDEX_WHEN_PREFIX, addIndexAfterPrefix);
-				additionalParameters.put(ReformatFastaParameters.SEPARATOR, separator == null? "" : separator);
+				additionalParameters.put(ReformatFastaParameters.JOINER_STRING, joiner == null ? "" : joiner);
+				additionalParameters.put(ReformatFastaParameters.KEEP_DESCRIPTION, keepDescription);
 				break;
 			}
-			case GENERIC: {
-				final List<Integer> indexes = parameters.getAllValues(OPTION_INDEXES);
-				if (indexes == null || indexes.isEmpty())
-					throw new IllegalArgumentException("At least one index must be selected");
-				
-				final int[] indexesArray = new int[indexes.size()];
-				int i = 0;
-				for (Integer index : indexes) {
-					indexesArray[i++] = index;
-				}
+			case MULTIPART_NAME: {
+				final int[] selectedIndexes = extractSelectedIndexes(parameters);
 
-				additionalParameters.put(ReformatFastaParameters.INDEXES, indexesArray);
-				
-				final String separator = parameters.getSingleValue(OPTION_SEPARATOR);
-				additionalParameters.put(ReformatFastaParameters.SEPARATOR, separator == null? "" : separator);
+				if (selectedIndexes != null)
+					additionalParameters.put(ReformatFastaParameters.INDEXES, selectedIndexes);
+				additionalParameters.put(ReformatFastaParameters.DELIMITER_STRING, delimiter == null ? "" : delimiter);
+				additionalParameters.put(ReformatFastaParameters.JOINER_STRING, joiner == null ? "" : joiner);
+				additionalParameters.put(ReformatFastaParameters.KEEP_DESCRIPTION, keepDescription);
 				break;
 			}
 			default:
 		}
 		
 		this.controller.reformatFasta(
-			renameMode, 
 			newFasta(fastaType, fastaFile), 
-			fragmentLength == null ? -1 : fragmentLength,
+			fragmentLength == null ? -1 : fragmentLength, 
+			renameMode,
 			additionalParameters
 		);
+	}
+
+	private static int[] extractSelectedIndexes(Parameters parameters) {
+		final List<Integer> indexes = parameters.getAllValues(OPTION_INDEXES);
+		
+		if (indexes != null && !indexes.isEmpty()) {
+			final int[] indexesArray = new int[indexes.size()];
+			int i = 0;
+			for (Integer index : indexes) {
+				indexesArray[i++] = index;
+			}
+			
+			return indexesArray;
+		} else {
+			return null;
+		}
 	}
 }

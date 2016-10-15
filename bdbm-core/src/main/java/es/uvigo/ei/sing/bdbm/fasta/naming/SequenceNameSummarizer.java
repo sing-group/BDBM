@@ -19,15 +19,11 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package es.uvigo.ei.sing.bdbm.fasta;
+package es.uvigo.ei.sing.bdbm.fasta.naming;
 
-public enum ReformatFastaParameters {
-	INDEXES,
-	DELIMITER_STRING,
-	JOINER_STRING,
-	PREFIX,
-	KEEP_NAMES_WHEN_PREFIX,
-	ADD_INDEX_WHEN_PREFIX,
-	REMOVE_EMPTY_LINES,
-	KEEP_DESCRIPTION;
+import es.uvigo.ei.sing.bdbm.fasta.naming.configuration.SequenceRenameConfiguration;
+
+public interface SequenceNameSummarizer<T extends SequenceRenameConfiguration> {
+	public boolean recognizes(String sequenceName, T configuration);
+	public String summarize(String sequenceName, T configuration);
 }

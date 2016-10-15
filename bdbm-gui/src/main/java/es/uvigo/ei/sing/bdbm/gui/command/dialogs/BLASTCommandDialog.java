@@ -160,7 +160,7 @@ public abstract class BLASTCommandDialog extends CommandDialog {
 	
 	
 	@Override
-	protected void postComponentsCreation() {
+	protected void postComponentsCreation(PanelOptionsBuilder panelOptionsBuilder) {
 		final JButton btnShow = new JButton("Show additional parameters");
 		
 		taAdditionalParameters = new JTextArea(getAdditionalParametersString());
@@ -175,7 +175,7 @@ public abstract class BLASTCommandDialog extends CommandDialog {
 		
 		panel.add(btnShow);
 		panel.add(new JScrollPane(taAdditionalParameters));
-		super.createOptionRow(
+		panelOptionsBuilder.addOptionRow(
 			"Additional parameters",
 			"This option allows you to introduce additional parameters to the blast operation.",
 			panel

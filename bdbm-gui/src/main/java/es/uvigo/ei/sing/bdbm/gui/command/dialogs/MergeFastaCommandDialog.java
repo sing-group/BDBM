@@ -67,7 +67,7 @@ public class MergeFastaCommandDialog extends CommandDialog {
 	}
 	
 	@Override
-	protected void preComponentsCreation() {
+	protected void preComponentsCreation(PanelOptionsBuilder panelOptionBuilder) {
 		this.listFastas = new JList<Fasta>();
 		this.listFastas.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 	}

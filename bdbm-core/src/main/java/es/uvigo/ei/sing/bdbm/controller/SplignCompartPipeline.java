@@ -47,6 +47,7 @@ import es.uvigo.ei.sing.bdbm.environment.execution.SplignBinariesExecutor;
 import es.uvigo.ei.sing.bdbm.environment.execution.BinariesExecutor.InputLineCallback;
 import es.uvigo.ei.sing.bdbm.fasta.FastaParseException;
 import es.uvigo.ei.sing.bdbm.fasta.FastaUtils;
+import es.uvigo.ei.sing.bdbm.fasta.naming.configuration.PrefixSequenceRenameConfiguration;
 import es.uvigo.ei.sing.bdbm.persistence.entities.DefaultNucleotideDatabase;
 import es.uvigo.ei.sing.bdbm.persistence.entities.DefaultNucleotideFasta;
 import es.uvigo.ei.sing.bdbm.persistence.entities.NucleotideFasta;
@@ -187,8 +188,14 @@ public class SplignCompartPipeline {
 		}
 		
 		try (PrintWriter fw = new PrintWriter(renamedReversedFastaFile)) {
-			prefixFastaSequenceRenaming(
-				reversedFastaFile, "Reversed", true, false, "_", fw);
+			final PrefixSequenceRenameConfiguration configuration = new PrefixSequenceRenameConfiguration();
+			configuration.setPrefix("Reversed");
+			configuration.setKeepNames(true);
+			configuration.setAddIndex(false);
+			configuration.setJoinerString("_");
+			configuration.setKeepDescription(true);
+			
+			prefixFastaSequenceRenaming(reversedFastaFile, configuration, fw);
 		}
 		
 		try (PrintWriter pw = new PrintWriter(bidirectionalFastaFile)) {
@@ -324,7 +331,14 @@ public class SplignCompartPipeline {
 			}
 			
 			try (PrintWriter pw = new PrintWriter(outputFasta)) {
-				FastaUtils.prefixFastaSequenceRenaming(tmpFile, null, true, true, "-", pw);
+				final PrefixSequenceRenameConfiguration configuration = new PrefixSequenceRenameConfiguration();
+				configuration.setPrefix(null);
+				configuration.setKeepNames(true);
+				configuration.setAddIndex(true);
+				configuration.setJoinerString("-");
+				configuration.setKeepDescription(true);
+				
+				FastaUtils.prefixFastaSequenceRenaming(tmpFile, configuration, pw);
 			}
 		} catch (Exception e) {
 			throw new ExecutionException(-1, "Error cleaning final FASTA file", e, null);

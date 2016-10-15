@@ -172,7 +172,7 @@ public class BLASTDBAliasToolCommandDialog extends CommandDialog {
 	}
 	
 	@Override
-	protected void preComponentsCreation() {
+	protected void preComponentsCreation(PanelOptionsBuilder panelOptionBuilder) {
 		 this.cmbDatabases = new JComboBox<>();
 	}
 	

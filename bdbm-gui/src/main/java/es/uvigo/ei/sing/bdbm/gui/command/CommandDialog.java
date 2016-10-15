@@ -57,6 +57,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.ListModel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
@@ -91,12 +92,6 @@ public class CommandDialog extends JDialog {
 	protected final Command command;
 	private final Parameters defaultParameters;
 
-	private GroupLayout groupLayout;
-	private SequentialGroup verticalGroup;
-	private ParallelGroup pgLblName;
-	private ParallelGroup pgText;
-	private ParallelGroup pgLblDescription;
-
 	protected JButton btnOk;
 
 	protected ParameterValues parameterValues;
@@ -118,6 +113,14 @@ public class CommandDialog extends JDialog {
 			this.init();
 	}
 	
+	protected void asynchronousPack() {
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				CommandDialog.this.pack();
+			}
+		});
+	}
+	
 	protected boolean hasDefaultValue(Option<?> option) {
 		return this.defaultParameters != null && this.defaultParameters.hasOption(option);
 	}
@@ -135,6 +138,77 @@ public class CommandDialog extends JDialog {
 			return this.defaultParameters.getAllValuesString(option);
 		} else {
 			return null;
+		}
+	}
+
+	protected final static class PanelOptionsBuilder {
+		private final JPanel panelOptions;
+		
+		private final GroupLayout groupLayout;
+		private final SequentialGroup verticalGroup;
+		private final ParallelGroup pgLblName;
+		private final ParallelGroup pgText;
+		private final ParallelGroup pgLblDescription;
+		
+		public PanelOptionsBuilder() {
+			this.panelOptions = new JPanel();
+			this.panelOptions.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
+			
+			this.groupLayout = new GroupLayout(this.panelOptions);
+			this.groupLayout.setAutoCreateContainerGaps(true);
+			this.groupLayout.setAutoCreateGaps(true);
+			
+			this.groupLayout.setVerticalGroup(this.verticalGroup = this.groupLayout.createSequentialGroup());
+			this.groupLayout.setHorizontalGroup(
+				this.groupLayout.createSequentialGroup()
+					.addGroup(this.pgLblName = this.groupLayout.createParallelGroup(Alignment.LEADING, false))
+					.addGroup(this.pgText = this.groupLayout.createParallelGroup())
+					.addGroup(this.pgLblDescription = this.groupLayout.createParallelGroup(Alignment.CENTER, false))
+			);
+			this.panelOptions.setLayout(this.groupLayout);
+		}
+		
+		public JPanel getPanelOptions() {
+			return this.panelOptions;
+		}
+
+		public void addOptionRow(String name, String txtDescription, Component inputComponent) {
+			final JLabel lblName = new JLabel(name);
+			lblName.setBorder(BorderFactory.createEmptyBorder(6, 0, 0, 0));
+			final JLabel lblDescription = new JLabel(CommandDialog.ICON_HELP);
+			
+			final String description = StringEscapeUtils.escapeHtml4(txtDescription)
+				.replaceAll("\n", "<br/>")
+				.replaceAll("\t", "&nbsp;&nbsp;&nbsp;");
+			
+			lblDescription.setToolTipText("<html>" + description + "</html>");
+			
+			this.verticalGroup.addGroup(
+				this.groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER, false)
+					.addComponent(lblName, Alignment.LEADING)
+					.addComponent(inputComponent)
+					.addComponent(lblDescription)
+			);
+			
+			this.pgLblName.addComponent(lblName);
+			this.pgText.addComponent(inputComponent);
+			this.pgLblDescription.addComponent(lblDescription);
+			
+			inputComponent.addComponentListener(new ComponentAdapter() {
+				@Override
+				public void componentShown(ComponentEvent e) {
+					lblName.setVisible(true);
+					lblDescription.setVisible(true);
+				}
+				
+				@Override
+				public void componentHidden(ComponentEvent e) {
+					lblName.setVisible(false);
+					lblDescription.setVisible(false);
+				}
+			});
+			lblName.setVisible(inputComponent.isVisible());
+			lblDescription.setVisible(inputComponent.isVisible());
 		}
 	}
 	
@@ -159,22 +233,7 @@ public class CommandDialog extends JDialog {
 		panelButtons.add(btnOk);
 		panelButtons.add(btnCancel);
 		
-		final JPanel panelOptions = new JPanel();
-		panelOptions.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
-		
-		this.groupLayout = new GroupLayout(panelOptions);
-		panelOptions.setLayout(groupLayout);
-		groupLayout.setAutoCreateContainerGaps(true);
-		groupLayout.setAutoCreateGaps(true);
-		
-		this.verticalGroup = groupLayout.createSequentialGroup();
-		groupLayout.setVerticalGroup(verticalGroup);
-		final SequentialGroup horizontalGroup = groupLayout.createSequentialGroup();
-		groupLayout.setHorizontalGroup(horizontalGroup);
-		pgLblName = groupLayout.createParallelGroup(Alignment.LEADING, false);
-		pgText = groupLayout.createParallelGroup();
-		pgLblDescription = groupLayout.createParallelGroup(Alignment.CENTER, false);
-		horizontalGroup.addGroup(pgLblName).addGroup(pgText).addGroup(pgLblDescription);
+		final PanelOptionsBuilder panelOptionsBuilder = new PanelOptionsBuilder();
 		
 		this.parameterValues = new ParameterValues(this.command.getOptions());
 		this.updateButtonOk();
@@ -185,17 +244,20 @@ public class CommandDialog extends JDialog {
 			}
 		});
 		
-		this.preComponentsCreation();
+		this.preComponentsCreation(panelOptionsBuilder);
 		for (Option<?> option : this.command.getOptions()) {
-			this.preComponentCreation(option, parameterValues);
+			this.preComponentCreation(option, parameterValues, panelOptionsBuilder);
 			final Component inputComponent = this.createComponentForOption(option, parameterValues);
-			this.createOptionRow(option.getParamName(), option.getDescription(), inputComponent);
-			this.postComponentCreation(inputComponent, option, parameterValues);
+			final String optionName = this.createOptionName(option);
+			final String optionDescription = this.createOptionDescription(option);
+			
+			panelOptionsBuilder.addOptionRow(optionName, optionDescription, inputComponent);
+			this.postComponentCreation(inputComponent, option, parameterValues, panelOptionsBuilder);
 		}
-		this.postComponentsCreation();
+		this.postComponentsCreation(panelOptionsBuilder);
 		
 		panel.add(taDescription, BorderLayout.NORTH);
-		panel.add(panelOptions, BorderLayout.CENTER);
+		panel.add(panelOptionsBuilder.getPanelOptions(), BorderLayout.CENTER);
 		panel.add(panelButtons, BorderLayout.SOUTH);
 		
 		this.setContentPane(panel);
@@ -228,52 +290,8 @@ public class CommandDialog extends JDialog {
 				CommandDialog.this.setVisible(false);
 			}
 		});
-		
-		this.groupLayout = null;
-		this.verticalGroup = null;
-		this.pgLblName = null;
-		this.pgText = null;
-		this.pgLblDescription = null;
 	}
-	
-	protected void createOptionRow(String name, String txtDescription, Component inputComponent) {
-		final JLabel lblName = new JLabel(name);
-		lblName.setBorder(BorderFactory.createEmptyBorder(6, 0, 0, 0));
-		final JLabel lblDescription = new JLabel(CommandDialog.ICON_HELP);
-		
-		final String description = StringEscapeUtils.escapeHtml4(txtDescription)
-			.replaceAll("\n", "<br/>")
-			.replaceAll("\t", "&nbsp;&nbsp;&nbsp;");
-		
-		lblDescription.setToolTipText("<html>" + description + "</html>");
-		
-		verticalGroup.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER, false)
-			.addComponent(lblName, Alignment.LEADING)
-			.addComponent(inputComponent)
-			.addComponent(lblDescription)
-		);
-		
-		pgLblName.addComponent(lblName);
-		pgText.addComponent(inputComponent);
-		pgLblDescription.addComponent(lblDescription);
-		
-		inputComponent.addComponentListener(new ComponentAdapter() {
-			@Override
-			public void componentShown(ComponentEvent e) {
-				lblName.setVisible(true);
-				lblDescription.setVisible(true);
-			}
-			
-			@Override
-			public void componentHidden(ComponentEvent e) {
-				lblName.setVisible(false);
-				lblDescription.setVisible(false);
-			}
-		});
-		lblName.setVisible(inputComponent.isVisible());
-		lblDescription.setVisible(inputComponent.isVisible());
-	}
-	
+
 	private static class MICBParameterValuesReceiver 
 	extends Observable
 	implements ParameterValuesReceiver {
@@ -402,21 +420,21 @@ public class CommandDialog extends JDialog {
 		return null;
 	}
 	
-	protected void preComponentsCreation() {
-	}
+	protected void preComponentsCreation(PanelOptionsBuilder panelOptionsBuilder) {}
 	
-	protected void postComponentsCreation() {
-	}
+	protected void postComponentsCreation(PanelOptionsBuilder panelOptionsBuilder) {}
 	
 	protected <T> void preComponentCreation(
 		final Option<T> option,
-		final ParameterValuesReceiver receiver
+		final ParameterValuesReceiver receiver,
+		final PanelOptionsBuilder panelOptionsBuilder
 	) {}
 
 	protected <T> void postComponentCreation(
 		final Component component,
 		final Option<T> option,
-		final ParameterValuesReceiver receiver
+		final ParameterValuesReceiver receiver,
+		final PanelOptionsBuilder panelOptionsBuilder
 	) {}
 	
 	protected <T> Component createComponentForOptionNoReflection(
@@ -555,6 +573,14 @@ public class CommandDialog extends JDialog {
 		} else {
 			return createComponentForOptionNoReflection(option, receiver);
 		}
+	}
+
+	protected String createOptionName(Option<?> option) {
+		return option.getParamName();
+	}
+	
+	protected String createOptionDescription(Option<?> option) {
+		return option.getDescription();
 	}
 	
 	protected void addMultipleValue(Option<?> option, DefaultListModel<Object> listModel, String value) {
