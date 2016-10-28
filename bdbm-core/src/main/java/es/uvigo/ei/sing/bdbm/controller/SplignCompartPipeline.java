@@ -47,6 +47,7 @@ import es.uvigo.ei.sing.bdbm.environment.execution.SplignBinariesExecutor;
 import es.uvigo.ei.sing.bdbm.environment.execution.BinariesExecutor.InputLineCallback;
 import es.uvigo.ei.sing.bdbm.fasta.FastaParseException;
 import es.uvigo.ei.sing.bdbm.fasta.FastaUtils;
+import es.uvigo.ei.sing.bdbm.fasta.SequenceLengthConfiguration;
 import es.uvigo.ei.sing.bdbm.fasta.naming.configuration.PrefixSequenceRenameConfiguration;
 import es.uvigo.ei.sing.bdbm.persistence.entities.DefaultNucleotideDatabase;
 import es.uvigo.ei.sing.bdbm.persistence.entities.DefaultNucleotideFasta;
@@ -199,8 +200,10 @@ public class SplignCompartPipeline {
 		}
 		
 		try (PrintWriter pw = new PrintWriter(bidirectionalFastaFile)) {
-			changeSequenceLength(fasta.getFile(), -1, pw);
-			changeSequenceLength(renamedReversedFastaFile, -1, pw);
+			final SequenceLengthConfiguration sequenceLengthConfigNoChanges = SequenceLengthConfiguration.buildNoChanges();
+			
+			changeSequenceLength(fasta.getFile(), sequenceLengthConfigNoChanges, pw);
+			changeSequenceLength(renamedReversedFastaFile, sequenceLengthConfigNoChanges, pw);
 		}
 		
 		return null;

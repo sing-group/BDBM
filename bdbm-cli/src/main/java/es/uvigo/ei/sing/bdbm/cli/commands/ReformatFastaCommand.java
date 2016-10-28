@@ -22,12 +22,14 @@
 package es.uvigo.ei.sing.bdbm.cli.commands;
 
 import static es.uvigo.ei.sing.bdbm.persistence.entities.AbstractFasta.newFasta;
+import static java.lang.String.format;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import es.uvigo.ei.sing.bdbm.cli.commands.converters.BooleanOption;
 import es.uvigo.ei.sing.bdbm.cli.commands.converters.DefaultValueBooleanOption;
 import es.uvigo.ei.sing.bdbm.cli.commands.converters.EnumOption;
 import es.uvigo.ei.sing.bdbm.cli.commands.converters.FileOption;
@@ -46,7 +48,8 @@ import es.uvigo.ei.sing.yaacli.command.parameter.Parameters;
 public class ReformatFastaCommand extends BDBMCommand {
 	public static final String OPTION_FASTA_TYPE_SHORT_NAME = "fastatype";
 	public static final String OPTION_FASTA_SHORT_NAME = "fastatype";
-	public static final String OPTION_FRAGMENT_LENGTH_SHORT_NAME = "length";
+	public static final String OPTION_FRAGMENT_LENGTH_SHORT_NAME = "fragment_length";
+	public static final String OPTION_REMOVE_LINE_BREAKS_SHORT_NAME = "remove_line_breaks";
 	public static final String OPTION_RENAMING_MODE_SHORT_NAME = "mode";
 	public static final String OPTION_INDEXES_SHORT_NAME = "indexes";
 	public static final String OPTION_PREFIX_SHORT_NAME = "prefix";
@@ -73,8 +76,15 @@ public class ReformatFastaCommand extends BDBMCommand {
 	public static final IntegerOption OPTION_FRAGMENT_LENGTH = 
 		new IntegerOption(
 			"Sequence Fragment Length", OPTION_FRAGMENT_LENGTH_SHORT_NAME, 
-			"Length of the sequence fragments (Negative values mean no changes, and zero value means no line break)", 
-			-1
+			"Length of the sequence fragments. Requires a positive value. This option can't be used together with 'Remove Line Breaks'.", 
+			80
+		);
+	
+	public static final BooleanOption OPTION_REMOVE_LINE_BREAKS = 
+		new BooleanOption(
+			"Remove Line Breaks", OPTION_REMOVE_LINE_BREAKS_SHORT_NAME, 
+			"Remove line breaks in sequences. This option can't be used together with 'Remove Line Breaks'.", 
+			true, false
 		);
 	
 	public static final EnumOption<FastaSequenceRenameMode> OPTION_RENAMING_MODE =
@@ -175,11 +185,19 @@ public class ReformatFastaCommand extends BDBMCommand {
 		final SequenceType fastaType = parameters.getSingleValue(OPTION_FASTA_TYPE);
 		final File fastaFile = parameters.getSingleValue(OPTION_FASTA);
 		final FastaSequenceRenameMode renameMode = parameters.getSingleValue(OPTION_RENAMING_MODE);
-		final Integer fragmentLength = parameters.getSingleValue(OPTION_FRAGMENT_LENGTH);
 		final Boolean keepDescription = parameters.getSingleValue(OPTION_KEEP_DESCRIPTION);
 		final String delimiter = parameters.getSingleValue(OPTION_DELIMITER_STRING);
 		final String joiner = parameters.getSingleValue(OPTION_JOINER_STRING);
-
+		
+		final Integer fragmentLength = parameters.getSingleValue(OPTION_FRAGMENT_LENGTH);
+		final Boolean removeLineBreaks = parameters.getSingleValue(OPTION_REMOVE_LINE_BREAKS);
+		
+		if (fragmentLength != null && removeLineBreaks)
+			throw new IllegalArgumentException(format("%s and %s can't be used at the same time", OPTION_REMOVE_LINE_BREAKS_SHORT_NAME, OPTION_FRAGMENT_LENGTH_SHORT_NAME));
+		
+		if (fragmentLength != null && fragmentLength <= 0)
+			throw new IllegalArgumentException(format("%s must be a positive value (actual value %d)", OPTION_FRAGMENT_LENGTH_SHORT_NAME, fragmentLength));
+		
 		final Map<ReformatFastaParameters, Object> additionalParameters = new HashMap<>();
 		switch (renameMode) {
 			case KNOWN_SEQUENCE_NAMES: {
@@ -216,12 +234,26 @@ public class ReformatFastaCommand extends BDBMCommand {
 			default:
 		}
 		
-		this.controller.reformatFasta(
-			newFasta(fastaType, fastaFile), 
-			fragmentLength == null ? -1 : fragmentLength, 
-			renameMode,
-			additionalParameters
-		);
+		if (removeLineBreaks) {
+			this.controller.renameSequencesAndRemoveLineBreaks(
+				newFasta(fastaType, fastaFile), 
+				renameMode,
+				additionalParameters
+			);
+		} else if (fragmentLength != null) {
+			this.controller.renameSequencesAndChangeLength(
+				newFasta(fastaType, fastaFile), 
+				fragmentLength, 
+				renameMode,
+				additionalParameters
+			);
+		} else {
+			this.controller.renameSequences(
+				newFasta(fastaType, fastaFile), 
+				renameMode,
+				additionalParameters
+			);
+		}
 	}
 
 	private static int[] extractSelectedIndexes(Parameters parameters) {

@@ -42,6 +42,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -49,6 +50,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import es.uvigo.ei.sing.bdbm.cli.commands.ReformatFastaCommand;
+import es.uvigo.ei.sing.bdbm.cli.commands.converters.BooleanOption;
 import es.uvigo.ei.sing.bdbm.cli.commands.converters.EnumOption;
 import es.uvigo.ei.sing.bdbm.cli.commands.converters.FileOption;
 import es.uvigo.ei.sing.bdbm.cli.commands.converters.IntegerOption;
@@ -96,6 +98,10 @@ public class ReformatFastaCommandDialog extends CommandDialog {
 	private ParamsPanel paramsPanel;
 
 	private JComboBox<FastaSequenceRenameMode> cmbMode;
+
+	private JCheckBox chkChangeLength;
+
+	private JCheckBox chkRemoveLineBreaks;
 
 	public ReformatFastaCommandDialog(
 		BDBMController controller, 
@@ -258,31 +264,54 @@ public class ReformatFastaCommandDialog extends CommandDialog {
 		);
 	}
 
+	@ComponentForOption(ReformatFastaCommand.OPTION_REMOVE_LINE_BREAKS_SHORT_NAME)
+	protected Component createComponentForRemoveLineBreaks(
+		final BooleanOption option, 
+		final ParameterValuesReceiver receiver
+	) {
+		chkRemoveLineBreaks = BuildComponent.forBoolean(this, option, receiver);
+		chkRemoveLineBreaks.setSelected(false);
+		
+		chkRemoveLineBreaks.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				if (chkRemoveLineBreaks.isSelected() && chkChangeLength.isSelected()) {
+					chkChangeLength.setSelected(false);
+				}
+			}
+		});
+		
+		return chkRemoveLineBreaks;
+	}
+	
 	@ComponentForOption(ReformatFastaCommand.OPTION_FRAGMENT_LENGTH_SHORT_NAME)
 	protected Component createComponentForFragmentLengthOption(
 		final IntegerOption option, 
 		final ParameterValuesReceiver receiver
 	) {
-		final JCheckBox chkChangeLength = new JCheckBox("Change sequence length?", false);
-		final JTextField component = (JTextField) BuildComponent.forOption(this, option, receiver);
+		chkChangeLength = new JCheckBox("Change sequence length?", false);
+		final JSpinner component = (JSpinner) BuildComponent.forPositiveInteger(this, option, receiver);
 		component.setEnabled(false);
-		component.setText("");
 		
-		chkChangeLength.addActionListener(new ActionListener() {
-			private String lastValue = "0";
+		final ChangeListener changeListener = new ChangeListener() {
+			private Integer lastValue = (Integer) component.getValue();
 			
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void stateChanged(ChangeEvent e) {
 				if (chkChangeLength.isSelected()) {
-					component.setText(this.lastValue);
+					if (chkRemoveLineBreaks.isSelected())
+						chkRemoveLineBreaks.setSelected(false);
+					
+					component.setValue(this.lastValue);
 					component.setEnabled(true);
 				} else {
 					component.setEnabled(false);
-					lastValue = receiver.getValue(option);
-					component.setText("");
+					component.setValue(0);
 				}
 			}
-		});
+		};
+		chkChangeLength.addChangeListener(changeListener);
+		changeListener.stateChanged(null);
 		
 		final JPanel panel = new JPanel(new GridLayout(2, 1));
 		panel.add(chkChangeLength);
@@ -317,7 +346,6 @@ public class ReformatFastaCommandDialog extends CommandDialog {
 	
 	@Override
 	protected void updateButtonOk() {
-		System.out.println(this.parameterValues.getValues());
 		if (this.cmbMode != null && this.cmbMode.getSelectedItem() == FastaSequenceRenameMode.KNOWN_SEQUENCE_NAMES) {
 			btnOk.setEnabled(getSummarizer() != null && this.parameterValues.isComplete());
 		} else {
