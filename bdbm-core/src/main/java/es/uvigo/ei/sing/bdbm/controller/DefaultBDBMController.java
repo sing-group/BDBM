@@ -46,6 +46,7 @@ import es.uvigo.ei.sing.bdbm.environment.execution.SplignBinariesExecutor;
 import es.uvigo.ei.sing.bdbm.fasta.FastaParseException;
 import es.uvigo.ei.sing.bdbm.fasta.FastaUtils;
 import es.uvigo.ei.sing.bdbm.fasta.ReformatFastaParameters;
+import es.uvigo.ei.sing.bdbm.fasta.SequenceLengthConfiguration;
 import es.uvigo.ei.sing.bdbm.fasta.naming.FastaSequenceRenameMode;
 import es.uvigo.ei.sing.bdbm.persistence.BDBMRepositoryManager;
 import es.uvigo.ei.sing.bdbm.persistence.DatabaseRepositoryManager;
@@ -666,7 +667,7 @@ public class DefaultBDBMController implements BDBMController {
 			try {
 				this.embossBinariesExecutor.executeGetORF(fasta, orf, minSize, maxSize);
 				if (noNewLines) {
-					this.reformatFasta(orf, 0, FastaSequenceRenameMode.NONE, null);
+					this.renameSequencesAndChangeLength(orf, 0, FastaSequenceRenameMode.NONE, null);
 				}
 				
 				return orf;
@@ -714,9 +715,36 @@ public class DefaultBDBMController implements BDBMController {
 	}
 	
 	@Override
-	public void reformatFasta(
+	public void renameSequences(
+		Fasta fasta,
+		FastaSequenceRenameMode mode,
+		Map<ReformatFastaParameters, Object> additionalParameters
+	) throws FastaParseException, IOException {
+		reformatFasta(fasta, SequenceLengthConfiguration.buildNoChanges(), mode, additionalParameters);
+	}
+	
+	@Override
+	public void renameSequencesAndChangeLength(
 		Fasta fasta,
 		int fragmentLength,
+		FastaSequenceRenameMode mode,
+		Map<ReformatFastaParameters, Object> additionalParameters
+	) throws FastaParseException, IOException {
+		reformatFasta(fasta, SequenceLengthConfiguration.buildChangeFragmentLength(fragmentLength), mode, additionalParameters);
+	}
+	
+	@Override
+	public void renameSequencesAndRemoveLineBreaks(
+		Fasta fasta,
+		FastaSequenceRenameMode mode,
+		Map<ReformatFastaParameters, Object> additionalParameters
+	) throws FastaParseException, IOException {
+		reformatFasta(fasta, SequenceLengthConfiguration.buildRemoveLineBreaks(), mode, additionalParameters);
+	}
+	
+	private void reformatFasta(
+		Fasta fasta,
+		SequenceLengthConfiguration sequenceLengthConfiguration,
 		FastaSequenceRenameMode mode,
 		Map<ReformatFastaParameters, Object> additionalParameters
 	) throws FastaParseException, IOException {
@@ -724,13 +752,14 @@ public class DefaultBDBMController implements BDBMController {
 		
 		try (final PrintWriter writer = new PrintWriter(tmpPath.toFile())) {
 			FastaUtils.fastaSequenceRenaming(
-				mode, fasta.getFile(), fragmentLength,
+				mode, fasta.getFile(), sequenceLengthConfiguration,
 				writer, additionalParameters
 			);
 		}
 		
 		Files.move(tmpPath, fasta.getFile().toPath(), REPLACE_EXISTING);
-	};
+		
+	}
 
 	@Override
 	public void mergeFastas(Fasta[] fastas, String outputFastaName) throws FastaParseException, IOException {

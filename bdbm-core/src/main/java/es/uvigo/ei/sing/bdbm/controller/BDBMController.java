@@ -193,8 +193,18 @@ public interface BDBMController {
 		String outputName
 	) throws IOException, InterruptedException, ExecutionException, IllegalStateException, FastaParseException;
 	
-	public abstract void reformatFasta(
+	public abstract void renameSequences(
+		Fasta fasta, FastaSequenceRenameMode mode,
+		Map<ReformatFastaParameters, Object> additionalParameters
+	) throws FastaParseException, IOException;
+	
+	public abstract void renameSequencesAndChangeLength(
 		Fasta fasta, int fragmentLength, FastaSequenceRenameMode mode,
+		Map<ReformatFastaParameters, Object> additionalParameters
+	) throws FastaParseException, IOException;
+	
+	public abstract void renameSequencesAndRemoveLineBreaks(
+		Fasta fasta, FastaSequenceRenameMode mode,
 		Map<ReformatFastaParameters, Object> additionalParameters
 	) throws FastaParseException, IOException;
 	

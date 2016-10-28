@@ -59,23 +59,6 @@ public class DefaultInputComponentBuilder implements InputComponentBuilder {
 			if (receiver.hasOption(option)) {
 				txt.setText(receiver.getValue(option));
 			}
-//			
-//			final KeyAdapter txtListener = new KeyAdapter() {
-//				@Override
-//				public void keyReleased(KeyEvent e) {
-//					try {
-//						final JTextField txt = (JTextField) e.getComponent();
-//						
-//						if (txt.getText().isEmpty()) {
-//							receiver.removeValue(option);
-//						} else {
-//							receiver.setValue(option, txt.getText());
-//						}
-//					} catch (Exception ex) {
-//						LOG.error("Error setting option value", ex);
-//					}
-//				}
-//			};
 			
 			final DocumentListener docListener = new DocumentListener() {
 				@Override
@@ -108,9 +91,6 @@ public class DefaultInputComponentBuilder implements InputComponentBuilder {
 			
 			docListener.changedUpdate(null);
 			txt.getDocument().addDocumentListener(docListener);
-			
-//			txtListener.keyReleased(null);
-//			txt.addKeyListener(txtListener);
 			
 			return txt;
 		} else {

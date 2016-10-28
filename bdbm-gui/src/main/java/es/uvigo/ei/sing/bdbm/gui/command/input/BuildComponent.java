@@ -25,6 +25,7 @@ import java.awt.Component;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JSpinner;
 
 import es.uvigo.ei.sing.bdbm.gui.command.ParameterValuesReceiver;
 import es.uvigo.ei.sing.yaacli.command.option.Option;
@@ -60,5 +61,13 @@ public class BuildComponent {
 		final ParameterValuesReceiver receiver
 	) {
 		return new BooleanInputComponentBuilder().createFor(parent, option, receiver);
+	}
+	
+	public static <T> JSpinner forPositiveInteger(
+		final Component parent, 
+		final Option<T> option, 
+		final ParameterValuesReceiver receiver
+	) {
+		return new PositiveIntegerInputComponentBuilder().createFor(parent, option, receiver);
 	}
 }
