@@ -60,7 +60,8 @@ public class PrefixSequenceRenameConfiguration extends AbstractSequenceRenameCon
 		this.keepNames = keepNames;
 	}
 	
-	public boolean isValidConfiguration() {
-		return prefix == null && !addIndex && !keepNames;
+	@Override
+	public boolean isValid() {
+		return this.addIndex || this.keepNames;
 	}
 }

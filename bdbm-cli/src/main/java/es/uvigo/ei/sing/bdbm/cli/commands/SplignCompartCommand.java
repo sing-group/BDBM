@@ -46,9 +46,10 @@ public class SplignCompartCommand extends BDBMCommand {
 			"CDS FASTA", OPTION_CDS_SHORT_NAME, "CDS FASTA file",
 			false, true
 		);
-	public static final DefaultValueBooleanOption OPTION_CONCATENATE_EXONS = new DefaultValueBooleanOption(
-		"Concatenate Exons", OPTION_CONCATENATE_SHORT_NAME, "Concatenate the exons that are, apparently, from the same genes", true
-	);
+	public static final DefaultValueBooleanOption OPTION_CONCATENATE_EXONS =
+		new DefaultValueBooleanOption(
+			"Concatenate Exons", OPTION_CONCATENATE_SHORT_NAME, "Concatenate the exons that are, apparently, from the same genes", true
+		);
 	public static final StringOption OPTION_OUTPUT_NAME = 
 		new StringOption(
 			"Output name", OPTION_OUTPUT_SHORT_NAME, "Output name", 

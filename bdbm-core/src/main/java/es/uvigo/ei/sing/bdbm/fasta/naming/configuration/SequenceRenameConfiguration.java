@@ -24,4 +24,5 @@ package es.uvigo.ei.sing.bdbm.fasta.naming.configuration;
 public interface SequenceRenameConfiguration {
 	public String getJoinerString();
 	public boolean isKeepDescription();
+	public boolean isValid();
 }
