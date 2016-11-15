@@ -23,12 +23,11 @@ package es.uvigo.ei.sing.bdbm.gui.command.dialogs;
 
 import static es.uvigo.ei.sing.bdbm.fasta.FastaUtils.prefixFastaSequenceNameRename;
 import static es.uvigo.ei.sing.bdbm.fasta.naming.SequenceNameSummarizerFactory.createStandardNameSummarizer;
-import static java.util.Collections.emptyList;
-import static java.util.Collections.unmodifiableSortedSet;
 import static org.apache.commons.lang3.StringUtils.abbreviate;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -42,7 +41,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -50,7 +48,6 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import es.uvigo.ei.sing.bdbm.cli.commands.ReformatFastaCommand;
-import es.uvigo.ei.sing.bdbm.cli.commands.converters.BooleanOption;
 import es.uvigo.ei.sing.bdbm.cli.commands.converters.EnumOption;
 import es.uvigo.ei.sing.bdbm.cli.commands.converters.FileOption;
 import es.uvigo.ei.sing.bdbm.cli.commands.converters.IntegerOption;
@@ -69,16 +66,15 @@ import es.uvigo.ei.sing.bdbm.gui.command.ParameterValuesReceiver;
 import es.uvigo.ei.sing.bdbm.gui.command.dialogs.ComponentFactory.FastaValuesProvider;
 import es.uvigo.ei.sing.bdbm.gui.command.dialogs.ComponentFactory.ValueCallback;
 import es.uvigo.ei.sing.bdbm.gui.command.input.BuildComponent;
-import es.uvigo.ei.sing.bdbm.gui.component.IndexesJTextField;
 import es.uvigo.ei.sing.bdbm.persistence.entities.Fasta;
 import es.uvigo.ei.sing.yaacli.command.option.Option;
 import es.uvigo.ei.sing.yaacli.command.option.StringConstructedOption;
 import es.uvigo.ei.sing.yaacli.command.parameter.Parameters;
 
 public class ReformatFastaCommandDialog extends CommandDialog {
+	private static final int MAXIMUM_SEQUENCE_LENGTH = 80;
+
 	private static final long serialVersionUID = 1L;
-	
-	private static final int MAXIMUM_SEQUENCE_LENGTH = 60;
 
 	private JComboBox<Fasta> cmbFastas;
 	
@@ -89,19 +85,19 @@ public class ReformatFastaCommandDialog extends CommandDialog {
 	private JTextField cmpJoinerString;
 	private JCheckBox cmpKeepDescription;
 	
-	private IndexesJTextField cmpIndexes;
-	private ParameterValuesReceiver pvrIndexes;
+	private JTextField cmpIndexes;
 	
 	private JLabel lblFormatDetected;
 	private JLabel lblFirstSequence;
 	private JLabel lblReformatedSequence;
-	private ParamsPanel paramsPanel;
+	private JPanel panelParams;
+	private GridLayout panelParamsLayout;
 
 	private JComboBox<FastaSequenceRenameMode> cmbMode;
+	
+	private SortedSet<NameField> selectedFields;
 
-	private JCheckBox chkChangeLength;
 
-	private JCheckBox chkRemoveLineBreaks;
 
 	public ReformatFastaCommandDialog(
 		BDBMController controller, 
@@ -116,6 +112,13 @@ public class ReformatFastaCommandDialog extends CommandDialog {
 		Parameters defaultParameters
 	) {
 		super(controller, command, defaultParameters);
+
+		this.selectedFields = new TreeSet<>(new Comparator<NameField>() {
+			@Override
+			public int compare(NameField o1, NameField o2) {
+				return Integer.compare(o1.getIndex(), o2.getIndex());
+			}
+		});
 		
 		this.asynchronousPack();
 	}
@@ -126,12 +129,13 @@ public class ReformatFastaCommandDialog extends CommandDialog {
 		this.lblFormatDetected = new JLabel();
 		this.lblFirstSequence = new JLabel();
 		this.lblReformatedSequence = new JLabel();
-		this.paramsPanel = new ParamsPanel();
+		this.panelParamsLayout = new GridLayout(1, 1);
+		this.panelParams = new JPanel(panelParamsLayout);
 		
 		this.lblFormatDetected.setVisible(false);
 		this.lblFirstSequence.setVisible(false);
 		this.lblReformatedSequence.setVisible(false);
-		this.paramsPanel.setVisible(false);
+		this.panelParams.setVisible(false);
 	}
 	
 	@Override
@@ -140,7 +144,7 @@ public class ReformatFastaCommandDialog extends CommandDialog {
 			"Name Parts",
 			"Recognized parts in the FASTA sequence name. You can select which parts you want to include in the reformatted name, "
 			+ "however, at least one part must be selected.",
-			this.paramsPanel
+			this.panelParams
 		);
 		panelOptionsBuilder.addOptionRow(
 			"Sequence Name Format",
@@ -157,14 +161,6 @@ public class ReformatFastaCommandDialog extends CommandDialog {
 			"Preview of the result of reformatting the first sequence name.",
 			this.lblReformatedSequence
 		);
-		
-		this.paramsPanel.addChangeListener(new ChangeListener() {
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				updateSelectedIndexesParameterValue();
-				updateSequenceNameInformation();
-			}
-		});
 	}
 	
 	@Override
@@ -231,10 +227,44 @@ public class ReformatFastaCommandDialog extends CommandDialog {
 		final StringConstructedOption<Integer> option,
 		final ParameterValuesReceiver receiver
 	) {
-		this.cmpIndexes = new IndexesJTextField();
-		this.pvrIndexes = receiver;
+		this.cmpIndexes = new JTextField();
+		final Color background = cmpIndexes.getBackground();
 		
-		this.cmpIndexes.getDocument().addDocumentListener(newUpdateSequenceNameInformationDocumentListener());
+		this.cmpIndexes.getDocument().addDocumentListener(new DocumentListener() {
+			private void update() {
+				try {
+					cmpIndexes.setBackground(background);
+					
+					
+					final List<String> indexes = indexesList();
+					
+					if (indexes == null)
+						receiver.removeValue(option);
+					else
+						receiver.setValue(option, indexes);
+				} catch(IllegalStateException iae) {
+					cmpIndexes.setBackground(Color.RED);
+					receiver.removeValue(option);
+				} finally {
+					updateSequenceNameInformation();
+				}
+			}
+			
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				this.update();
+			}
+			
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				this.update();
+			}
+			
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				this.update();
+			}
+		});
 		
 		return cmpIndexes;
 	}
@@ -264,54 +294,31 @@ public class ReformatFastaCommandDialog extends CommandDialog {
 		);
 	}
 
-	@ComponentForOption(ReformatFastaCommand.OPTION_REMOVE_LINE_BREAKS_SHORT_NAME)
-	protected Component createComponentForRemoveLineBreaks(
-		final BooleanOption option, 
-		final ParameterValuesReceiver receiver
-	) {
-		chkRemoveLineBreaks = BuildComponent.forBoolean(this, option, receiver);
-		chkRemoveLineBreaks.setSelected(false);
-		
-		chkRemoveLineBreaks.addChangeListener(new ChangeListener() {
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				if (chkRemoveLineBreaks.isSelected() && chkChangeLength.isSelected()) {
-					chkChangeLength.setSelected(false);
-				}
-			}
-		});
-		
-		return chkRemoveLineBreaks;
-	}
-	
 	@ComponentForOption(ReformatFastaCommand.OPTION_FRAGMENT_LENGTH_SHORT_NAME)
 	protected Component createComponentForFragmentLengthOption(
 		final IntegerOption option, 
 		final ParameterValuesReceiver receiver
 	) {
-		chkChangeLength = new JCheckBox("Change sequence length?", false);
-		final JSpinner component = (JSpinner) BuildComponent.forPositiveInteger(this, option, receiver);
+		final JCheckBox chkChangeLength = new JCheckBox("Change sequence length?", false);
+		final JTextField component = (JTextField) BuildComponent.forOption(this, option, receiver);
 		component.setEnabled(false);
+		component.setText("");
 		
-		final ChangeListener changeListener = new ChangeListener() {
-			private Integer lastValue = (Integer) component.getValue();
+		chkChangeLength.addActionListener(new ActionListener() {
+			private String lastValue = "0";
 			
 			@Override
-			public void stateChanged(ChangeEvent e) {
+			public void actionPerformed(ActionEvent e) {
 				if (chkChangeLength.isSelected()) {
-					if (chkRemoveLineBreaks.isSelected())
-						chkRemoveLineBreaks.setSelected(false);
-					
-					component.setValue(this.lastValue);
+					component.setText(this.lastValue);
 					component.setEnabled(true);
 				} else {
 					component.setEnabled(false);
-					component.setValue(0);
+					lastValue = receiver.getValue(option);
+					component.setText("");
 				}
 			}
-		};
-		chkChangeLength.addChangeListener(changeListener);
-		changeListener.stateChanged(null);
+		});
 		
 		final JPanel panel = new JPanel(new GridLayout(2, 1));
 		panel.add(chkChangeLength);
@@ -330,11 +337,10 @@ public class ReformatFastaCommandDialog extends CommandDialog {
 		this.cmbMode.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				reenableComponents();
+				enableComponents();
 				
-				clearConfigurationFields();
-
-				updateSelectedIndexesParameterValue();
+				clearConfiguration();
+				
 				updateSequenceNameInformation();
 				
 				asynchronousPack();
@@ -344,98 +350,78 @@ public class ReformatFastaCommandDialog extends CommandDialog {
 		return this.cmbMode;
 	}
 	
-	@Override
-	protected void updateButtonOk() {
-		if (this.cmbMode != null && this.cmbMode.getSelectedItem() == FastaSequenceRenameMode.KNOWN_SEQUENCE_NAMES) {
-			btnOk.setEnabled(getSummarizer() != null && this.parameterValues.isComplete());
-		} else {
-			super.updateButtonOk();
-		}
-	}
-	
-	private DocumentListener newUpdateSequenceNameInformationDocumentListener() {
-		return new DocumentListener() {
-			@Override
-			public void removeUpdate(DocumentEvent e) {
-				updateSelectedIndexesParameterValue();
-				updateSequenceNameInformation();
-			}
-			
-			@Override
-			public void insertUpdate(DocumentEvent e) {
-				updateSelectedIndexesParameterValue();
-				updateSequenceNameInformation();
-			}
-			
-			@Override
-			public void changedUpdate(DocumentEvent e) {
-				updateSelectedIndexesParameterValue();
-				updateSequenceNameInformation();
-			}
-		};
-	}
-
-	private ChangeListener newUpdateSequenceNameInformationChangeListener() {
-		return new ChangeListener() {
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				updateSequenceNameInformation();
-			}
-		};
-	}
-	
-	protected <T> ValueCallback<T> newUpdateSequenceNameInformationValueCallback() {
-		return new ValueCallback<T>() {
-			@Override
-			public void callback(T value) {
-				clearConfigurationFields();
-				updateSequenceNameInformation();
-			}
-		};
-	}
-	
-	private void updateSelectedIndexesParameterValue() {
-		switch(this.getSelectedRenameMode()) {
-		case MULTIPART_NAME:
-		case KNOWN_SEQUENCE_NAMES:
-			final List<String> indexesList = getSelectedIndexesList();
-			if (indexesList.isEmpty()) {
-				this.pvrIndexes.removeValue(ReformatFastaCommand.OPTION_INDEXES);
-			} else {
-				this.pvrIndexes.setValue(ReformatFastaCommand.OPTION_INDEXES, indexesList);
-			}
-			super.updateButtonOk();
-			break;
-		default:
-			this.pvrIndexes.removeValue(ReformatFastaCommand.OPTION_INDEXES);
-		}
-	}
-	
-	private List<String> getSelectedIndexesList() {
-		try {
-			switch (this.getSelectedRenameMode()) {
-			case MULTIPART_NAME:
-				return this.cmpIndexes.getIndexesList();
-			case KNOWN_SEQUENCE_NAMES:
-				return this.paramsPanel.getSelectedIndexesList(1);
-			default:
-				throw new IllegalStateException("Invalid rename mode selected: " + this.getSelectedRenameMode());
-			}
-		} catch (IllegalArgumentException iae) {
-			return emptyList();
-		}
-	}
-	
-	private int[] getSelectedIndexes() {
+	private int[] indexes() {
 		switch (this.getSelectedRenameMode()) {
 		case MULTIPART_NAME: {
-			return this.cmpIndexes.getIndexes();
+			try {
+				final List<String> indexesList = indexesList();
+				
+				if (indexesList == null) {
+					return null;
+				} else {
+					final int[] indexes = new int[indexesList.size()];
+					
+					int i = 0;
+					for (String index : indexesList) {
+						indexes[i++] = Integer.parseInt(index);
+					}
+					
+					return indexes;
+				}
+			} catch (IllegalStateException ise) {
+				ise.printStackTrace();
+				return null;
+			}
 		}
 		case KNOWN_SEQUENCE_NAMES: {
-			return this.paramsPanel.getSelectedIndexes(1);
+			final int[] indexes = new int[this.selectedFields.size()];
+			
+			int i = 0;
+			for (NameField field : this.selectedFields) {
+				indexes[i++] = field.getIndex() + 1;
+			}
+			
+			return indexes;
 		}
 		default:
 			throw new IllegalStateException("Invalid rename mode selected: " + this.getSelectedRenameMode());
+		}
+	}
+
+	private List<String> indexesList() throws IllegalStateException {
+		final String text = cmpIndexes.getText().trim();
+		
+		if (text.isEmpty())
+			return null;
+		
+		final String regex = "[1-9][0-9]*(-[1-9][0-9]*)?(,([1-9][0-9]*(-[1-9][0-9]*)?))*";
+
+		if (text.matches(regex)) {
+			final String[] parts = text.split(",");
+			
+			final SortedSet<String> indexes = new TreeSet<>();
+			for (String part : parts) {
+				if (part.contains("-")) {
+					final String[] minMax = part.split("-");
+					final int min = Integer.parseInt(minMax[0]);
+					final int max = Integer.parseInt(minMax[1]);
+					
+					if (min >= max) {
+						throw new IllegalArgumentException("Invalid range: " + part);
+					} else {
+						for (int i = min; i <= max; i++) {
+							indexes.add(Integer.toString(i - 1));
+						}
+					}
+				} else {
+					final int index = Integer.parseInt(part) - 1;
+					indexes.add(Integer.toString(index));
+				}
+			}
+			
+			return indexes.isEmpty() ? null : new ArrayList<>(indexes);
+		} else {
+			throw new IllegalStateException("Invalid format: " + text);
 		}
 	}
 	
@@ -446,7 +432,69 @@ public class ReformatFastaCommandDialog extends CommandDialog {
 			return null;
 	}
 	
-	private StandardSequenceNameSummarizer getSummarizer() {
+	private void enableComponents() {
+		final FastaSequenceRenameMode selectedMode = getSelectedRenameMode();
+		
+		if (cmpKeepDescription != null)
+			cmpKeepDescription.setVisible(selectedMode != FastaSequenceRenameMode.NONE);
+		if (lblFirstSequence != null)
+			lblFirstSequence.setVisible(selectedMode != FastaSequenceRenameMode.NONE);
+		if (lblReformatedSequence != null)
+			lblReformatedSequence.setVisible(selectedMode != FastaSequenceRenameMode.NONE);
+		
+		if (cmpPrefix != null)
+			cmpPrefix.setVisible(selectedMode == FastaSequenceRenameMode.PREFIX);
+		if (cmpKeepNames != null)
+			cmpKeepNames.setVisible(selectedMode == FastaSequenceRenameMode.PREFIX);
+		if (cmpAddIndex != null)
+			cmpAddIndex.setVisible(selectedMode == FastaSequenceRenameMode.PREFIX);
+		
+		if (cmpIndexes != null)
+			cmpIndexes.setVisible(selectedMode == FastaSequenceRenameMode.MULTIPART_NAME);
+		if (cmpDelimiterString != null)
+			cmpDelimiterString.setVisible(selectedMode == FastaSequenceRenameMode.MULTIPART_NAME);
+		
+		if (lblFormatDetected != null)
+			lblFormatDetected.setVisible(selectedMode == FastaSequenceRenameMode.KNOWN_SEQUENCE_NAMES);
+		if (panelParams != null)
+			panelParams.setVisible(selectedMode == FastaSequenceRenameMode.KNOWN_SEQUENCE_NAMES);
+		
+		if (cmpJoinerString != null)
+			cmpJoinerString.setVisible(selectedMode == FastaSequenceRenameMode.KNOWN_SEQUENCE_NAMES || selectedMode == FastaSequenceRenameMode.MULTIPART_NAME);
+	}
+	
+	@Override
+	protected void updateButtonOk() {
+		final FastaSequenceRenameMode renameMode = getSelectedRenameMode();
+		
+		if (renameMode != null) {
+			switch (renameMode) {
+			case KNOWN_SEQUENCE_NAMES: {
+				final ComposedSequenceRenameConfiguration configuration = this.createNameSummaryConfiguration();
+				
+				this.btnOk.setEnabled(configuration.isValid() && getSummarizers() != null);
+				break;
+			}
+			case PREFIX: {
+				final PrefixSequenceRenameConfiguration configuration = this.createPrefixRenamingConfiguration();
+				
+				this.btnOk.setEnabled(configuration.isValid());
+				break;
+			}
+			case MULTIPART_NAME: {
+				final ComposedSequenceRenameConfiguration configuration = this.createNameSummaryConfiguration();
+				
+				this.btnOk.setEnabled(configuration.isValid());
+				break;
+			}
+			default:
+			}
+		} else {
+			super.updateButtonOk();
+		}
+	}
+	
+	protected StandardSequenceNameSummarizer getSummarizers() {
 		try {
 			final String firstSequence = getFirstSequence();
 			
@@ -468,41 +516,12 @@ public class ReformatFastaCommandDialog extends CommandDialog {
 			else
 				return FastaUtils.getFirstSequence(fasta.getFile());
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new RuntimeException(e);
 		}
 	}
 	
-	private void reenableComponents() {
-		final FastaSequenceRenameMode selectedMode = getSelectedRenameMode();
-		
-		if (cmpKeepDescription != null)
-			cmpKeepDescription.setVisible(selectedMode != FastaSequenceRenameMode.NONE);
-		if (lblFirstSequence != null)
-			lblFirstSequence.setVisible(selectedMode != FastaSequenceRenameMode.NONE);
-		if (lblReformatedSequence != null)
-			lblReformatedSequence.setVisible(selectedMode != FastaSequenceRenameMode.NONE);
-		if (cmpJoinerString != null)
-			cmpJoinerString.setVisible(selectedMode != FastaSequenceRenameMode.NONE);
-		
-		if (cmpPrefix != null)
-			cmpPrefix.setVisible(selectedMode == FastaSequenceRenameMode.PREFIX);
-		if (cmpKeepNames != null)
-			cmpKeepNames.setVisible(selectedMode == FastaSequenceRenameMode.PREFIX);
-		if (cmpAddIndex != null)
-			cmpAddIndex.setVisible(selectedMode == FastaSequenceRenameMode.PREFIX);
-		
-		if (cmpIndexes != null)
-			cmpIndexes.setVisible(selectedMode == FastaSequenceRenameMode.MULTIPART_NAME);
-		if (cmpDelimiterString != null)
-			cmpDelimiterString.setVisible(selectedMode == FastaSequenceRenameMode.MULTIPART_NAME);
-		
-		if (lblFormatDetected != null)
-			lblFormatDetected.setVisible(selectedMode == FastaSequenceRenameMode.KNOWN_SEQUENCE_NAMES);
-		if (paramsPanel != null)
-			paramsPanel.setVisible(selectedMode == FastaSequenceRenameMode.KNOWN_SEQUENCE_NAMES);
-	}
-	
-	private void clearConfigurationFields() {
+	private void clearConfiguration() {
 		if (this.cmpJoinerString != null)
 			this.cmpJoinerString.setText(ReformatFastaCommand.OPTION_JOINER_STRING.getDefaultValue());
 		if (this.cmpDelimiterString != null)
@@ -526,7 +545,7 @@ public class ReformatFastaCommandDialog extends CommandDialog {
 		final ComposedSequenceRenameConfiguration configuration = new ComposedSequenceRenameConfiguration();
 
 		if (this.cmpIndexes != null)
-			configuration.setSelectedIndexes(this.getSelectedIndexes());
+			configuration.setSelectedIndexes(this.indexes());
 		if (this.cmpJoinerString != null)
 			configuration.setJoinerString(this.cmpJoinerString.getText());
 		if (this.cmpKeepDescription != null)
@@ -554,19 +573,60 @@ public class ReformatFastaCommandDialog extends CommandDialog {
 		return configuration;
 	}
 	
-	private void clearPanelParams() {
-		if (this.paramsPanel != null) {
-			this.paramsPanel.clear();
+	protected <T> ValueCallback<T> newUpdateSequenceNameInformationValueCallback() {
+		return new ValueCallback<T>() {
+			@Override
+			public void callback(T value) {
+				clearConfiguration();
+				updateSequenceNameInformation();
+			}
+		};
+	}
+	
+	protected DocumentListener newUpdateSequenceNameInformationDocumentListener() {
+		return new DocumentListener() {
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				updateSequenceNameInformation();
+			}
 			
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				updateSequenceNameInformation();
+			}
+			
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				updateSequenceNameInformation();
+			}
+		};
+	}
+
+	private ChangeListener newUpdateSequenceNameInformationChangeListener() {
+		return new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				updateSequenceNameInformation();
+			}
+		};
+	}
+	
+	private void clearPanelParams() {
+		if (this.panelParams != null && this.selectedFields != null) {
+			this.panelParams.removeAll();
+			this.selectedFields.clear();
+	
 			if (this.getSelectedRenameMode() == FastaSequenceRenameMode.KNOWN_SEQUENCE_NAMES) {
-				final StandardSequenceNameSummarizer summarizer = getSummarizer();
+				final StandardSequenceNameSummarizer summarizer = getSummarizers();
 				if (summarizer != null) {
 					final String firstSequence = this.getFirstSequence();
 					final ComposedSequenceRenameConfiguration configuration = this.createNameSummaryConfiguration();
 					
 					final List<? extends NameField> fields = summarizer.identifyNameFields(firstSequence, configuration);
 					
-					this.paramsPanel.addParamPanelField(new NameField() {
+					this.panelParamsLayout.setRows(fields.size() + 1);
+					
+					addParamPanelField(new NameField() {
 						@Override
 						public int getIndex() {
 							return -1;
@@ -583,11 +643,31 @@ public class ReformatFastaCommandDialog extends CommandDialog {
 					});
 					
 					for (final NameField field : fields) {
-						this.paramsPanel.addParamPanelField(field);
+						addParamPanelField(field);
 					}
 				}
 			}
 		}
+	}
+
+	private void addParamPanelField(final NameField field) {
+		final JCheckBox chkField = new JCheckBox(field.getName(), true);
+		
+		this.panelParams.add(chkField);
+		this.selectedFields.add(field);
+		
+		chkField.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				if (chkField.isSelected()) {
+					selectedFields.add(field);
+				} else {
+					selectedFields.remove(field);
+				}
+				
+				updateSequenceNameInformation();
+			}
+		});
 	}
 	
 	protected void updateSequenceNameInformation() {
@@ -598,69 +678,62 @@ public class ReformatFastaCommandDialog extends CommandDialog {
 		if (firstSequence == null) {
 			this.lblFirstSequence.setText("");
 			this.lblFirstSequence.setToolTipText(null);
-			this.lblFormatDetected.setText("No FASTA selected");
-			this.lblFormatDetected.setForeground(Color.RED);
-			this.lblReformatedSequence.setText("");
-			this.lblReformatedSequence.setToolTipText(null);
+			
+			this.setFormatDetectedError("No FASTA selected");
+			this.clearReformatedSequence();
 		} else {
 			final FastaSequenceRenameMode renameMode = getSelectedRenameMode();
 			
 			if (renameMode == null) {
-				this.lblFormatDetected.setText("Unrecognized sequence name format");
-				this.lblFormatDetected.setForeground(Color.RED);
-				this.lblFormatDetected.setText("");
-				this.lblReformatedSequence.setText("");
-				this.lblReformatedSequence.setToolTipText(null);
+				this.setFormatDetectedError("Unrecognized sequence name format");
+				this.clearReformatedSequence();
 			} else {					
 				this.lblFirstSequence.setText(abbreviatedFirstSequence);
 				this.lblFirstSequence.setToolTipText(firstSequence);
 				
 				switch (renameMode) {
 				case KNOWN_SEQUENCE_NAMES: {
-					final StandardSequenceNameSummarizer summarizer = getSummarizer();
+					final StandardSequenceNameSummarizer summarizer = getSummarizers();
 					
 					if (summarizer == null) {
-						this.lblFormatDetected.setText("Unrecognized sequence name format");
-						this.lblFormatDetected.setForeground(Color.RED);
-						this.lblReformatedSequence.setText("");
-						this.lblReformatedSequence.setToolTipText(null);
+						this.setFormatDetectedError("Unrecognized sequence name format");
+						this.clearReformatedSequence();
 					} else {
-						final ComposedSequenceRenameConfiguration configuration = this.createNameSummaryConfiguration();
-						final String summary = summarizer.summarize(firstSequence, configuration);
-						final String abbreviatedSummary = abbreviate(summary, MAXIMUM_SEQUENCE_LENGTH);
+						final String summary = summarizer.summarize(firstSequence, this.createNameSummaryConfiguration());
 						
-						this.lblFormatDetected.setText(summarizer.getDescription());
-						this.lblReformatedSequence.setText(abbreviatedSummary);
-						this.lblReformatedSequence.setToolTipText(summary);
-						this.lblReformatedSequence.setOpaque(false);
+						this.setFormatDetectedText(summarizer.getDescription());
+						this.setReformatedSequenceText(summary);
 					}
 					break;
 				}
 				case MULTIPART_NAME: {
 					try {
-						final GenericComposedSequenceNameSummarizer summarizer = new GenericComposedSequenceNameSummarizer();
-						final String summary = summarizer.summarize(firstSequence, this.createNameSummaryConfiguration());
-						final String abbreviatedSummary = abbreviate(summary, MAXIMUM_SEQUENCE_LENGTH);
+						final ComposedSequenceRenameConfiguration configuration = this.createNameSummaryConfiguration();
 						
-						this.lblReformatedSequence.setText(abbreviatedSummary);
-						this.lblReformatedSequence.setToolTipText(summary);
-						this.lblReformatedSequence.setOpaque(false);
+						if (configuration.isValid()) {
+							final GenericComposedSequenceNameSummarizer summarizer = new GenericComposedSequenceNameSummarizer();
+							final String summary = summarizer.summarize(firstSequence, configuration);
+							
+							this.setReformatedSequenceText(summary);
+						} else {
+							this.setReformatedSequenceError("Invalid configuration");
+						}
 					} catch (IllegalArgumentException iae) {
-						this.lblReformatedSequence.setText(iae.getMessage());
-						this.lblReformatedSequence.setToolTipText(null);
-						this.lblReformatedSequence.setOpaque(true);
-						this.lblReformatedSequence.setBackground(Color.RED);
+						this.setReformatedSequenceError(iae.getMessage());
 					}
 					
 					break;
 				}
 				case PREFIX: {
-					final String summary = prefixFastaSequenceNameRename(firstSequence, this.createPrefixRenamingConfiguration());
-					final String abbreviatedSummary = abbreviate(summary, MAXIMUM_SEQUENCE_LENGTH);
+					final PrefixSequenceRenameConfiguration configuration = this.createPrefixRenamingConfiguration();
 					
-					this.lblReformatedSequence.setText(abbreviatedSummary);
-					this.lblReformatedSequence.setToolTipText(summary);
-					this.lblReformatedSequence.setOpaque(false);
+					if (configuration.isValid()) {
+						final String summary = prefixFastaSequenceNameRename(firstSequence, configuration);
+						
+						this.setReformatedSequenceText(summary);
+					} else {
+						this.setReformatedSequenceError("Invalid configuration. You must add an index or keep the sequence name.");
+					}
 					
 					break;
 				}
@@ -668,105 +741,47 @@ public class ReformatFastaCommandDialog extends CommandDialog {
 				}
 			}
 		}
+		
+		this.asynchronousPack();
 	}
 	
-	protected static class ParamsPanel extends JPanel {
-		private static final long serialVersionUID = 1L;
+	private void clearReformatedSequence() {
+		this.setReformatedSequenceText(null);
+	}
+	
+	private void setReformatedSequenceText(String text) {
+		this.lblReformatedSequence.setText(text == null ? "" : abbreviate(text, MAXIMUM_SEQUENCE_LENGTH));
+		this.lblReformatedSequence.setToolTipText(text);
 		
-		private final GridLayout layout;
-		private final SortedSet<NameField> selectedFields;
+		configureNormalLabel(this.lblReformatedSequence);
+	}
+	
+	private void setReformatedSequenceError(String error) {
+		this.lblReformatedSequence.setText(error);
+		this.lblReformatedSequence.setToolTipText(null);
 		
-		public ParamsPanel() {
-			super(new GridLayout(1, 1));
-			
-			this.layout = (GridLayout) this.getLayout();
-			this.selectedFields = new TreeSet<>(new Comparator<NameField>() {
-				@Override
-				public int compare(NameField o1, NameField o2) {
-					return Integer.compare(o1.getIndex(), o2.getIndex());
-				}
-			});
-		}
+		configureErrorLabel(this.lblReformatedSequence);
+	}
+	
+	private void setFormatDetectedText(String text) {
+		this.lblFormatDetected.setText(text);
 		
-		public void clear() {
-			this.removeAll();
-			this.selectedFields.clear();
-			this.layout.setRows(1);
-		}
-
-		public void addParamPanelField(final NameField field) {
-			final JCheckBox chkField = new JCheckBox(field.getName(), true);
-			
-			this.add(chkField);
-			this.layout.setRows(this.layout.getRows() + 1);
-			this.selectedFields.add(field);
-			
-			chkField.addChangeListener(new ChangeListener() {
-				@Override
-				public void stateChanged(ChangeEvent e) {
-					if (chkField.isSelected()) {
-						selectedFields.add(field);
-					} else {
-						selectedFields.remove(field);
-					}
-					
-					fireStateChanged();
-				}
-			});
-		}
+		configureNormalLabel(this.lblFormatDetected);
+	}
+	
+	private void setFormatDetectedError(String error) {
+		this.lblFormatDetected.setText(error);
 		
-		public SortedSet<NameField> getSelectedFields() {
-			return unmodifiableSortedSet(selectedFields);
-		}
-
-		public int[] getSelectedIndexes() {
-			return this.getSelectedIndexes(0);
-		}
-
-		public int[] getSelectedIndexes(int offset) {
-			final int[] indexes = new int[this.selectedFields.size()];
-			
-			int i = 0;
-			for (NameField field : this.selectedFields) {
-				indexes[i++] = field.getIndex() + offset;
-			}
-			
-			return indexes;
-		}
-		
-		public List<String> getSelectedIndexesList() {
-			return getSelectedIndexesList(0);
-		}
-		
-		public List<String> getSelectedIndexesList(int offset) {
-			final int[] indexes = getSelectedIndexes(offset);
-			final List<String> indexesList = new ArrayList<>(indexes.length);
-			
-			for (int index : indexes) {
-				indexesList.add(Integer.toString(index));
-			}
-			
-			return indexesList;
-		}
-		
-	    public void addChangeListener(ChangeListener l) {
-	        listenerList.add(ChangeListener.class, l);
-	    }
-
-	    public void removeChangeListener(ChangeListener l) {
-	        listenerList.remove(ChangeListener.class, l);
-	    }
-
-	    public ChangeListener[] getChangeListeners() {
-	        return listenerList.getListeners(ChangeListener.class);
-	    }
-
-	    protected void fireStateChanged() {
-	    	final ChangeEvent event = new ChangeEvent(this);
-	    	
-	    	for (ChangeListener listener : listenerList.getListeners(ChangeListener.class)) {
-	    		listener.stateChanged(event);
-	    	}
-	    }
+		configureErrorLabel(this.lblFormatDetected);
+	}
+	
+	private static void configureNormalLabel(JLabel label) {
+		label.setForeground(Color.BLACK);
+		label.setFont(label.getFont().deriveFont(Font.PLAIN));
+	}
+	
+	private static void configureErrorLabel(JLabel label) {
+		label.setForeground(Color.RED);
+		label.setFont(label.getFont().deriveFont(Font.BOLD));
 	}
 }

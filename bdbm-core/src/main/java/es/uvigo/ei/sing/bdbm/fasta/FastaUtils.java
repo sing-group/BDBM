@@ -215,8 +215,8 @@ public class FastaUtils {
 		final PrefixSequenceRenameConfiguration renameConfiguration,
 		final PrintWriter writer
 	) throws FastaParseException, IOException {
-		if (!renameConfiguration.isValidConfiguration()) {
-			throw new IllegalArgumentException("At least prefix must be not null or addIndex true or keepNames true");
+		if (!renameConfiguration.isValid()) {
+			throw new IllegalArgumentException("You must select to add an index or to keep names");
 		}
 		
 		final FastaParser parser = new DefaultFastaParser();
@@ -239,10 +239,11 @@ public class FastaUtils {
 	}
 	
 	public static String smartFastaSequenceNameRename(
-		String sequenceName,
-		ComposedSequenceRenameConfiguration renameConfiguration
+		final String sequenceName,
+		final ComposedSequenceRenameConfiguration renameConfiguration
 	) {
 		final StandardSequenceNameSummarizer summarizer = createStandardNameSummarizer(sequenceName, renameConfiguration);
+		
 		if (summarizer == null)
 			throw new RuntimeException("Unrecognized sequence name: " + sequenceName);
 		

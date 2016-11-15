@@ -21,6 +21,8 @@
  */
 package es.uvigo.ei.sing.bdbm.fasta.naming.configuration;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -35,7 +37,7 @@ public class ComposedSequenceRenameConfiguration extends AbstractSequenceRenameC
 	}
 	
 	public void setDelimiterString(String delimiterString) {
-		this.delimiterString = delimiterString;
+		this.delimiterString = requireNonNull(delimiterString, "Delimiter string can't be null");
 	}
 	
 	public String getDelimiterString() {
@@ -79,5 +81,10 @@ public class ComposedSequenceRenameConfiguration extends AbstractSequenceRenameC
 		} else {
 			return String.join(this.getJoinerString(), parts);
 		}
+	}
+	
+	@Override
+	public boolean isValid() {
+		return this.selectedIndexes == null || this.selectedIndexes.length > 0;
 	}
 }

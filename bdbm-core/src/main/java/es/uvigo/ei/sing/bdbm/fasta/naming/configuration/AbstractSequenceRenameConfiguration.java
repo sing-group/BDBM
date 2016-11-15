@@ -21,6 +21,8 @@
  */
 package es.uvigo.ei.sing.bdbm.fasta.naming.configuration;
 
+import static java.util.Objects.requireNonNull;
+
 public abstract class AbstractSequenceRenameConfiguration implements SequenceRenameConfiguration {
 	private String joinerString;
 	private boolean keepDescription;
@@ -31,7 +33,7 @@ public abstract class AbstractSequenceRenameConfiguration implements SequenceRen
 	}
 	
 	public void setJoinerString(String joinerString) {
-		this.joinerString = joinerString;
+		this.joinerString = requireNonNull(joinerString, "Joiner string can't be null");
 	}
 	
 	public String getJoinerString() {
