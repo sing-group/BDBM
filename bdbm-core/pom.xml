@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>es.uvigo.ei.sing</groupId>
 		<artifactId>bdbm-project</artifactId>
-		<version>v0.19.1</version>
+		<version>v0.20.0</version>
 	</parent>
 
 	<artifactId>bdbm-core</artifactId>

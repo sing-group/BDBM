@@ -54,6 +54,22 @@
 			</pattern>
 		</encoder>
 	</appender>
+
+	<appender name="DAILY_ROLLING_FILE_APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>bdbm.log</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- daily rollover -->
+			<FileNamePattern>${user.home}/bdbm.%d{yyyy-MM-dd}.log</FileNamePattern>
+
+			<!-- keep 30 days' worth of history -->
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+
+		<encoder>
+			<Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{35} - %msg %n
+			</Pattern>
+		</encoder>
+	</appender>
 	
 	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
@@ -66,5 +82,6 @@
 		<appender-ref ref="STDOUT" />
 		<appender-ref ref="EXECUTION_STD"/>
 		<appender-ref ref="EXECUTION_ERROR"/>
+		<appender-ref ref="DAILY_ROLLING_FILE_APPENDER"/>
 	</root>
 </configuration>
