@@ -41,6 +41,7 @@ import org.slf4j.LoggerFactory;
 
 import es.uvigo.ei.sing.bdbm.environment.binaries.BLASTBinaries;
 import es.uvigo.ei.sing.bdbm.environment.binaries.BLASTType;
+import es.uvigo.ei.sing.bdbm.fasta.FastaUtils;
 import es.uvigo.ei.sing.bdbm.persistence.entities.Database;
 import es.uvigo.ei.sing.bdbm.persistence.entities.Export;
 import es.uvigo.ei.sing.bdbm.persistence.entities.Export.ExportEntry;
@@ -465,17 +466,9 @@ implements BLASTBinariesExecutor {
 		
 		try (BufferedReader br = new BufferedReader(new FileReader(entry.getOutFile()));) {
 			String line;
-			boolean startFound = false;
 			while ((line = br.readLine()) != null) {
-				if (startFound) {
-					if (line.startsWith("lcl|")) {
-						final String sequence = line.substring(line.indexOf('|') + 1, line.indexOf(' '));
-						alignments.add(sequence);
-					} else if (line.startsWith(">lcl")) {
-						startFound = false;
-					}
-				} else {
-					startFound = line.startsWith("Sequences producing significant alignments");
+				if (line.startsWith(">")) {
+					alignments.add(FastaUtils.extractFastaSequenceName(line));
 				}
 			}
 		} catch (FileNotFoundException e) {
