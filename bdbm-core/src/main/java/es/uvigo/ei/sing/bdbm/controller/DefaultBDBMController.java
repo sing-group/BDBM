@@ -667,7 +667,7 @@ public class DefaultBDBMController implements BDBMController {
 			try {
 				this.embossBinariesExecutor.executeGetORF(fasta, orf, minSize, maxSize);
 				if (noNewLines) {
-					this.renameSequencesAndChangeLength(orf, 0, FastaSequenceRenameMode.NONE, null);
+					this.renameSequencesAndRemoveLineBreaks(orf, FastaSequenceRenameMode.NONE, null);
 				}
 				
 				return orf;
