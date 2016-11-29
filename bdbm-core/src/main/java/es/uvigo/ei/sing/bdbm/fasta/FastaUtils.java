@@ -742,4 +742,16 @@ public class FastaUtils {
 		
 		parser.parse(inputFasta);
 	}
+
+	public static String extractFastaSequenceName(String line) {
+		if (line.startsWith(">") && line.length() > 1) {
+			if (line.contains(" ")) {
+				return line.substring(1, line.indexOf(' '));
+			} else {
+				return line.substring(1);
+			}
+		} else {
+			throw new IllegalArgumentException("Invalid sequence name: " + line);
+		}
+	}
 }
