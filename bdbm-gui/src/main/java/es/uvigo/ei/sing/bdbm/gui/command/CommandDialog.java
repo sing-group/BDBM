@@ -116,6 +116,7 @@ public class CommandDialog extends JDialog {
 	protected void asynchronousPack() {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
+				CommandDialog.this.revalidate();
 				CommandDialog.this.pack();
 			}
 		});

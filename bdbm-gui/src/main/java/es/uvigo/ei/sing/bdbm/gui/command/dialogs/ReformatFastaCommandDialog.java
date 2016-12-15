@@ -97,8 +97,6 @@ public class ReformatFastaCommandDialog extends CommandDialog {
 	
 	private SortedSet<NameField> selectedFields;
 
-
-
 	public ReformatFastaCommandDialog(
 		BDBMController controller, 
 		ReformatFastaCommand command
@@ -342,8 +340,6 @@ public class ReformatFastaCommandDialog extends CommandDialog {
 				clearConfiguration();
 				
 				updateSequenceNameInformation();
-				
-				asynchronousPack();
 			}
 		});
 		
@@ -516,7 +512,6 @@ public class ReformatFastaCommandDialog extends CommandDialog {
 			else
 				return FastaUtils.getFirstSequence(fasta.getFile());
 		} catch (Exception e) {
-			e.printStackTrace();
 			throw new RuntimeException(e);
 		}
 	}
