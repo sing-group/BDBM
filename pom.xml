@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>es.uvigo.ei.sing</groupId>
 	<artifactId>bdbm-project</artifactId>
-	<version>0.19.1</version>
+  <version>0.19.2</version>
 	<!-- WARNING: change version using: mvn versions:set -DnewVersion=[new_version] 
 		in order to change the version in all modules at-once -->
 	<name>BLAST DataBase Manager</name>
@@ -72,13 +72,13 @@
 
 	<properties>
 		<!-- General -->
-		<source.version>1.7</source.version>
-		<target.version>1.7</target.version>
+		<source.version>1.8</source.version>
+		<target.version>1.8</target.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		
 		<!-- Plugins -->
 		<maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
-		<license-maven-plugin.version>1.8</license-maven-plugin.version>
+		<license-maven-plugin.version>1.10</license-maven-plugin.version>
 		<maven-assembly-plugin.version>2.5.4</maven-assembly-plugin.version>
 		
 		<!-- Testing -->
