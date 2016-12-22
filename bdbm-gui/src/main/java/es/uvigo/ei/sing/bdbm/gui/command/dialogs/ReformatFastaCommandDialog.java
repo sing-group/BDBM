@@ -27,6 +27,7 @@ import static org.apache.commons.lang3.StringUtils.abbreviate;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -118,7 +119,7 @@ public class ReformatFastaCommandDialog extends CommandDialog {
 			}
 		});
 		
-		this.asynchronousPack();
+		this.setPreferredSize(new Dimension(600, (int) this.getPreferredSize().getHeight()));
 	}
 	
 	@Override
@@ -736,8 +737,6 @@ public class ReformatFastaCommandDialog extends CommandDialog {
 				}
 			}
 		}
-		
-		this.asynchronousPack();
 	}
 	
 	private void clearReformatedSequence() {

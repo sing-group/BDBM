@@ -57,7 +57,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.ListModel;
-import javax.swing.SwingUtilities;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
@@ -111,15 +110,6 @@ public class CommandDialog extends JDialog {
 		
 		if (init)
 			this.init();
-	}
-	
-	protected void asynchronousPack() {
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				CommandDialog.this.revalidate();
-				CommandDialog.this.pack();
-			}
-		});
 	}
 	
 	protected boolean hasDefaultValue(Option<?> option) {
