@@ -615,14 +615,6 @@ public class FastaUtils {
 		}
 	}
 
-	/**
-	 * Merges the sequences with the same name in the input FASTA file.
-	 * 
-	 * @param inputFasta input FASTA file.
-	 * @param writer output writer.
-	 * @throws IOException 
-	 * @throws FastaParseException 
-	 */
 	public static void mergeSequences(
 		final File inputFasta,
 		final PrintWriter writer,
