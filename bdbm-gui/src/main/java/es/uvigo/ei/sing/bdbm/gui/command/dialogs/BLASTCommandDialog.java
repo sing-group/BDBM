@@ -44,7 +44,6 @@ import javax.swing.JTextArea;
 
 import es.uvigo.ei.sing.bdbm.cli.commands.BLASTCommand;
 import es.uvigo.ei.sing.bdbm.cli.commands.BLASTNCommand;
-import es.uvigo.ei.sing.bdbm.cli.commands.converters.FileOption;
 import es.uvigo.ei.sing.bdbm.controller.BDBMController;
 import es.uvigo.ei.sing.bdbm.environment.binaries.BLASTType;
 import es.uvigo.ei.sing.bdbm.gui.command.CommandDialog;
@@ -54,6 +53,7 @@ import es.uvigo.ei.sing.bdbm.gui.command.dialogs.ComponentFactory.ValueCallback;
 import es.uvigo.ei.sing.bdbm.persistence.entities.Database;
 import es.uvigo.ei.sing.bdbm.persistence.entities.SearchEntry;
 import es.uvigo.ei.sing.bdbm.persistence.entities.SearchEntry.Query;
+import es.uvigo.ei.sing.yaacli.command.option.FileOption;
 import es.uvigo.ei.sing.yaacli.command.option.StringOption;
 import es.uvigo.ei.sing.yaacli.command.parameter.Parameters;
 

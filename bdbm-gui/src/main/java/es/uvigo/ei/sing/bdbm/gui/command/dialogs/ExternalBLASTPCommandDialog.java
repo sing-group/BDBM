@@ -24,9 +24,9 @@ package es.uvigo.ei.sing.bdbm.gui.command.dialogs;
 import java.awt.Component;
 
 import es.uvigo.ei.sing.bdbm.cli.commands.BLASTPCommand;
-import es.uvigo.ei.sing.bdbm.cli.commands.converters.FileOption;
 import es.uvigo.ei.sing.bdbm.controller.BDBMController;
 import es.uvigo.ei.sing.bdbm.gui.command.ParameterValuesReceiver;
+import es.uvigo.ei.sing.yaacli.command.option.FileOption;
 import es.uvigo.ei.sing.yaacli.command.parameter.Parameters;
 
 public class ExternalBLASTPCommandDialog extends BLASTPCommandDialog {

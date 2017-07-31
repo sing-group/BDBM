@@ -21,10 +21,10 @@
  */
 package es.uvigo.ei.sing.bdbm.cli.commands;
 
-import es.uvigo.ei.sing.bdbm.cli.commands.converters.FileOption;
 import es.uvigo.ei.sing.bdbm.cli.commands.converters.SequenceTypeOptionConverter;
 import es.uvigo.ei.sing.bdbm.controller.BDBMController;
 import es.uvigo.ei.sing.bdbm.environment.SequenceType;
+import es.uvigo.ei.sing.yaacli.command.option.FileOption;
 import es.uvigo.ei.sing.yaacli.command.option.Option;
 import es.uvigo.ei.sing.yaacli.command.parameter.Parameters;
 

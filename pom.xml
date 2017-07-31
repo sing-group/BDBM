@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>es.uvigo.ei.sing</groupId>
 	<artifactId>bdbm-project</artifactId>
-  <version>0.19.3</version>
+  <version>0.19.4</version>
 	<!-- WARNING: change version using: mvn versions:set -DnewVersion=[new_version] 
 		in order to change the version in all modules at-once -->
 	<name>BLAST DataBase Manager</name>
@@ -72,9 +72,10 @@
 
 	<properties>
 		<!-- General -->
-		<source.version>1.8</source.version>
-		<target.version>1.8</target.version>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		
 		<!-- Plugins -->
 		<license-maven-plugin.version>1.10</license-maven-plugin.version>
@@ -140,22 +141,22 @@
 		<dependencies>
 			<!-- Modules -->
 			<dependency>
-				<groupId>es.uvigo.ei.sing</groupId>
+				<groupId>${project.groupId}</groupId>
 				<artifactId>bdbm-api</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>es.uvigo.ei.sing</groupId>
+				<groupId>${project.groupId}</groupId>
 				<artifactId>bdbm-core</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>es.uvigo.ei.sing</groupId>
+				<groupId>${project.groupId}</groupId>
 				<artifactId>bdbm-cli</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>es.uvigo.ei.sing</groupId>
+				<groupId>${project.groupId}</groupId>
 				<artifactId>bdbm-gui</artifactId>
 				<version>${project.version}</version>
 			</dependency>
@@ -227,50 +228,56 @@
 		<pluginManagement>
 			<plugins>
 				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>license-maven-plugin</artifactId>
+					<version>${license-maven-plugin.version}</version>
+				</plugin>
+				
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-assembly-plugin</artifactId>
 					<version>${maven-assembly-plugin.version}</version>
+				</plugin>
+				
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-javadoc-plugin</artifactId>
+					<version>${maven-javadoc-plugin.version}</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-source-plugin</artifactId>
+					<version>${maven-source-plugin.version}</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
 	
 		<plugins>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>${maven-compiler-plugin.version}</version>
-				<configuration>
-					<source>${source.version}</source>
-					<target>${target.version}</target>
-				</configuration>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>license-maven-plugin</artifactId>
 			</plugin>
 			
 			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>license-maven-plugin</artifactId>
-				<version>${license-maven-plugin.version}</version>
-			</plugin>
-
-			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<version>${maven-source-plugin.version}</version>
+				<artifactId>maven-javadoc-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>attach-sources</id>
+						<id>attach-javadocs</id>
 						<goals>
 							<goal>jar</goal>
 						</goals>
 					</execution>
 				</executions>
 			</plugin>
-			
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>${maven-javadoc-plugin.version}</version>
+				<artifactId>maven-source-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>attach-javadocs</id>
+						<id>attach-sources</id>
 						<goals>
 							<goal>jar</goal>
 						</goals>

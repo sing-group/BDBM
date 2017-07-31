@@ -48,9 +48,6 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import es.uvigo.ei.sing.bdbm.cli.commands.ReformatFastaCommand;
-import es.uvigo.ei.sing.bdbm.cli.commands.converters.EnumOption;
-import es.uvigo.ei.sing.bdbm.cli.commands.converters.FileOption;
-import es.uvigo.ei.sing.bdbm.cli.commands.converters.IntegerOption;
 import es.uvigo.ei.sing.bdbm.controller.BDBMController;
 import es.uvigo.ei.sing.bdbm.environment.SequenceType;
 import es.uvigo.ei.sing.bdbm.fasta.FastaUtils;
@@ -67,6 +64,9 @@ import es.uvigo.ei.sing.bdbm.gui.command.dialogs.ComponentFactory.FastaValuesPro
 import es.uvigo.ei.sing.bdbm.gui.command.dialogs.ComponentFactory.ValueCallback;
 import es.uvigo.ei.sing.bdbm.gui.command.input.BuildComponent;
 import es.uvigo.ei.sing.bdbm.persistence.entities.Fasta;
+import es.uvigo.ei.sing.yaacli.command.option.EnumOption;
+import es.uvigo.ei.sing.yaacli.command.option.FileOption;
+import es.uvigo.ei.sing.yaacli.command.option.IntegerOption;
 import es.uvigo.ei.sing.yaacli.command.option.Option;
 import es.uvigo.ei.sing.yaacli.command.option.StringConstructedOption;
 import es.uvigo.ei.sing.yaacli.command.parameter.Parameters;

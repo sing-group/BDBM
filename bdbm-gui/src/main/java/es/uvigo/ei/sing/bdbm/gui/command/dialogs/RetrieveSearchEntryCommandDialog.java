@@ -30,7 +30,6 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 
 import es.uvigo.ei.sing.bdbm.cli.commands.RetrieveSearchEntryCommand;
-import es.uvigo.ei.sing.bdbm.cli.commands.converters.FileOption;
 import es.uvigo.ei.sing.bdbm.controller.BDBMController;
 import es.uvigo.ei.sing.bdbm.environment.SequenceType;
 import es.uvigo.ei.sing.bdbm.gui.command.CommandDialog;
@@ -39,6 +38,7 @@ import es.uvigo.ei.sing.bdbm.gui.command.ParameterValuesReceiver;
 import es.uvigo.ei.sing.bdbm.gui.command.dialogs.ComponentFactory.DatabaseValuesProvider;
 import es.uvigo.ei.sing.bdbm.gui.command.dialogs.ComponentFactory.ValueCallback;
 import es.uvigo.ei.sing.bdbm.persistence.entities.Database;
+import es.uvigo.ei.sing.yaacli.command.option.FileOption;
 import es.uvigo.ei.sing.yaacli.command.option.Option;
 import es.uvigo.ei.sing.yaacli.command.option.StringOption;
 import es.uvigo.ei.sing.yaacli.command.parameter.Parameters;

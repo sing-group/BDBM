@@ -24,12 +24,12 @@ package es.uvigo.ei.sing.bdbm.cli.commands;
 import java.io.File;
 import java.util.List;
 
-import es.uvigo.ei.sing.bdbm.cli.commands.converters.FileOption;
 import es.uvigo.ei.sing.bdbm.cli.commands.converters.SequenceTypeOptionConverter;
 import es.uvigo.ei.sing.bdbm.controller.BDBMController;
 import es.uvigo.ei.sing.bdbm.environment.SequenceType;
 import es.uvigo.ei.sing.bdbm.persistence.entities.AbstractFasta;
 import es.uvigo.ei.sing.bdbm.persistence.entities.Fasta;
+import es.uvigo.ei.sing.yaacli.command.option.FileOption;
 import es.uvigo.ei.sing.yaacli.command.option.Option;
 import es.uvigo.ei.sing.yaacli.command.option.StringOption;
 import es.uvigo.ei.sing.yaacli.command.parameter.Parameters;

@@ -23,10 +23,10 @@ package es.uvigo.ei.sing.bdbm.cli.commands;
 
 import java.io.File;
 
-import es.uvigo.ei.sing.bdbm.cli.commands.converters.DefaultValueBooleanOption;
-import es.uvigo.ei.sing.bdbm.cli.commands.converters.FileOption;
 import es.uvigo.ei.sing.bdbm.controller.BDBMController;
 import es.uvigo.ei.sing.bdbm.persistence.entities.DefaultNucleotideFasta;
+import es.uvigo.ei.sing.yaacli.command.option.DefaultValueBooleanOption;
+import es.uvigo.ei.sing.yaacli.command.option.FileOption;
 import es.uvigo.ei.sing.yaacli.command.option.StringOption;
 import es.uvigo.ei.sing.yaacli.command.parameter.Parameters;
 

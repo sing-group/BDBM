@@ -35,7 +35,6 @@ import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 
 import es.uvigo.ei.sing.bdbm.cli.commands.BLASTDBAliasToolCommand;
-import es.uvigo.ei.sing.bdbm.cli.commands.converters.FileOption;
 import es.uvigo.ei.sing.bdbm.controller.BDBMController;
 import es.uvigo.ei.sing.bdbm.environment.SequenceType;
 import es.uvigo.ei.sing.bdbm.gui.command.CommandDialog;
@@ -43,6 +42,7 @@ import es.uvigo.ei.sing.bdbm.gui.command.ComponentForOption;
 import es.uvigo.ei.sing.bdbm.gui.command.ParameterValuesReceiver;
 import es.uvigo.ei.sing.bdbm.gui.command.input.BuildComponent;
 import es.uvigo.ei.sing.bdbm.persistence.entities.Database;
+import es.uvigo.ei.sing.yaacli.command.option.FileOption;
 import es.uvigo.ei.sing.yaacli.command.option.Option;
 import es.uvigo.ei.sing.yaacli.command.parameter.Parameters;
 import es.uvigo.ei.sing.yaacli.command.parameter.SingleParameterValue;
