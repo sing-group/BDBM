@@ -1,289 +1,310 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>es.uvigo.ei.sing</groupId>
-	<artifactId>bdbm-project</artifactId>
-  <version>0.19.5</version>
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
+>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>es.uvigo.ei.sing</groupId>
+  <artifactId>bdbm-project</artifactId>
+  <version>0.19.6</version>
 	<!-- WARNING: change version using: mvn versions:set -DnewVersion=[new_version] 
 		in order to change the version in all modules at-once -->
-	<name>BLAST DataBase Manager</name>
-	<inceptionYear>2014</inceptionYear>
-	<url>http://sing.ei.uvigo.es/BDBM</url>
-	<packaging>pom</packaging>
-	
-	<developers>
-		<developer>
-			<name>Miguel Reboiro-Jato</name>
-			<organization>SING Group - University of Vigo</organization>
-			<organizationUrl>http://sing.ei.uvigo.es/</organizationUrl>
-			<email>mrjato@uvigo.es</email>
-		</developer>
-		<developer>
-			<name>Hugo López-Fernández</name>
-			<organization>SING Group - University of Vigo</organization>
-			<organizationUrl>http://sing.ei.uvigo.es/</organizationUrl>
-			<email>hlfernandez@uvigo.es</email>
-		</developer>
-		<developer>
-			<name>Noé Vázquez González</name>
-			<organization>SING Group - University of Vigo</organization>
-			<organizationUrl>http://sing.ei.uvigo.es/</organizationUrl>
-			<email>nvazquezg@gmail.com</email>
-		</developer>
-	</developers>
-	<contributors>
-		<contributor>
-			<name>Jorge Vieira</name>
-			<organization>Instituto de Biologia Molecular e Celular, Universidade do Porto</organization>
-			<organizationUrl>http://evolution.ibmc.up.pt/</organizationUrl>
-			<email>jbvieira@ibmc.up.pt</email>
-			<roles>
-				<role>Principal Investigator</role>
-			</roles>
-		</contributor>
-		<contributor>
-			<name>Cristina P. Vieira</name>
-			<organization>Instituto de Biologia Molecular e Celular, Universidade do Porto</organization>
-			<organizationUrl>http://evolution.ibmc.up.pt/</organizationUrl>
-			<email>cgvieira@ibmc.up.pt</email>
-			<roles>
-				<role>Researcher</role>
-			</roles>
-		</contributor>
-		<contributor>
-			<name>Florentino Fdez-Riverola</name>
-			<organization>SING Group - University of Vigo</organization>
-			<organizationUrl>http://sing.ei.uvigo.es/</organizationUrl>
-			<email>riverola@uvigo.es</email>
-			<roles>
-				<role>Researcher</role>
-			</roles>
-		</contributor>
-	</contributors>
+  <name>BLAST DataBase Manager</name>
+  <inceptionYear>2014</inceptionYear>
+  <url>http://sing.ei.uvigo.es/BDBM</url>
+  <packaging>pom</packaging>
 
-	<licenses>
-		<license>
-			<name>GNU GENERAL PUBLIC LICENSE, Version 3</name>
-			<url>http://www.gnu.org/licenses/gpl.html</url>
-			<distribution>repo</distribution>
-		</license>
-	</licenses>
+  <developers>
+    <developer>
+      <name>Miguel Reboiro-Jato</name>
+      <organization>SING Group - University of Vigo</organization>
+      <organizationUrl>http://sing.ei.uvigo.es/</organizationUrl>
+      <email>mrjato@uvigo.es</email>
+    </developer>
+    <developer>
+      <name>Hugo López-Fernández</name>
+      <organization>SING Group - University of Vigo</organization>
+      <organizationUrl>http://sing.ei.uvigo.es/</organizationUrl>
+      <email>hlfernandez@uvigo.es</email>
+    </developer>
+    <developer>
+      <name>Noé Vázquez González</name>
+      <organization>SING Group - University of Vigo</organization>
+      <organizationUrl>http://sing.ei.uvigo.es/</organizationUrl>
+      <email>nvazquezg@gmail.com</email>
+    </developer>
+  </developers>
+  <contributors>
+    <contributor>
+      <name>Jorge Vieira</name>
+      <organization>Instituto de Biologia Molecular e Celular, Universidade do Porto</organization>
+      <organizationUrl>http://evolution.ibmc.up.pt/</organizationUrl>
+      <email>jbvieira@ibmc.up.pt</email>
+      <roles>
+        <role>Principal Investigator</role>
+      </roles>
+    </contributor>
+    <contributor>
+      <name>Cristina P. Vieira</name>
+      <organization>Instituto de Biologia Molecular e Celular, Universidade do Porto</organization>
+      <organizationUrl>http://evolution.ibmc.up.pt/</organizationUrl>
+      <email>cgvieira@ibmc.up.pt</email>
+      <roles>
+        <role>Researcher</role>
+      </roles>
+    </contributor>
+    <contributor>
+      <name>Florentino Fdez-Riverola</name>
+      <organization>SING Group - University of Vigo</organization>
+      <organizationUrl>http://sing.ei.uvigo.es/</organizationUrl>
+      <email>riverola@uvigo.es</email>
+      <roles>
+        <role>Researcher</role>
+      </roles>
+    </contributor>
+  </contributors>
 
-	<properties>
+  <licenses>
+    <license>
+      <name>GNU GENERAL PUBLIC LICENSE, Version 3</name>
+      <url>http://www.gnu.org/licenses/gpl.html</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <properties>
 		<!-- General -->
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		
 		<!-- Plugins -->
-		<license-maven-plugin.version>1.13</license-maven-plugin.version>
-		<maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
-		<maven-assembly-plugin.version>2.5.4</maven-assembly-plugin.version>
-		<maven-source-plugin.version>3.0.1</maven-source-plugin.version>
-		<maven-javadoc-plugin.version>2.10.4</maven-javadoc-plugin.version>
+    <license-maven-plugin.version>1.13</license-maven-plugin.version>
+    <maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
+    <maven-assembly-plugin.version>2.5.4</maven-assembly-plugin.version>
+    <maven-source-plugin.version>3.0.1</maven-source-plugin.version>
+    <maven-javadoc-plugin.version>2.10.4</maven-javadoc-plugin.version>
 		
 		<!-- Testing -->
-		<junit.version>4.12</junit.version>
-		<easymock.version>3.3.1</easymock.version>
+    <junit.version>4.12</junit.version>
+    <easymock.version>3.3.1</easymock.version>
 		
 		<!-- General -->
-		<yaacli.version>0.1.0-SNAPSHOT</yaacli.version>
-		<commons-lang3.version>3.4</commons-lang3.version>
-		<commons-io.version>2.4</commons-io.version>
-		<jfontchooser.version>1.0.5</jfontchooser.version>
-		<javahelp.version>2.0.05</javahelp.version>
-		<slf4j.version>1.7.12</slf4j.version>
-		<logback.version>1.1.3</logback.version>
-		<janino.version>2.7.8</janino.version>
+    <yaacli.version>0.1.0-SNAPSHOT</yaacli.version>
+    <commons-lang3.version>3.4</commons-lang3.version>
+    <commons-io.version>2.4</commons-io.version>
+    <jfontchooser.version>1.0.5</jfontchooser.version>
+    <javahelp.version>2.0.05</javahelp.version>
+    <slf4j.version>1.7.12</slf4j.version>
+    <logback.version>1.1.3</logback.version>
+    <janino.version>2.7.8</janino.version>
 		
 		<!-- license-maven-plugin configuration -->
-		<license.licenseName>gpl_v3</license.licenseName>
-		<license.copyrightOwners>Miguel Reboiro-Jato, Critina P. Vieira, Hugo López-Fdez, Noé Vázquez González, Florentino Fdez-Riverola and Jorge Vieira</license.copyrightOwners>
-		<license.organizationName>Instituto de Biologia Molecular e Celular (Universidade do Porto) and SING Group (University of Vigo)</license.organizationName>
-		<license.addJavaLicenseAfterPackage>false</license.addJavaLicenseAfterPackage>
-	</properties>
+    <license.licenseName>gpl_v3</license.licenseName>
+    <license.copyrightOwners>Miguel Reboiro-Jato, Critina P. Vieira, Hugo
+      López-Fdez, Noé Vázquez González, Florentino Fdez-Riverola and Jorge
+      Vieira</license.copyrightOwners>
+    <license.organizationName>Instituto de Biologia Molecular e Celular
+      (Universidade do Porto) and SING Group (University of Vigo)</license.organizationName>
+    <license.addJavaLicenseAfterPackage>false</license.addJavaLicenseAfterPackage>
+  </properties>
 
-	<distributionManagement>
-		<repository>
-			<id>sing-maven-releases</id>
-			<name>SING Maven Releases</name>
-			<url>http://maven.sing-group.org/repository/maven-releases</url>
-		</repository>
-		<snapshotRepository>
-			<id>sing-maven-releases</id>
-			<name>SING Maven Snapshots</name>
-			<url>http://maven.sing-group.org/repository/maven-snapshots</url>
-		</snapshotRepository>
-	</distributionManagement>
+  <distributionManagement>
+    <repository>
+      <id>sing-maven-releases</id>
+      <name>SING Maven Releases</name>
+      <url>http://maven.sing-group.org/repository/maven-releases</url>
+    </repository>
+    <snapshotRepository>
+      <id>sing-maven-releases</id>
+      <name>SING Maven Snapshots</name>
+      <url>http://maven.sing-group.org/repository/maven-snapshots</url>
+    </snapshotRepository>
+  </distributionManagement>
 
-	<repositories>
-		<repository>
-			<id>sing-repository</id>
-			<name>SING repository</name>
-			<url>http://maven.sing-group.org/repository/maven</url>
-		</repository>
-		<repository>
-			<id>say.swing.footchooser</id>
-			<url>http://jfontchooser.sourceforge.jp/repository/</url>
-		</repository>
-	</repositories>
+  <repositories>
+    <repository>
+      <id>sing-repository</id>
+      <name>SING repository</name>
+      <url>http://maven.sing-group.org/repository/maven</url>
+    </repository>
+    <repository>
+      <id>sing-maven-releases</id>
+      <name>SING Maven Snapshots</name>
+      <url>http://maven.sing-group.org/repository/maven-snapshots</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>say.swing.footchooser</id>
+      <url>http://jfontchooser.sourceforge.jp/repository/</url>
+    </repository>
+  </repositories>
 
-	<modules>
-		<module>bdbm-api</module>
-		<module>bdbm-core</module>
-		<module>bdbm-cli</module>
-		<module>bdbm-gui</module>
-	</modules>
-	
-	<dependencyManagement>
-		<dependencies>
+  <modules>
+    <module>bdbm-api</module>
+    <module>bdbm-core</module>
+    <module>bdbm-cli</module>
+    <module>bdbm-gui</module>
+  </modules>
+
+  <dependencyManagement>
+    <dependencies>
 			<!-- Modules -->
-			<dependency>
-				<groupId>${project.groupId}</groupId>
-				<artifactId>bdbm-api</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>${project.groupId}</groupId>
-				<artifactId>bdbm-core</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>${project.groupId}</groupId>
-				<artifactId>bdbm-cli</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>${project.groupId}</groupId>
-				<artifactId>bdbm-gui</artifactId>
-				<version>${project.version}</version>
-			</dependency>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>bdbm-api</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>bdbm-core</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>bdbm-cli</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>bdbm-gui</artifactId>
+        <version>${project.version}</version>
+      </dependency>
 			
 			<!-- General -->
-			<dependency>
-				<groupId>es.uvigo.ei.sing</groupId>
-				<artifactId>yaacli</artifactId>
-				<version>${yaacli.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>say.swing</groupId>
-				<artifactId>jfontchooser</artifactId>
-				<version>${jfontchooser.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.commons</groupId>
-				<artifactId>commons-lang3</artifactId>
-				<version>${commons-lang3.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>commons-io</groupId>
-				<artifactId>commons-io</artifactId>
-				<version>${commons-io.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>javax.help</groupId>
-				<artifactId>javahelp</artifactId>
-				<version>${javahelp.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.slf4j</groupId>
-				<artifactId>slf4j-api</artifactId>
-				<version>${slf4j.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>ch.qos.logback</groupId>
-				<artifactId>logback-core</artifactId>
-				<version>${logback.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>ch.qos.logback</groupId>
-				<artifactId>logback-classic</artifactId>
-				<version>${logback.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.codehaus.janino</groupId>
-				<artifactId>janino</artifactId>
-				<version>${janino.version}</version>
-			</dependency>
+      <dependency>
+        <groupId>es.uvigo.ei.sing</groupId>
+        <artifactId>yaacli</artifactId>
+        <version>${yaacli.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>say.swing</groupId>
+        <artifactId>jfontchooser</artifactId>
+        <version>${jfontchooser.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-lang3</artifactId>
+        <version>${commons-lang3.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-io</groupId>
+        <artifactId>commons-io</artifactId>
+        <version>${commons-io.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>javax.help</groupId>
+        <artifactId>javahelp</artifactId>
+        <version>${javahelp.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>${slf4j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-core</artifactId>
+        <version>${logback.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-classic</artifactId>
+        <version>${logback.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.codehaus.janino</groupId>
+        <artifactId>janino</artifactId>
+        <version>${janino.version}</version>
+      </dependency>
 			
 			<!-- Testing -->
-			<dependency>
-				<groupId>junit</groupId>
-				<artifactId>junit</artifactId>
-				<version>${junit.version}</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.easymock</groupId>
-				<artifactId>easymock</artifactId>
-				<version>${easymock.version}</version>
-				<scope>test</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
-	
-	<build>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.codehaus.mojo</groupId>
-					<artifactId>license-maven-plugin</artifactId>
-					<version>${license-maven-plugin.version}</version>
-				</plugin>
-				
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-assembly-plugin</artifactId>
-					<version>${maven-assembly-plugin.version}</version>
-				</plugin>
-				
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-javadoc-plugin</artifactId>
-					<version>${maven-javadoc-plugin.version}</version>
-				</plugin>
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>${junit.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.easymock</groupId>
+        <artifactId>easymock</artifactId>
+        <version>${easymock.version}</version>
+        <scope>test</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-source-plugin</artifactId>
-					<version>${maven-source-plugin.version}</version>
-				</plugin>
-			</plugins>
-		</pluginManagement>
-	
-		<plugins>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>license-maven-plugin</artifactId>
-			</plugin>
-			
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>attach-javadocs</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>license-maven-plugin</artifactId>
+          <version>${license-maven-plugin.version}</version>
+        </plugin>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>attach-sources</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-assembly-plugin</artifactId>
+          <version>${maven-assembly-plugin.version}</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>${maven-javadoc-plugin.version}</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-source-plugin</artifactId>
+          <version>${maven-source-plugin.version}</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>first</id>
+            <goals>
+              <goal>update-file-header</goal>
+            </goals>
+            <phase>process-sources</phase>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>
