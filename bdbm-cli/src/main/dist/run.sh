@@ -1,6 +1,5 @@
 #!/bin/bash
 
-###
 # #%L
 # BDBM CLI
 # %%
