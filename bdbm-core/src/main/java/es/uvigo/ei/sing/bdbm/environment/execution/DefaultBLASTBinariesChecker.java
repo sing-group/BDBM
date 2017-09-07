@@ -8,12 +8,12 @@
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
@@ -32,14 +32,14 @@ import es.uvigo.ei.sing.bdbm.environment.execution.BinaryCheckException;
 
 public class DefaultBLASTBinariesChecker implements BLASTBinariesChecker {
 	private BLASTBinaries bBinaries;
-	
+
 	public DefaultBLASTBinariesChecker() {
 	}
-	
+
 	public DefaultBLASTBinariesChecker(BLASTBinaries bBinaries) {
 		this.bBinaries = bBinaries;
 	}
-	
+
 	public static void checkAll(BLASTBinaries bBinaries)
 	throws BinaryCheckException {
 		new DefaultBLASTBinariesChecker(bBinaries).checkAll();
@@ -92,38 +92,38 @@ public class DefaultBLASTBinariesChecker implements BLASTBinariesChecker {
 
 	protected static void checkCommand(String command) throws BinaryCheckException {
 		final Runtime runtime = Runtime.getRuntime();
-		
+
 		command += " -version";
-		
+
 		try {
 			final Process process = runtime.exec(command);
-			
+
 			final BufferedReader br = new BufferedReader(
 				new InputStreamReader(process.getInputStream()));
-			
+
 			StringBuilder sb = new StringBuilder();
-			
+
 			String line;
 			int countLines = 0;
 			while ((line = br.readLine()) != null) {
 				sb.append(line).append('\n');
 				countLines++;
 			}
-			
+
 			if (countLines != 2) {
 				throw new BinaryCheckException("Unrecognized version output", command);
 			}
 
 			final String[] lines = sb.toString().split("\n");
 			// TODO: Better parsing?
-			if (!lines[1].startsWith("Package")) {
+			if (!lines[1].trim().startsWith("Package")) {
 				throw new BinaryCheckException("Unrecognized version output", command);
 			}
-			
+
 			final int exitStatus = process.waitFor();
 			if (exitStatus != 0) {
 				throw new BinaryCheckException(
-					"Invalid exit status: " + exitStatus, 
+					"Invalid exit status: " + exitStatus,
 					command
 				);
 			}
