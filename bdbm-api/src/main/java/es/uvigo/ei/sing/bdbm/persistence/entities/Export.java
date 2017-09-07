@@ -20,16 +20,10 @@
  * #L%
  */
 
-package es.uvigo.ei.sing.bdbm.persistence;
+package es.uvigo.ei.sing.bdbm.persistence.entities;
 
-public interface BDBMRepositoryManager extends Repository {
-	public abstract DatabaseRepositoryManager database();
+import java.io.File;
 
-	public abstract FastaRepositoryManager fasta();
-
-	public abstract BlastResultsRepositoryManager blastResults();
-
-	public abstract SearchEntryRepositoryManager searchEntry();
-
-	public abstract ExportRepositoryManager export();
+public interface Export extends SequenceEntity, Comparable<Export> {
+	public abstract File getFile();
 }

@@ -20,16 +20,8 @@
  * #L%
  */
 
-package es.uvigo.ei.sing.bdbm.persistence;
+package es.uvigo.ei.sing.bdbm.persistence.entities;
 
-public interface BDBMRepositoryManager extends Repository {
-	public abstract DatabaseRepositoryManager database();
 
-	public abstract FastaRepositoryManager fasta();
-
-	public abstract BlastResultsRepositoryManager blastResults();
-
-	public abstract SearchEntryRepositoryManager searchEntry();
-
-	public abstract ExportRepositoryManager export();
+public interface ProteinExport extends Export, ProteinSequenceEntity {
 }

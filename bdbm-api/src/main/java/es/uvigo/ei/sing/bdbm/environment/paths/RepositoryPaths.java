@@ -33,6 +33,7 @@ public interface RepositoryPaths {
 	public final static String BLAST_RESULTS_PREFIX = "blastResults.";
 	public final static String PROTEINS_PREFIX = "prot.";
 	public final static String NUCLEOTIDES_PREFIX = "nucl.";
+	public final static String EXPORT_PREFIX = "export.";
 	
 	public final static String BASE_DIRECTORY_PROP =
 		REPOSITORY_PREFIX + "baseDir";
@@ -46,6 +47,10 @@ public interface RepositoryPaths {
 		REPOSITORY_PREFIX + FASTA_PREFIX + PROTEINS_PREFIX;
 	public final static String FASTA_NUCLEOTIDES_DIRECTORY_PROP = 
 		REPOSITORY_PREFIX + FASTA_PREFIX + NUCLEOTIDES_PREFIX;
+	public final static String EXPORT_PROTEINS_DIRECTORY_PROP = 
+	  REPOSITORY_PREFIX + EXPORT_PREFIX + PROTEINS_PREFIX;
+	public final static String EXPORT_NUCLEOTIDES_DIRECTORY_PROP = 
+	  REPOSITORY_PREFIX + EXPORT_PREFIX + NUCLEOTIDES_PREFIX;
 	
 	public final static String ENTRY_PROTEINS_DIRECTORY_PROP = 
 		REPOSITORY_PREFIX + SEARCH_ENTRY_PREFIX + PROTEINS_PREFIX;
@@ -71,4 +76,6 @@ public interface RepositoryPaths {
 	public abstract File getSearchEntryNucleotidesDirectory();
 	public abstract File getBlastResultsProteinsDirectory();
 	public abstract File getBlastResultsNucleotidesDirectory();
+	public abstract File getExportProteinsDirectory();
+	public abstract File getExportNucleotidesDirectory();
 }

@@ -35,12 +35,14 @@ public class DefaultRepositoryPaths implements RepositoryPaths {
 	public static final String FASTA_DIRECTORY_NAME = "fasta";
 	public static final String ENTRY_DIRECTORY_NAME = "entry";
 	public static final String BLAST_RESULTS_DIRECTORY_NAME = "blastresults";
+	public static final String EXPORT_DIRECTORY_NAME = "export";
 	
 	private File baseDirectory;
 	private final Map<SequenceType, File> dbDirectories;
 	private final Map<SequenceType, File> fastaDirectories;
 	private final Map<SequenceType, File> entryDirectories;
 	private final Map<SequenceType, File> blastResultsDirectories;
+	private final Map<SequenceType, File> exportDirectories;
 	
 	public DefaultRepositoryPaths(File baseDirectory) 
 	throws IllegalArgumentException {
@@ -53,6 +55,7 @@ public class DefaultRepositoryPaths implements RepositoryPaths {
 		this.fastaDirectories = new HashMap<>();
 		this.entryDirectories = new HashMap<>();
 		this.blastResultsDirectories = new HashMap<>();
+		this.exportDirectories = new HashMap<>();
 		
 		this.updateDefaultDirectories();
 	}
@@ -62,12 +65,14 @@ public class DefaultRepositoryPaths implements RepositoryPaths {
 		this.fastaDirectories.clear();
 		this.entryDirectories.clear();
 		this.blastResultsDirectories.clear();
+		this.exportDirectories.clear();
 		
 		for (SequenceType sequence : SequenceType.values()) {
 			this.dbDirectories.put(sequence, this.defaultDBDirectory(sequence));
 			this.fastaDirectories.put(sequence, this.defaultFastaDirectory(sequence));
 			this.entryDirectories.put(sequence, this.defaultEntryDirectory(sequence));
 			this.blastResultsDirectories.put(sequence, this.defaultBlastResultstDirectory(sequence));
+			this.exportDirectories.put(sequence, this.defaultExportDirectory(sequence));
 		}
 	}
 	
@@ -94,6 +99,10 @@ public class DefaultRepositoryPaths implements RepositoryPaths {
 		return this.defaultDirectory(DefaultRepositoryPaths.BLAST_RESULTS_DIRECTORY_NAME, sequenceType);
 	}
 	
+	protected File defaultExportDirectory(SequenceType sequenceType) {
+		return this.defaultDirectory(DefaultRepositoryPaths.EXPORT_DIRECTORY_NAME, sequenceType);
+	}
+	
 	@Override
 	public File getBaseDirectory() {
 		return this.baseDirectory;
@@ -118,7 +127,9 @@ public class DefaultRepositoryPaths implements RepositoryPaths {
 			paths.getSearchEntryNucleotidesDirectory().isDirectory() &&
 			paths.getSearchEntryProteinsDirectory().isDirectory() &&
 			paths.getBlastResultsNucleotidesDirectory().isDirectory() &&
-			paths.getBlastResultsProteinsDirectory().isDirectory();
+			paths.getBlastResultsProteinsDirectory().isDirectory() &&
+			paths.getExportNucleotidesDirectory().isDirectory() &&
+			paths.getExportProteinsDirectory().isDirectory();
 	}
 	
 	@Override
@@ -138,7 +149,9 @@ public class DefaultRepositoryPaths implements RepositoryPaths {
 				stub.getSearchEntryNucleotidesDirectory(),
 				stub.getSearchEntryProteinsDirectory(),
 				stub.getBlastResultsNucleotidesDirectory(),
-				stub.getBlastResultsProteinsDirectory()
+				stub.getBlastResultsProteinsDirectory(),
+				stub.getExportNucleotidesDirectory(),
+				stub.getExportProteinsDirectory()
 			};
 			
 			for (File subdirectory : subdirectories) {
@@ -226,6 +239,24 @@ public class DefaultRepositoryPaths implements RepositoryPaths {
 	public void setBlastResultsNucleotidesDirectory(File directory) {
 		this.blastResultsDirectories.put(SequenceType.NUCLEOTIDE, directory);
 	}
+
+	@Override
+	public File getExportNucleotidesDirectory() {
+		return this.exportDirectories.get(SequenceType.NUCLEOTIDE);
+	}
+	
+	public void setExportNucleotidesDirectory(File directory) {
+		this.exportDirectories.put(SequenceType.NUCLEOTIDE, directory);
+	}
+
+	@Override
+	public File getExportProteinsDirectory() {
+		return this.exportDirectories.get(SequenceType.PROTEIN);
+	}
+	
+	public void setExportProteinsDirectory(File directory) {
+		this.exportDirectories.put(SequenceType.PROTEIN, directory);
+	}
 	
 	public void setProperties(Map<String, String> props) {
 		if (props.containsKey(RepositoryPaths.BASE_DIRECTORY_PROP)) {
@@ -271,6 +302,16 @@ public class DefaultRepositoryPaths implements RepositoryPaths {
 		if (props.containsKey(RepositoryPaths.BLAST_RESULTS_NUCLEOTIDES_DIRECTORY_PROP)) {
 			this.setBlastResultsNucleotidesDirectory(
 				new File(props.get(RepositoryPaths.BLAST_RESULTS_NUCLEOTIDES_DIRECTORY_PROP))
+			);
+		}
+		if (props.containsKey(RepositoryPaths.EXPORT_NUCLEOTIDES_DIRECTORY_PROP)) {
+			this.setExportProteinsDirectory(
+				new File(props.get(RepositoryPaths.EXPORT_PROTEINS_DIRECTORY_PROP))
+			);
+		}
+		if (props.containsKey(RepositoryPaths.EXPORT_PROTEINS_DIRECTORY_PROP)) {
+			this.setExportNucleotidesDirectory(
+				new File(props.get(RepositoryPaths.EXPORT_PROTEINS_DIRECTORY_PROP))
 			);
 		}
 	}

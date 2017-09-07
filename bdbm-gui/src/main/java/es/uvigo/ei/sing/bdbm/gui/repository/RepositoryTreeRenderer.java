@@ -40,6 +40,8 @@ public class RepositoryTreeRenderer extends DefaultTreeCellRenderer {
 	
 	final static ImageIcon ICON_FASTA = 
 		new ImageIcon(RepositoryTreeRenderer.class.getResource("images/fasta.png"));
+	final static ImageIcon ICON_EXPORT = 
+		new ImageIcon(RepositoryTreeRenderer.class.getResource("images/file-export.png"));
 	final static ImageIcon ICON_REGULAR_DATABASE = 
 		new ImageIcon(RepositoryTreeRenderer.class.getResource("images/database.png"));
 	final static ImageIcon ICON_AGGREGATED_DATABASE = 

@@ -1,6 +1,6 @@
 /*-
  * #%L
- * BDBM API
+ * BDBM Core
  * %%
  * Copyright (C) 2014 - 2017 Miguel Reboiro-Jato, Critina P. Vieira, Hugo López-Fdez, Noé Vázquez González, Florentino Fdez-Riverola and Jorge Vieira
  * %%
@@ -20,16 +20,14 @@
  * #L%
  */
 
-package es.uvigo.ei.sing.bdbm.persistence;
+package es.uvigo.ei.sing.bdbm.persistence.entities;
 
-public interface BDBMRepositoryManager extends Repository {
-	public abstract DatabaseRepositoryManager database();
+import java.io.File;
 
-	public abstract FastaRepositoryManager fasta();
+import es.uvigo.ei.sing.bdbm.environment.SequenceType;
 
-	public abstract BlastResultsRepositoryManager blastResults();
-
-	public abstract SearchEntryRepositoryManager searchEntry();
-
-	public abstract ExportRepositoryManager export();
+public class DefaultProteinExport extends AbstractExport implements ProteinExport {
+	public DefaultProteinExport(File file) {
+		super(SequenceType.PROTEIN, file);
+	}
 }

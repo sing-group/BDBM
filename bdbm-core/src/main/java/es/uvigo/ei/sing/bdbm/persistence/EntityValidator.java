@@ -24,13 +24,13 @@ package es.uvigo.ei.sing.bdbm.persistence;
 
 import java.util.List;
 
-import es.uvigo.ei.sing.bdbm.persistence.EntityValidationException;
 import es.uvigo.ei.sing.bdbm.persistence.entities.AbstractDatabase;
-import es.uvigo.ei.sing.bdbm.persistence.entities.Database;
 import es.uvigo.ei.sing.bdbm.persistence.entities.BlastResults;
+import es.uvigo.ei.sing.bdbm.persistence.entities.BlastResults.BlastResultsEntry;
+import es.uvigo.ei.sing.bdbm.persistence.entities.Database;
+import es.uvigo.ei.sing.bdbm.persistence.entities.Export;
 import es.uvigo.ei.sing.bdbm.persistence.entities.Fasta;
 import es.uvigo.ei.sing.bdbm.persistence.entities.SearchEntry;
-import es.uvigo.ei.sing.bdbm.persistence.entities.BlastResults.BlastResultsEntry;
 import es.uvigo.ei.sing.bdbm.persistence.entities.SearchEntry.Query;
 
 abstract class EntityValidator<T> {
@@ -54,6 +54,22 @@ abstract class EntityValidator<T> {
 					} else {
 						throw new EntityValidationException("FASTA file doesn't exists or isn't a file: "  + fasta.getFile());
 					}
+				}
+			}
+		};
+	}
+
+	public static EntityValidator<Export> export() {
+		return new EntityValidator<Export>() {
+			@Override
+			public void validate(Export export)
+				throws EntityValidationException {
+				if (Boolean.valueOf(System.getProperty("entities.export.validate", "true"))) {
+//					if (!export.getFile().isFile()) {
+//						throw new EntityValidationException("Export file doesn't exists or isn't a file: "  + export.getFile());
+//					} else if (!export.getFile().isDirectory()) {
+//						throw new EntityValidationException("Export file doesn't exists or isn't a directory: "  + export.getFile());
+//					}
 				}
 			}
 		};

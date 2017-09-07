@@ -26,12 +26,14 @@ import java.io.File;
 import java.io.IOException;
 
 import es.uvigo.ei.sing.bdbm.environment.SequenceType;
-import es.uvigo.ei.sing.bdbm.persistence.entities.AbstractDatabase;
 import es.uvigo.ei.sing.bdbm.persistence.entities.AbstractBlastResults;
+import es.uvigo.ei.sing.bdbm.persistence.entities.AbstractDatabase;
+import es.uvigo.ei.sing.bdbm.persistence.entities.AbstractExport;
 import es.uvigo.ei.sing.bdbm.persistence.entities.AbstractFasta;
 import es.uvigo.ei.sing.bdbm.persistence.entities.AbstractSearchEntry;
-import es.uvigo.ei.sing.bdbm.persistence.entities.Database;
 import es.uvigo.ei.sing.bdbm.persistence.entities.BlastResults;
+import es.uvigo.ei.sing.bdbm.persistence.entities.Database;
+import es.uvigo.ei.sing.bdbm.persistence.entities.Export;
 import es.uvigo.ei.sing.bdbm.persistence.entities.Fasta;
 import es.uvigo.ei.sing.bdbm.persistence.entities.SearchEntry;
 import es.uvigo.ei.sing.bdbm.persistence.entities.SequenceEntity;
@@ -80,6 +82,15 @@ abstract class EntityBuilder<T extends SequenceEntity> {
 			@Override
 			public Fasta create(SequenceType sequenceType, File file) {
 				return AbstractFasta.newFasta(sequenceType, file);
+			}
+		};
+	}
+
+	public final static EntityBuilder<Export> export() {
+		return new EntityBuilder<Export>() {
+			@Override
+			public Export create(SequenceType sequenceType, File file) {
+				return AbstractExport.newExport(sequenceType, file);
 			}
 		};
 	}
