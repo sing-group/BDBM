@@ -53,20 +53,20 @@ import es.uvigo.ei.sing.bdbm.persistence.BDBMRepositoryManager;
 import es.uvigo.ei.sing.bdbm.persistence.DatabaseRepositoryManager;
 import es.uvigo.ei.sing.bdbm.persistence.EntityAlreadyExistsException;
 import es.uvigo.ei.sing.bdbm.persistence.EntityValidationException;
-import es.uvigo.ei.sing.bdbm.persistence.ExportRepositoryManager;
+import es.uvigo.ei.sing.bdbm.persistence.BlastResultsRepositoryManager;
 import es.uvigo.ei.sing.bdbm.persistence.FastaRepositoryManager;
 import es.uvigo.ei.sing.bdbm.persistence.SearchEntryRepositoryManager;
 import es.uvigo.ei.sing.bdbm.persistence.entities.Database;
-import es.uvigo.ei.sing.bdbm.persistence.entities.Export;
-import es.uvigo.ei.sing.bdbm.persistence.entities.Export.ExportEntry;
+import es.uvigo.ei.sing.bdbm.persistence.entities.BlastResults;
+import es.uvigo.ei.sing.bdbm.persistence.entities.BlastResults.BlastResultsEntry;
 import es.uvigo.ei.sing.bdbm.persistence.entities.Fasta;
 import es.uvigo.ei.sing.bdbm.persistence.entities.NucleotideDatabase;
-import es.uvigo.ei.sing.bdbm.persistence.entities.NucleotideExport;
+import es.uvigo.ei.sing.bdbm.persistence.entities.NucleotideBlastResults;
 import es.uvigo.ei.sing.bdbm.persistence.entities.NucleotideFasta;
 import es.uvigo.ei.sing.bdbm.persistence.entities.NucleotideSearchEntry;
 import es.uvigo.ei.sing.bdbm.persistence.entities.NucleotideSearchEntry.NucleotideQuery;
 import es.uvigo.ei.sing.bdbm.persistence.entities.ProteinDatabase;
-import es.uvigo.ei.sing.bdbm.persistence.entities.ProteinExport;
+import es.uvigo.ei.sing.bdbm.persistence.entities.ProteinBlastResults;
 import es.uvigo.ei.sing.bdbm.persistence.entities.ProteinFasta;
 import es.uvigo.ei.sing.bdbm.persistence.entities.ProteinSearchEntry;
 import es.uvigo.ei.sing.bdbm.persistence.entities.ProteinSearchEntry.ProteinQuery;
@@ -140,8 +140,8 @@ public class DefaultBDBMController implements BDBMController {
 			return this.repositoryManager.fasta().exists((Fasta) entity);
 		} else if (entity instanceof SearchEntry) {
 			return this.repositoryManager.searchEntry().exists((SearchEntry) entity);
-		} else if (entity instanceof Export) {
-			return this.repositoryManager.export().exists((Export) entity);
+		} else if (entity instanceof BlastResults) {
+			return this.repositoryManager.blastResults().exists((BlastResults) entity);
 		} else {
 			return false;
 		}
@@ -157,10 +157,10 @@ public class DefaultBDBMController implements BDBMController {
 			return this.delete((SearchEntry) entity);
 		} else if (entity instanceof Query) {
 			return this.delete((Query) entity);
-		} else if (entity instanceof Export) {
-			return this.delete((Export) entity);
-		} else if (entity instanceof ExportEntry) {
-			return this.delete((ExportEntry) entity);
+		} else if (entity instanceof BlastResults) {
+			return this.delete((BlastResults) entity);
+		} else if (entity instanceof BlastResultsEntry) {
+			return this.delete((BlastResultsEntry) entity);
 		} else {
 			return false;
 		}
@@ -194,17 +194,17 @@ public class DefaultBDBMController implements BDBMController {
 	}
 	
 	@Override
-	public boolean delete(Export export) throws IOException {
-		return this.repositoryManager.export().delete(export);
+	public boolean delete(BlastResults blastResults) throws IOException {
+		return this.repositoryManager.blastResults().delete(blastResults);
 	}
 	
 	@Override
-	public boolean delete(ExportEntry exportEntry) throws IOException {
-		final Export export = exportEntry.getExport();
+	public boolean delete(BlastResultsEntry blastResultsEntry) throws IOException {
+		final BlastResults blastResults = blastResultsEntry.getBlastResults();
 		
-		export.deleteExportEntry(exportEntry);
-		if (export.listEntries().isEmpty()) {
-			return this.delete(export);
+		blastResults.deleteBlastResultsEntry(blastResultsEntry);
+		if (blastResults.listEntries().isEmpty()) {
+			return this.delete(blastResults);
 		} else {
 			return true;
 		}
@@ -241,13 +241,13 @@ public class DefaultBDBMController implements BDBMController {
 	}
 	
 	@Override
-	public ProteinExport[] listProteinExports() {
-		return this.repositoryManager.export().listProtein();
+	public ProteinBlastResults[] listProteinBlastResults() {
+		return this.repositoryManager.blastResults().listProtein();
 	}
 	
 	@Override
-	public NucleotideExport[] listNucleotideExports() {
-		return this.repositoryManager.export().listNucleotide();
+	public NucleotideBlastResults[] listNucleotideBlastResults() {
+		return this.repositoryManager.blastResults().listNucleotide();
 	}
 	
 	@Override
@@ -371,7 +371,7 @@ public class DefaultBDBMController implements BDBMController {
 	}
 	
 	@Override
-	public NucleotideExport blastn(
+	public NucleotideBlastResults blastn(
 		NucleotideDatabase database,
 		File queryFile, 
 		BigDecimal expectedValue, 
@@ -380,30 +380,30 @@ public class DefaultBDBMController implements BDBMController {
 		String outputName,
 		Map<String, String> additionalParameters
 	) throws IOException, InterruptedException, ExecutionException, IllegalStateException {
-		final ExportRepositoryManager exportManager = this.repositoryManager.export();
-		final NucleotideExport export = exportManager.getNucleotide(
+		final BlastResultsRepositoryManager blastResultsManager = this.repositoryManager.blastResults();
+		final NucleotideBlastResults blastResults = blastResultsManager.getNucleotide(
 			database.getName()
 		);
 		
 		try {
 			this.repositoryManager.fasta().validateEntityPath(SequenceType.NUCLEOTIDE, queryFile);
 			
-			this.blastBinariesExecutor.executeBlastN(database, queryFile, export, expectedValue, filter, outputName, additionalParameters);
+			this.blastBinariesExecutor.executeBlastN(database, queryFile, blastResults, expectedValue, filter, outputName, additionalParameters);
 			
-			generateExportEntry(database, outputName, export, keepSingleSequenceFiles);
+			generateBlastResultsEntry(database, outputName, blastResults, keepSingleSequenceFiles);
 			
-			return export;
+			return blastResults;
 		} catch (EntityValidationException e) {
 			throw new IOException("Invalid query file: " + queryFile.getAbsolutePath());
 		} finally {
-			if (!exportManager.exists(export)) {
-				exportManager.delete(export);
+			if (!blastResultsManager.exists(blastResults)) {
+				blastResultsManager.delete(blastResults);
 			}
 		}
 	}
 	
 	@Override
-	public NucleotideExport blastn(
+	public NucleotideBlastResults blastn(
 		NucleotideDatabase database, 
 		NucleotideQuery query, 
 		BigDecimal expectedValue,
@@ -412,26 +412,26 @@ public class DefaultBDBMController implements BDBMController {
 		String outputName,
 		Map<String, String> additionalParameters
 	) throws IOException, InterruptedException, ExecutionException, IllegalStateException {
-		final ExportRepositoryManager exportManager = this.repositoryManager.export();
-		final NucleotideExport export = exportManager.getNucleotide(
+		final BlastResultsRepositoryManager blastResultsManager = this.repositoryManager.blastResults();
+		final NucleotideBlastResults blastResults = blastResultsManager.getNucleotide(
 			database.getName()
 		);
 		
 		try {
-			this.blastBinariesExecutor.executeBlastN(database, query, export, expectedValue, filter, outputName, additionalParameters);
+			this.blastBinariesExecutor.executeBlastN(database, query, blastResults, expectedValue, filter, outputName, additionalParameters);
 			
-			generateExportEntry(database, outputName, export, keepSingleSequenceFiles);
+			generateBlastResultsEntry(database, outputName, blastResults, keepSingleSequenceFiles);
 			
-			return export;
+			return blastResults;
 		} finally {
-			if (!exportManager.exists(export)) {
-				exportManager.delete(export);
+			if (!blastResultsManager.exists(blastResults)) {
+				blastResultsManager.delete(blastResults);
 			}
 		}
 	}
 
 	@Override
-	public ProteinExport blastp(
+	public ProteinBlastResults blastp(
 		ProteinDatabase database,
 		File queryFile, 
 		BigDecimal expectedValue, 
@@ -440,31 +440,31 @@ public class DefaultBDBMController implements BDBMController {
 		String outputName,
 		Map<String, String> additionalParameters
 	) throws IOException, InterruptedException, ExecutionException, IllegalStateException {
-		final ExportRepositoryManager exportManager = this.repositoryManager.export();
-		final ProteinExport export = exportManager.getProtein(
+		final BlastResultsRepositoryManager blastResultsManager = this.repositoryManager.blastResults();
+		final ProteinBlastResults blastResults = blastResultsManager.getProtein(
 			database.getName()
 		);
 		
 		try {
 			this.repositoryManager.fasta().validateEntityPath(SequenceType.PROTEIN, queryFile);
 			this.blastBinariesExecutor.executeBlastP(
-				database, queryFile, export, expectedValue, filter, outputName, additionalParameters
+				database, queryFile, blastResults, expectedValue, filter, outputName, additionalParameters
 			);
 
-			generateExportEntry(database, outputName, export, keepSingleSequenceFiles);
+			generateBlastResultsEntry(database, outputName, blastResults, keepSingleSequenceFiles);
 			
-			return export;
+			return blastResults;
 		} catch (EntityValidationException e) {
 			throw new IOException("Invalid query file: " + queryFile.getAbsolutePath());
 		} finally {
-			if (!exportManager.exists(export)) {
-				exportManager.delete(export);
+			if (!blastResultsManager.exists(blastResults)) {
+				blastResultsManager.delete(blastResults);
 			}
 		}
 	}
 
 	@Override
-	public ProteinExport blastp(
+	public ProteinBlastResults blastp(
 		ProteinDatabase database,
 		ProteinQuery query, 
 		BigDecimal expectedValue, 
@@ -473,28 +473,28 @@ public class DefaultBDBMController implements BDBMController {
 		String outputName,
 		Map<String, String> additionalParameters
 	) throws IOException, InterruptedException, ExecutionException, IllegalStateException {
-		final ExportRepositoryManager exportManager = this.repositoryManager.export();
-		final ProteinExport export = exportManager.getProtein(
+		final BlastResultsRepositoryManager blastResultsManager = this.repositoryManager.blastResults();
+		final ProteinBlastResults blastResults = blastResultsManager.getProtein(
 			database.getName()
 		);
 		
 		try {
 			this.blastBinariesExecutor.executeBlastP(
-				database, query, export, expectedValue, filter, outputName, additionalParameters
+				database, query, blastResults, expectedValue, filter, outputName, additionalParameters
 			);
 
-			this.generateExportEntry(database, outputName, export, keepSingleSequenceFiles);
+			this.generateBlastResultsEntry(database, outputName, blastResults, keepSingleSequenceFiles);
 			
-			return export;
+			return blastResults;
 		} finally {
-			if (!exportManager.exists(export)) {
-				exportManager.delete(export);
+			if (!blastResultsManager.exists(blastResults)) {
+				blastResultsManager.delete(blastResults);
 			}
 		}
 	}
 	
 	@Override
-	public NucleotideExport tblastx(
+	public NucleotideBlastResults tblastx(
 		NucleotideDatabase database, 
 		File queryFile, 
 		BigDecimal expectedValue,
@@ -503,30 +503,30 @@ public class DefaultBDBMController implements BDBMController {
 		String outputName,
 		Map<String, String> additionalParameters
 	) throws IOException, InterruptedException, ExecutionException, IllegalStateException {
-		final ExportRepositoryManager exportManager = this.repositoryManager.export();
-		final NucleotideExport export = exportManager.getNucleotide(
+		final BlastResultsRepositoryManager blastResultsManager = this.repositoryManager.blastResults();
+		final NucleotideBlastResults blastResults = blastResultsManager.getNucleotide(
 			database.getName()
 		);
 		
 		try {
 			this.repositoryManager.fasta().validateEntityPath(SequenceType.NUCLEOTIDE, queryFile);
 			
-			this.blastBinariesExecutor.executeTBlastX(database, queryFile, export, expectedValue, filter, outputName, additionalParameters);
+			this.blastBinariesExecutor.executeTBlastX(database, queryFile, blastResults, expectedValue, filter, outputName, additionalParameters);
 				
-			generateExportEntry(database, outputName, export, keepSingleSequenceFiles);
+			generateBlastResultsEntry(database, outputName, blastResults, keepSingleSequenceFiles);
 				
-			return export;
+			return blastResults;
 		} catch (EntityValidationException e) {
 			throw new IOException("Invalid query file: " + queryFile.getAbsolutePath());
 		} finally {
-			if (!exportManager.exists(export)) {
-				exportManager.delete(export);
+			if (!blastResultsManager.exists(blastResults)) {
+				blastResultsManager.delete(blastResults);
 			}
 		}
 	}
 	
 	@Override
-	public NucleotideExport tblastx(
+	public NucleotideBlastResults tblastx(
 		NucleotideDatabase database, 
 		NucleotideQuery query, 
 		BigDecimal expectedValue,
@@ -535,26 +535,26 @@ public class DefaultBDBMController implements BDBMController {
 		String outputName,
 		Map<String, String> additionalParameters
 	) throws IOException, InterruptedException, ExecutionException, IllegalStateException {
-		final ExportRepositoryManager exportManager = this.repositoryManager.export();
-		final NucleotideExport export = exportManager.getNucleotide(
+		final BlastResultsRepositoryManager blastResultsManager = this.repositoryManager.blastResults();
+		final NucleotideBlastResults blastResults = blastResultsManager.getNucleotide(
 			database.getName()
 		);
 		
 		try {
-			this.blastBinariesExecutor.executeTBlastX(database, query, export, expectedValue, filter, outputName, additionalParameters);
+			this.blastBinariesExecutor.executeTBlastX(database, query, blastResults, expectedValue, filter, outputName, additionalParameters);
 			
-			generateExportEntry(database, outputName, export, keepSingleSequenceFiles);
+			generateBlastResultsEntry(database, outputName, blastResults, keepSingleSequenceFiles);
 			
-			return export;
+			return blastResults;
 		} finally {
-			if (!exportManager.exists(export)) {
-				exportManager.delete(export);
+			if (!blastResultsManager.exists(blastResults)) {
+				blastResultsManager.delete(blastResults);
 			}
 		}
 	}
 	
 	@Override
-	public NucleotideExport tblastn(
+	public NucleotideBlastResults tblastn(
 		NucleotideDatabase database, 
 		File queryFile, 
 		BigDecimal expectedValue,
@@ -563,30 +563,30 @@ public class DefaultBDBMController implements BDBMController {
 		String outputName,
 		Map<String, String> additionalParameters
 	) throws IOException, InterruptedException, ExecutionException, IllegalStateException {
-		final ExportRepositoryManager exportManager = this.repositoryManager.export();
-		final NucleotideExport export = exportManager.getNucleotide(
+		final BlastResultsRepositoryManager blastResultsManager = this.repositoryManager.blastResults();
+		final NucleotideBlastResults blastResults = blastResultsManager.getNucleotide(
 			database.getName()
 		);
 		
 		try {
 			this.repositoryManager.fasta().validateEntityPath(SequenceType.PROTEIN, queryFile);
 			
-			this.blastBinariesExecutor.executeTBlastN(database, queryFile, export, expectedValue, filter, outputName, additionalParameters);
+			this.blastBinariesExecutor.executeTBlastN(database, queryFile, blastResults, expectedValue, filter, outputName, additionalParameters);
 			
-			generateExportEntry(database, outputName, export, keepSingleSequenceFiles);
+			generateBlastResultsEntry(database, outputName, blastResults, keepSingleSequenceFiles);
 			
-			return export;
+			return blastResults;
 		} catch (EntityValidationException e) {
 			throw new IOException("Invalid query file: " + queryFile.getAbsolutePath());
 		} finally {
-			if (!exportManager.exists(export)) {
-				exportManager.delete(export);
+			if (!blastResultsManager.exists(blastResults)) {
+				blastResultsManager.delete(blastResults);
 			}
 		}
 	}
 	
 	@Override
-	public NucleotideExport tblastn(
+	public NucleotideBlastResults tblastn(
 		NucleotideDatabase database, 
 		ProteinQuery query, 
 		BigDecimal expectedValue,
@@ -595,20 +595,20 @@ public class DefaultBDBMController implements BDBMController {
 		String outputName,
 		Map<String, String> additionalParameters
 	) throws IOException, InterruptedException, ExecutionException, IllegalStateException {
-		final ExportRepositoryManager exportManager = this.repositoryManager.export();
-		final NucleotideExport export = exportManager.getNucleotide(
+		final BlastResultsRepositoryManager blastResultsManager = this.repositoryManager.blastResults();
+		final NucleotideBlastResults blastResults = blastResultsManager.getNucleotide(
 			database.getName()
 		);
 		
 		try {
-			this.blastBinariesExecutor.executeTBlastN(database, query, export, expectedValue, filter, outputName, additionalParameters);
+			this.blastBinariesExecutor.executeTBlastN(database, query, blastResults, expectedValue, filter, outputName, additionalParameters);
 			
-			generateExportEntry(database, outputName, export, keepSingleSequenceFiles);
+			generateBlastResultsEntry(database, outputName, blastResults, keepSingleSequenceFiles);
 			
-			return export;
+			return blastResults;
 		} finally {
-			if (!exportManager.exists(export)) {
-				exportManager.delete(export);
+			if (!blastResultsManager.exists(blastResults)) {
+				blastResultsManager.delete(blastResults);
 			}
 		}
 	}
@@ -618,36 +618,36 @@ public class DefaultBDBMController implements BDBMController {
 		return this.blastBinariesExecutor.getBlastAdditionalParameters(blastType);
 	}
 
-	private void generateExportEntry(
+	private void generateBlastResultsEntry(
 		final Database database,
 		final String outputName, 
-		final Export export,
+		final BlastResults blastResults,
 		final boolean keepSingleSequenceFiles
 	) throws InterruptedException, ExecutionException, IOException {
-		final ExportEntry exportEntry = export.getExportEntry(outputName);
+		final BlastResultsEntry blastResultsEntry = blastResults.getBlastResultsEntry(outputName);
 		
-		if (exportEntry == null) {
+		if (blastResultsEntry == null) {
 			throw new IllegalStateException("Missing output file");
 		} else {
 			final List<String> alignments = 
-				this.blastBinariesExecutor.extractSignificantSequences(exportEntry);
+				this.blastBinariesExecutor.extractSignificantSequences(blastResultsEntry);
 			
 			for (String alignment : alignments) {
 				this.blastBinariesExecutor.executeBlastDBCMD(
-					database, exportEntry, alignment
+					database, blastResultsEntry, alignment
 				);
 			}
 			
-			for (File fastas : exportEntry.getSequenceFiles()) {
+			for (File fastas : blastResultsEntry.getSequenceFiles()) {
 				FileUtils.write(
-					exportEntry.getSummaryFastaFile(), 
+					blastResultsEntry.getSummaryFastaFile(), 
 					FileUtils.readFileToString(fastas), 
 					true
 				);
 			}
 			
 			if (!keepSingleSequenceFiles)
-				exportEntry.deleteSequenceFiles();
+				blastResultsEntry.deleteSequenceFiles();
 		}
 	}
 	

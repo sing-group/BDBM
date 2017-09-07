@@ -66,12 +66,12 @@ import es.uvigo.ei.sing.bdbm.gui.command.dialogs.ReformatFastaCommandDialog;
 import es.uvigo.ei.sing.bdbm.gui.command.dialogs.RetrieveSearchEntryCommandDialog;
 import es.uvigo.ei.sing.bdbm.gui.repository.RepositoryTreeModel.TextFileMutableTreeNode;
 import es.uvigo.ei.sing.bdbm.persistence.entities.Database;
-import es.uvigo.ei.sing.bdbm.persistence.entities.Export;
+import es.uvigo.ei.sing.bdbm.persistence.entities.BlastResults;
 import es.uvigo.ei.sing.bdbm.persistence.entities.Fasta;
 import es.uvigo.ei.sing.bdbm.persistence.entities.NucleotideFasta;
 import es.uvigo.ei.sing.bdbm.persistence.entities.SearchEntry;
 import es.uvigo.ei.sing.bdbm.persistence.entities.SequenceEntity;
-import es.uvigo.ei.sing.bdbm.persistence.entities.Export.ExportEntry;
+import es.uvigo.ei.sing.bdbm.persistence.entities.BlastResults.BlastResultsEntry;
 import es.uvigo.ei.sing.bdbm.persistence.entities.SearchEntry.Query;
 import es.uvigo.ei.sing.yaacli.command.Command;
 import es.uvigo.ei.sing.yaacli.command.option.FileOption;
@@ -269,18 +269,18 @@ public class OperationsRepositoryListener extends MouseAdapter {
 								"Query", "query", tree, searchEntry, 
 								e.getX(), e.getY()
 							);
-						} else if (node.getUserObject() instanceof Export) {
-							final Export export = (Export) node.getUserObject();
+						} else if (node.getUserObject() instanceof BlastResults) {
+							final BlastResults blastResults = (BlastResults) node.getUserObject();
 							
 							this.showPopupMenu(
-								"Database Export", "database export", tree, export, 
+								"Database BLAST results", "database blast results", tree, blastResults, 
 								e.getX(), e.getY()
 							);
-						} else if (node.getUserObject() instanceof ExportEntry) {
-							final ExportEntry entry = (ExportEntry) node.getUserObject();
+						} else if (node.getUserObject() instanceof BlastResultsEntry) {
+							final BlastResultsEntry entry = (BlastResultsEntry) node.getUserObject();
 							
 							this.showPopupMenu(
-								"Database Entry", "database entry", tree, entry, 
+								"Database BLAST Results Entry", "database blast results entry", tree, entry, 
 								e.getX(), e.getY()
 							);
 						} else if (node instanceof TextFileMutableTreeNode) {

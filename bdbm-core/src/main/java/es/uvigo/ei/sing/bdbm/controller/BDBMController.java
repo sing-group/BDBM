@@ -41,19 +41,19 @@ import es.uvigo.ei.sing.bdbm.fasta.naming.FastaSequenceRenameMode;
 import es.uvigo.ei.sing.bdbm.persistence.BDBMRepositoryManager;
 import es.uvigo.ei.sing.bdbm.persistence.EntityAlreadyExistsException;
 import es.uvigo.ei.sing.bdbm.persistence.entities.Database;
-import es.uvigo.ei.sing.bdbm.persistence.entities.Export;
+import es.uvigo.ei.sing.bdbm.persistence.entities.BlastResults;
 import es.uvigo.ei.sing.bdbm.persistence.entities.Fasta;
 import es.uvigo.ei.sing.bdbm.persistence.entities.NucleotideDatabase;
-import es.uvigo.ei.sing.bdbm.persistence.entities.NucleotideExport;
+import es.uvigo.ei.sing.bdbm.persistence.entities.NucleotideBlastResults;
 import es.uvigo.ei.sing.bdbm.persistence.entities.NucleotideFasta;
 import es.uvigo.ei.sing.bdbm.persistence.entities.NucleotideSearchEntry;
 import es.uvigo.ei.sing.bdbm.persistence.entities.ProteinDatabase;
-import es.uvigo.ei.sing.bdbm.persistence.entities.ProteinExport;
+import es.uvigo.ei.sing.bdbm.persistence.entities.ProteinBlastResults;
 import es.uvigo.ei.sing.bdbm.persistence.entities.ProteinFasta;
 import es.uvigo.ei.sing.bdbm.persistence.entities.ProteinSearchEntry;
 import es.uvigo.ei.sing.bdbm.persistence.entities.SearchEntry;
 import es.uvigo.ei.sing.bdbm.persistence.entities.SequenceEntity;
-import es.uvigo.ei.sing.bdbm.persistence.entities.Export.ExportEntry;
+import es.uvigo.ei.sing.bdbm.persistence.entities.BlastResults.BlastResultsEntry;
 import es.uvigo.ei.sing.bdbm.persistence.entities.NucleotideSearchEntry.NucleotideQuery;
 import es.uvigo.ei.sing.bdbm.persistence.entities.ProteinSearchEntry.ProteinQuery;
 import es.uvigo.ei.sing.bdbm.persistence.entities.SearchEntry.Query;
@@ -73,18 +73,18 @@ public interface BDBMController {
 	public abstract boolean delete(Fasta fasta) throws IOException;
 	public abstract boolean delete(SearchEntry search) throws IOException;
 	public abstract boolean delete(Query query) throws IOException;
-	public abstract boolean delete(Export export) throws IOException;
-	public abstract boolean delete(ExportEntry exportEntry) throws IOException;
+	public abstract boolean delete(BlastResults blastResults) throws IOException;
+	public abstract boolean delete(BlastResultsEntry blastResultsEntry) throws IOException;
 
 	public abstract ProteinDatabase[] listProteinDatabases();
 	public abstract ProteinFasta[] listProteinFastas();
 	public abstract ProteinSearchEntry[] listProteinSearchEntries();
-	public abstract ProteinExport[] listProteinExports();
+	public abstract ProteinBlastResults[] listProteinBlastResults();
 	
 	public abstract NucleotideDatabase[] listNucleotideDatabases();
 	public abstract NucleotideFasta[] listNucleotideFastas();
 	public abstract NucleotideSearchEntry[] listNucleotideSearchEntries();
-	public abstract NucleotideExport[] listNucleotideExports();
+	public abstract NucleotideBlastResults[] listNucleotideBlastResults();
 
 	public abstract Fasta importFasta(SequenceType sequenceType, File file)
 		throws EntityAlreadyExistsException, IOException;
@@ -98,7 +98,7 @@ public interface BDBMController {
 	public abstract SearchEntry retrieveSearchEntry(Database database, String accession)
 		throws InterruptedException, ExecutionException, IOException;
 
-	public abstract NucleotideExport blastn(
+	public abstract NucleotideBlastResults blastn(
 		NucleotideDatabase database,
 		NucleotideQuery query,
 		BigDecimal expectedValue, 
@@ -108,7 +108,7 @@ public interface BDBMController {
 		Map<String, String> additionalParameters
 	) throws IOException, InterruptedException, ExecutionException, IllegalStateException;
 	
-	public abstract NucleotideExport blastn(
+	public abstract NucleotideBlastResults blastn(
 		NucleotideDatabase database,
 		File queryFile,
 		BigDecimal expectedValue, 
@@ -118,7 +118,7 @@ public interface BDBMController {
 		Map<String, String> additionalParameters
 	) throws IOException, InterruptedException, ExecutionException, IllegalStateException;
 
-	public abstract ProteinExport blastp(
+	public abstract ProteinBlastResults blastp(
 		ProteinDatabase database,
 		ProteinQuery query, 
 		BigDecimal expectedValue, 
@@ -128,7 +128,7 @@ public interface BDBMController {
 		Map<String, String> additionalParameters
 	) throws IOException, InterruptedException, ExecutionException, IllegalStateException;
 	
-	public abstract ProteinExport blastp(
+	public abstract ProteinBlastResults blastp(
 		ProteinDatabase database,
 		File queryFile,
 		BigDecimal expectedValue, 
@@ -138,7 +138,7 @@ public interface BDBMController {
 		Map<String, String> additionalParameters
 	) throws IOException, InterruptedException, ExecutionException, IllegalStateException;
 
-	public abstract NucleotideExport tblastx(
+	public abstract NucleotideBlastResults tblastx(
 		NucleotideDatabase database,
 		NucleotideQuery query,
 		BigDecimal expectedValue, 
@@ -148,7 +148,7 @@ public interface BDBMController {
 		Map<String, String> additionalParameters
 	) throws IOException, InterruptedException, ExecutionException, IllegalStateException;
 
-	public abstract NucleotideExport tblastx(
+	public abstract NucleotideBlastResults tblastx(
 		NucleotideDatabase database,
 		File queryFile,
 		BigDecimal expectedValue, 
@@ -158,7 +158,7 @@ public interface BDBMController {
 		Map<String, String> additionalParameters
 	) throws IOException, InterruptedException, ExecutionException, IllegalStateException;
 
-	public abstract NucleotideExport tblastn(
+	public abstract NucleotideBlastResults tblastn(
 		NucleotideDatabase database,
 		ProteinQuery query,
 		BigDecimal expectedValue,
@@ -168,7 +168,7 @@ public interface BDBMController {
 		Map<String, String> additionalParameters
 	) throws IOException, InterruptedException, ExecutionException, IllegalStateException;
 
-	public abstract NucleotideExport tblastn(
+	public abstract NucleotideBlastResults tblastn(
 		NucleotideDatabase database,
 		File queryFile,
 		BigDecimal expectedValue,

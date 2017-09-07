@@ -31,13 +31,13 @@ import java.util.Map;
 import es.uvigo.ei.sing.bdbm.environment.binaries.BLASTBinaries;
 import es.uvigo.ei.sing.bdbm.environment.binaries.BLASTType;
 import es.uvigo.ei.sing.bdbm.persistence.entities.Database;
-import es.uvigo.ei.sing.bdbm.persistence.entities.Export;
-import es.uvigo.ei.sing.bdbm.persistence.entities.Export.ExportEntry;
+import es.uvigo.ei.sing.bdbm.persistence.entities.BlastResults;
+import es.uvigo.ei.sing.bdbm.persistence.entities.BlastResults.BlastResultsEntry;
 import es.uvigo.ei.sing.bdbm.persistence.entities.NucleotideDatabase;
-import es.uvigo.ei.sing.bdbm.persistence.entities.NucleotideExport;
+import es.uvigo.ei.sing.bdbm.persistence.entities.NucleotideBlastResults;
 import es.uvigo.ei.sing.bdbm.persistence.entities.NucleotideSearchEntry;
 import es.uvigo.ei.sing.bdbm.persistence.entities.ProteinDatabase;
-import es.uvigo.ei.sing.bdbm.persistence.entities.ProteinExport;
+import es.uvigo.ei.sing.bdbm.persistence.entities.ProteinBlastResults;
 import es.uvigo.ei.sing.bdbm.persistence.entities.ProteinSearchEntry;
 import es.uvigo.ei.sing.bdbm.persistence.entities.ProteinSearchEntry.ProteinQuery;
 import es.uvigo.ei.sing.bdbm.persistence.entities.SearchEntry;
@@ -54,13 +54,13 @@ public interface BLASTBinariesExecutor extends BinariesExecutor<BLASTBinaries> {
 	public ExecutionResult executeBlastDBCMD(Database database, SearchEntry searchEntry, String entry)
 	throws InterruptedException, ExecutionException, IOException;
 	
-	public ExecutionResult executeBlastDBCMD(Database database, ExportEntry exportEntry, String entry)
+	public ExecutionResult executeBlastDBCMD(Database database, BlastResultsEntry blastResultsEntry, String entry)
 	throws InterruptedException, ExecutionException, IOException;
 
 	public ExecutionResult executeBlastN(
 		NucleotideDatabase database, 
 		File queryFile,
-		NucleotideExport export,
+		NucleotideBlastResults blastResults,
 		BigDecimal expectedValue, 
 		boolean filter,
 		String outputName,
@@ -70,7 +70,7 @@ public interface BLASTBinariesExecutor extends BinariesExecutor<BLASTBinaries> {
 	public ExecutionResult executeBlastN(
 		NucleotideDatabase database, 
 		NucleotideSearchEntry.NucleotideQuery query,
-		NucleotideExport export,
+		NucleotideBlastResults blastResults,
 		BigDecimal expectedValue, 
 		boolean filter,
 		String outputName,
@@ -80,7 +80,7 @@ public interface BLASTBinariesExecutor extends BinariesExecutor<BLASTBinaries> {
 	public ExecutionResult executeBlastP(
 		ProteinDatabase database,
 		File queryFile,
-		ProteinExport export,
+		ProteinBlastResults blastResults,
 		BigDecimal expectedValue,
 		boolean filter,
 		String outputName,
@@ -90,7 +90,7 @@ public interface BLASTBinariesExecutor extends BinariesExecutor<BLASTBinaries> {
 	public ExecutionResult executeBlastP(
 		ProteinDatabase database,
 		ProteinQuery query,
-		ProteinExport export,
+		ProteinBlastResults blastResults,
 		BigDecimal expectedValue,
 		boolean filter,
 		String outputName,
@@ -100,7 +100,7 @@ public interface BLASTBinariesExecutor extends BinariesExecutor<BLASTBinaries> {
 	public ExecutionResult executeTBlastX(
 		NucleotideDatabase database, 
 		File queryFile,
-		NucleotideExport export,
+		NucleotideBlastResults blastResults,
 		BigDecimal expectedValue, 
 		boolean filter,
 		String outputName,
@@ -110,7 +110,7 @@ public interface BLASTBinariesExecutor extends BinariesExecutor<BLASTBinaries> {
 	public ExecutionResult executeTBlastX(
 		NucleotideDatabase database, 
 		NucleotideSearchEntry.NucleotideQuery query,
-		NucleotideExport export,
+		NucleotideBlastResults blastResults,
 		BigDecimal expectedValue, 
 		boolean filter,
 		String outputName,
@@ -120,7 +120,7 @@ public interface BLASTBinariesExecutor extends BinariesExecutor<BLASTBinaries> {
 	public ExecutionResult executeTBlastN(
 		NucleotideDatabase database, 
 		File queryFile,
-		NucleotideExport export,
+		NucleotideBlastResults blastResults,
 		BigDecimal expectedValue, 
 		boolean filter,
 		String outputName,
@@ -130,14 +130,14 @@ public interface BLASTBinariesExecutor extends BinariesExecutor<BLASTBinaries> {
 	public ExecutionResult executeTBlastN(
 		NucleotideDatabase database, 
 		ProteinSearchEntry.ProteinQuery query,
-		NucleotideExport export,
+		NucleotideBlastResults blastResults,
 		BigDecimal expectedValue, 
 		boolean filter,
 		String outputName,
 		Map<String, String> additionalParameters
 	) throws InterruptedException, ExecutionException, IOException;
 	
-	public List<String> extractSignificantSequences(Export.ExportEntry entry)
+	public List<String> extractSignificantSequences(BlastResults.BlastResultsEntry entry)
 	throws InterruptedException, ExecutionException, IOException;
 
 	public Map<String, String> getBlastAdditionalParameters(BLASTType blastType);

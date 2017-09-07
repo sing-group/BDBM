@@ -27,10 +27,10 @@ import java.util.List;
 import es.uvigo.ei.sing.bdbm.persistence.EntityValidationException;
 import es.uvigo.ei.sing.bdbm.persistence.entities.AbstractDatabase;
 import es.uvigo.ei.sing.bdbm.persistence.entities.Database;
-import es.uvigo.ei.sing.bdbm.persistence.entities.Export;
+import es.uvigo.ei.sing.bdbm.persistence.entities.BlastResults;
 import es.uvigo.ei.sing.bdbm.persistence.entities.Fasta;
 import es.uvigo.ei.sing.bdbm.persistence.entities.SearchEntry;
-import es.uvigo.ei.sing.bdbm.persistence.entities.Export.ExportEntry;
+import es.uvigo.ei.sing.bdbm.persistence.entities.BlastResults.BlastResultsEntry;
 import es.uvigo.ei.sing.bdbm.persistence.entities.SearchEntry.Query;
 
 abstract class EntityValidator<T> {
@@ -121,28 +121,28 @@ abstract class EntityValidator<T> {
 	}
 
 	//TODO: Improve directory validation
-	public static EntityValidator<Export> export() {
-		return new EntityValidator<Export>() {
+	public static EntityValidator<BlastResults> blastResults() {
+		return new EntityValidator<BlastResults>() {
 			@Override
-			public void validate(Export export)
+			public void validate(BlastResults blastResults)
 			throws EntityValidationException {
-				if (Boolean.valueOf(System.getProperty("entities.export.validate", "true"))) {
-					if (export.getDirectory().isDirectory()) {
-						final List<? extends ExportEntry> entries = export.listEntries();
+				if (Boolean.valueOf(System.getProperty("entities.blastresults.validate", "true"))) {
+					if (blastResults.getDirectory().isDirectory()) {
+						final List<? extends BlastResultsEntry> entries = blastResults.listEntries();
 						
 						if (entries.isEmpty()) {
-							throw new EntityValidationException("Export file hasn't any entry: " + export.getDirectory(), export);
+							throw new EntityValidationException("BlastResults file hasn't any entry: " + blastResults.getDirectory(), blastResults);
 						} else {
-							for (ExportEntry entry : entries) {
+							for (BlastResultsEntry entry : entries) {
 								if (entry.getOutFile().isFile()/* && entry.getSequenceFiles().length > 0*/) {
 									return;
 								}
 							}
 							
-							throw new EntityValidationException("Export file hasn't any valid entry.");
+							throw new EntityValidationException("BlastResults file hasn't any valid entry.");
 						}
 					} else {
-						throw new EntityValidationException("Export file doesn't exists or isn't a directory: " + export.getDirectory(), export);
+						throw new EntityValidationException("BlastResults file doesn't exists or isn't a directory: " + blastResults.getDirectory(), blastResults);
 					}
 				}
 			}

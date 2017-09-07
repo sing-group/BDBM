@@ -31,7 +31,7 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 
 import es.uvigo.ei.sing.bdbm.gui.repository.RepositoryTreeModel.TextFileMutableTreeNode;
 import es.uvigo.ei.sing.bdbm.persistence.entities.Database;
-import es.uvigo.ei.sing.bdbm.persistence.entities.Export;
+import es.uvigo.ei.sing.bdbm.persistence.entities.BlastResults;
 import es.uvigo.ei.sing.bdbm.persistence.entities.Fasta;
 import es.uvigo.ei.sing.bdbm.persistence.entities.SearchEntry;
 
@@ -46,9 +46,9 @@ public class RepositoryTreeRenderer extends DefaultTreeCellRenderer {
 		new ImageIcon(RepositoryTreeRenderer.class.getResource("images/agg-database.png"));
 	final static ImageIcon ICON_SEARCH_ENTRY = 
 		new ImageIcon(RepositoryTreeRenderer.class.getResource("images/search-entry.png"));
-	final static ImageIcon ICON_EXPORT = 
+	final static ImageIcon ICON_BLAST_RESULTS = 
 		new ImageIcon(RepositoryTreeRenderer.class.getResource("images/export.png"));
-	final static ImageIcon ICON_EXPORT_OUTPUT = 
+	final static ImageIcon ICON_BLAST_RESULTS_ENTRY_OUTPUT = 
 			new ImageIcon(RepositoryTreeRenderer.class.getResource("images/output.png"));
 	final static ImageIcon ICON_SEQUENCE = 
 			new ImageIcon(RepositoryTreeRenderer.class.getResource("images/sequence.png"));
@@ -79,9 +79,9 @@ public class RepositoryTreeRenderer extends DefaultTreeCellRenderer {
 			} else if (nodeValue instanceof SearchEntry) {
 				this.setOpenIcon(ICON_SEARCH_ENTRY);
 				this.setClosedIcon(ICON_SEARCH_ENTRY);
-			} else if (nodeValue instanceof Export) {
-				this.setOpenIcon(ICON_EXPORT);
-				this.setClosedIcon(ICON_EXPORT);
+			} else if (nodeValue instanceof BlastResults) {
+				this.setOpenIcon(ICON_BLAST_RESULTS);
+				this.setClosedIcon(ICON_BLAST_RESULTS);
 			} else {
 				this.setLeafIcon(this.getDefaultLeafIcon());
 				this.setOpenIcon(this.getDefaultOpenIcon());

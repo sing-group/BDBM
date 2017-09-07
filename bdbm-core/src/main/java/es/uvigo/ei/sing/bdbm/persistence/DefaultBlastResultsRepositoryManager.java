@@ -30,21 +30,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import es.uvigo.ei.sing.bdbm.environment.SequenceType;
-import es.uvigo.ei.sing.bdbm.persistence.ExportRepositoryManager;
-import es.uvigo.ei.sing.bdbm.persistence.entities.Export;
-import es.uvigo.ei.sing.bdbm.persistence.entities.NucleotideExport;
-import es.uvigo.ei.sing.bdbm.persistence.entities.ProteinExport;
+import es.uvigo.ei.sing.bdbm.persistence.BlastResultsRepositoryManager;
+import es.uvigo.ei.sing.bdbm.persistence.entities.BlastResults;
+import es.uvigo.ei.sing.bdbm.persistence.entities.NucleotideBlastResults;
+import es.uvigo.ei.sing.bdbm.persistence.entities.ProteinBlastResults;
 
-public class DefaultExportRepositoryManager
-extends AbstractMixedRepositoryManager<Export, ProteinExport, NucleotideExport>
-implements ExportRepositoryManager {
-	private final static Logger LOG = LoggerFactory.getLogger(DefaultExportRepositoryManager.class);
+public class DefaultBlastResultsRepositoryManager
+extends AbstractMixedRepositoryManager<BlastResults, ProteinBlastResults, NucleotideBlastResults>
+implements BlastResultsRepositoryManager {
+	private final static Logger LOG = LoggerFactory.getLogger(DefaultBlastResultsRepositoryManager.class);
 
 	@Override
 	protected File getDirectory(SequenceType sequenceType) {
 		return sequenceType == SequenceType.PROTEIN ?
-			this.repositoryPaths.getExportProteinsDirectory() :
-			this.repositoryPaths.getExportNucleotidesDirectory();
+			this.repositoryPaths.getBlastResultsProteinsDirectory() :
+			this.repositoryPaths.getBlastResultsNucleotidesDirectory();
 	}
 	
 	@Override
@@ -58,17 +58,17 @@ implements ExportRepositoryManager {
 	}
 
 	@Override
-	protected EntityBuilder<Export> getEntityBuilder() {
-		return EntityBuilder.export();
+	protected EntityBuilder<BlastResults> getEntityBuilder() {
+		return EntityBuilder.blastResults();
 	}
 
 	@Override
-	protected EntityValidator<Export> getEntityValidator() {
-		return EntityValidator.export();
+	protected EntityValidator<BlastResults> getEntityValidator() {
+		return EntityValidator.blastResults();
 	}
 
 	@Override
-	protected boolean createEntityFiles(Export entity) {
+	protected boolean createEntityFiles(BlastResults entity) {
 		return entity.getDirectory().mkdirs();
 	}
 }

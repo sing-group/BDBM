@@ -29,19 +29,19 @@ import java.io.IOException;
 import org.apache.commons.io.FileUtils;
 
 import es.uvigo.ei.sing.bdbm.environment.SequenceType;
-import es.uvigo.ei.sing.bdbm.persistence.entities.Export;
+import es.uvigo.ei.sing.bdbm.persistence.entities.BlastResults;
 import es.uvigo.ei.sing.bdbm.persistence.watcher.PollingRepositoryWatcher;
 import es.uvigo.ei.sing.bdbm.persistence.watcher.RepositoryWatcher;
 import es.uvigo.ei.sing.bdbm.persistence.watcher.RepositoryWatcherEvent;
 import es.uvigo.ei.sing.bdbm.persistence.watcher.RepositoryWatcherListener;
 
-public abstract class AbstractExport extends AbstractSequenceEntity implements Export {
-	public static Export newExport(SequenceType sequenceType, File directory) {
+public abstract class AbstractBlastResults extends AbstractSequenceEntity implements BlastResults {
+	public static BlastResults newBlastResults(SequenceType sequenceType, File directory) {
 		switch (sequenceType) {
 		case PROTEIN:
-			return new DefaultProteinExport(directory);
+			return new DefaultProteinBlastResults(directory);
 		case NUCLEOTIDE:
-			return new DefaultNucleotideExport(directory);
+			return new DefaultNucleotideBlastResults(directory);
 		default:
 			throw new IllegalStateException("Unknown sequence type");
 		}
@@ -49,35 +49,35 @@ public abstract class AbstractExport extends AbstractSequenceEntity implements E
 	
 	protected final RepositoryWatcher watcher;
 	
-	protected AbstractExport(SequenceType type, File file) {
+	protected AbstractBlastResults(SequenceType type, File file) {
 		super(type, file);
 		
 		this.watcher = new PollingRepositoryWatcher();
-		this.watcher.addRepositoryWatcherListener(new ExportRepositoryListener());
+		this.watcher.addRepositoryWatcherListener(new BlastResultsRepositoryListener());
 		this.watcher.register(this.getBaseFile());
 	}
 	
-	private final class ExportRepositoryListener implements RepositoryWatcherListener {
+	private final class BlastResultsRepositoryListener implements RepositoryWatcherListener {
 		@Override
 		public void repositoryChanged(RepositoryWatcherEvent event) {
 			switch (event.getType()) {
 			case DELETE:
-				if (event.getFile().equals(AbstractExport.this.getBaseFile())) {
-					AbstractExport.this.watcher.clear();
-					AbstractExport.this.watcher.removeRepositoryWatcherListener(this);
+				if (event.getFile().equals(AbstractBlastResults.this.getBaseFile())) {
+					AbstractBlastResults.this.watcher.clear();
+					AbstractBlastResults.this.watcher.removeRepositoryWatcherListener(this);
 				}
 				// No break
 			case CREATE:
-				AbstractExport.this.setChanged();
-				AbstractExport.this.notifyObservers(event.getFile());
+				AbstractBlastResults.this.setChanged();
+				AbstractBlastResults.this.notifyObservers(event.getFile());
 				break;
 			}
 		}
 	}
 	
 	@Override
-	public ExportEntry getExportEntry(String name) {
-		for (ExportEntry entry : this.listEntries()) {
+	public BlastResultsEntry getBlastResultsEntry(String name) {
+		for (BlastResultsEntry entry : this.listEntries()) {
 			if (entry.getName().equals(name))
 				return entry;
 		}
@@ -86,12 +86,12 @@ public abstract class AbstractExport extends AbstractSequenceEntity implements E
 	}
 	
 	@Override
-	public void deleteExportEntry(ExportEntry entry)
+	public void deleteBlastResultsEntry(BlastResultsEntry entry)
 	throws IllegalArgumentException, IOException {
 		if (this.listEntries().contains(entry)) {
 			FileUtils.deleteDirectory(entry.getBaseFile());
 		} else {
-			throw new IllegalArgumentException("ExportEntry doesn't belongs to this Export");
+			throw new IllegalArgumentException("BlastResultsEntry doesn't belongs to this BlastResults");
 		}
 	}
 
@@ -101,7 +101,7 @@ public abstract class AbstractExport extends AbstractSequenceEntity implements E
 	}
 	
 	@Override
-	public int compareTo(Export o) {
+	public int compareTo(BlastResults o) {
 		return this.getDirectory().compareTo(o.getDirectory());
 	}
 
@@ -121,10 +121,10 @@ public abstract class AbstractExport extends AbstractSequenceEntity implements E
 			return true;
 		if (obj == null)
 			return false;
-		if (!(obj instanceof Export))
+		if (!(obj instanceof BlastResults))
 			return false;
 		
-		Export other = (Export) obj;
+		BlastResults other = (BlastResults) obj;
 		if (this.getDirectory() == null) {
 			if (other.getDirectory()!= null)
 				return false;
@@ -135,23 +135,23 @@ public abstract class AbstractExport extends AbstractSequenceEntity implements E
 		return true;
 	}
 	
-	public class DefaultExportEntry implements ExportEntry {
-		private final Export export;
+	public class DefaultBlastResultsEntry implements BlastResultsEntry {
+		private final BlastResults blastResults;
 		private final File baseFile;
 		
-		protected DefaultExportEntry(Export export, File baseFile) {
-			this.export = export;
+		protected DefaultBlastResultsEntry(BlastResults blastResults, File baseFile) {
+			this.blastResults = blastResults;
 			this.baseFile = baseFile;
 		}
 		
 		@Override
-		public Export getExport() {
-			return this.export;
+		public BlastResults getBlastResults() {
+			return this.blastResults;
 		}
 		
 		@Override
 		public SequenceType getType() {
-			return AbstractExport.this.getType();
+			return AbstractBlastResults.this.getType();
 		}
 		
 		@Override
@@ -212,10 +212,10 @@ public abstract class AbstractExport extends AbstractSequenceEntity implements E
 				return true;
 			if (obj == null)
 				return false;
-			if (!(obj instanceof ExportEntry))
+			if (!(obj instanceof BlastResultsEntry))
 				return false;
 			
-			ExportEntry other = (ExportEntry) obj;
+			BlastResultsEntry other = (BlastResultsEntry) obj;
 			if (this.getBaseFile() == null) {
 				if (other.getBaseFile() != null)
 					return false;
@@ -226,9 +226,4 @@ public abstract class AbstractExport extends AbstractSequenceEntity implements E
 			return true;
 		}
 	}
-//	
-//	@Override
-//	public String toString() {
-//		return "EXPORT: " + this.getName();
-//	}
 }

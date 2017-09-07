@@ -44,13 +44,13 @@ import es.uvigo.ei.sing.bdbm.environment.binaries.BLASTBinaries;
 import es.uvigo.ei.sing.bdbm.environment.binaries.BLASTType;
 import es.uvigo.ei.sing.bdbm.fasta.FastaUtils;
 import es.uvigo.ei.sing.bdbm.persistence.entities.Database;
-import es.uvigo.ei.sing.bdbm.persistence.entities.Export;
-import es.uvigo.ei.sing.bdbm.persistence.entities.Export.ExportEntry;
+import es.uvigo.ei.sing.bdbm.persistence.entities.BlastResults;
+import es.uvigo.ei.sing.bdbm.persistence.entities.BlastResults.BlastResultsEntry;
 import es.uvigo.ei.sing.bdbm.persistence.entities.NucleotideDatabase;
-import es.uvigo.ei.sing.bdbm.persistence.entities.NucleotideExport;
+import es.uvigo.ei.sing.bdbm.persistence.entities.NucleotideBlastResults;
 import es.uvigo.ei.sing.bdbm.persistence.entities.NucleotideSearchEntry;
 import es.uvigo.ei.sing.bdbm.persistence.entities.ProteinDatabase;
-import es.uvigo.ei.sing.bdbm.persistence.entities.ProteinExport;
+import es.uvigo.ei.sing.bdbm.persistence.entities.ProteinBlastResults;
 import es.uvigo.ei.sing.bdbm.persistence.entities.ProteinSearchEntry;
 import es.uvigo.ei.sing.bdbm.persistence.entities.ProteinSearchEntry.ProteinQuery;
 import es.uvigo.ei.sing.bdbm.persistence.entities.SearchEntry;
@@ -145,7 +145,7 @@ implements BLASTBinariesExecutor {
 
 	@Override
 	public ExecutionResult executeBlastDBCMD(
-		Database database, ExportEntry exportEntry, String entry
+		Database database, BlastResultsEntry blastResultsEntry, String entry
 	) throws InterruptedException, ExecutionException {
 		return executeCommand(
 			LOG,
@@ -153,7 +153,7 @@ implements BLASTBinariesExecutor {
 			"-db", database.getDirectory().getAbsolutePath(),
 			"-entry", entry,
 			"-outfmt", "%f",
-			"-out",	new File(exportEntry.getBaseFile(), entry + ".txt").getAbsolutePath()
+			"-out",	new File(blastResultsEntry.getBaseFile(), entry + ".txt").getAbsolutePath()
 		);
 	}
 
@@ -161,13 +161,13 @@ implements BLASTBinariesExecutor {
 		BLASTType blastType, 
 		Database database, 
 		File queryFile,
-		Export export, 
+		BlastResults blastResults, 
 		BigDecimal expectedValue, 
 		boolean filter,
 		String outputName,
 		Map<String, String> additionalParameters
 	) throws InterruptedException, ExecutionException, IOException {
-		final File outDirectory = new File(export.getBaseFile(), outputName);
+		final File outDirectory = new File(blastResults.getBaseFile(), outputName);
 		final File outFile = new File(outDirectory, outputName + ".out");
 		
 		if (!outDirectory.isDirectory() && !outDirectory.mkdirs()) {
@@ -266,7 +266,7 @@ implements BLASTBinariesExecutor {
 		BLASTType blastType, 
 		Database database, 
 		SearchEntry.Query query,
-		Export export, 
+		BlastResults blastResults, 
 		BigDecimal expectedValue, 
 		boolean filter,
 		String outputName,
@@ -276,7 +276,7 @@ implements BLASTBinariesExecutor {
 			blastType,
 			database,
 			query.getBaseFile(),
-			export,
+			blastResults,
 			expectedValue,
 			filter,
 			outputName,
@@ -288,7 +288,7 @@ implements BLASTBinariesExecutor {
 	public ExecutionResult executeBlastN(
 		NucleotideDatabase database,
 		File queryFile, 
-		NucleotideExport export, 
+		NucleotideBlastResults blastResults, 
 		BigDecimal expectedValue,
 		boolean filter, 
 		String outputName,
@@ -298,7 +298,7 @@ implements BLASTBinariesExecutor {
 			BLASTType.BLASTN, 
 			database,
 			queryFile,
-			export, 
+			blastResults, 
 			expectedValue, 
 			filter,
 			outputName,
@@ -310,7 +310,7 @@ implements BLASTBinariesExecutor {
 	public ExecutionResult executeBlastN(
 		NucleotideDatabase database, 
 		NucleotideSearchEntry.NucleotideQuery query,
-		NucleotideExport export, 
+		NucleotideBlastResults blastResults, 
 		BigDecimal expectedValue,
 		boolean filter,
 		String outputName,
@@ -320,7 +320,7 @@ implements BLASTBinariesExecutor {
 			BLASTType.BLASTN, 
 			database,
 			query,
-			export, 
+			blastResults, 
 			expectedValue, 
 			filter,
 			outputName,
@@ -332,7 +332,7 @@ implements BLASTBinariesExecutor {
 	public ExecutionResult executeBlastP(
 		ProteinDatabase database,
 		File queryFile,
-		ProteinExport export, 
+		ProteinBlastResults blastResults, 
 		BigDecimal expectedValue,
 		boolean filter,
 		String outputName,
@@ -342,7 +342,7 @@ implements BLASTBinariesExecutor {
 			BLASTType.BLASTP, 
 			database,
 			queryFile,
-			export, 
+			blastResults, 
 			expectedValue, 
 			filter,
 			outputName,
@@ -354,7 +354,7 @@ implements BLASTBinariesExecutor {
 	public ExecutionResult executeBlastP(
 		ProteinDatabase database,
 		ProteinQuery query, 
-		ProteinExport export, 
+		ProteinBlastResults blastResults, 
 		BigDecimal expectedValue,
 		boolean filter,
 		String outputName,
@@ -364,7 +364,7 @@ implements BLASTBinariesExecutor {
 			BLASTType.BLASTP, 
 			database,
 			query,
-			export, 
+			blastResults, 
 			expectedValue, 
 			filter,
 			outputName,
@@ -376,7 +376,7 @@ implements BLASTBinariesExecutor {
 	public ExecutionResult executeTBlastX(
 		NucleotideDatabase database, 
 		File queryFile,
-		NucleotideExport export, 
+		NucleotideBlastResults blastResults, 
 		BigDecimal expectedValue, 
 		boolean filter,
 		String outputName,
@@ -386,7 +386,7 @@ implements BLASTBinariesExecutor {
 			BLASTType.TBLASTX, 
 			database,
 			queryFile,
-			export, 
+			blastResults, 
 			expectedValue, 
 			filter,
 			outputName,
@@ -398,7 +398,7 @@ implements BLASTBinariesExecutor {
 	public ExecutionResult executeTBlastX(
 		NucleotideDatabase database, 
 		NucleotideSearchEntry.NucleotideQuery query,
-		NucleotideExport export, 
+		NucleotideBlastResults blastResults, 
 		BigDecimal expectedValue, 
 		boolean filter,
 		String outputName,
@@ -408,7 +408,7 @@ implements BLASTBinariesExecutor {
 			BLASTType.TBLASTX, 
 			database,
 			query,
-			export, 
+			blastResults, 
 			expectedValue, 
 			filter,
 			outputName,
@@ -420,7 +420,7 @@ implements BLASTBinariesExecutor {
 	public ExecutionResult executeTBlastN(
 		NucleotideDatabase database, 
 		File queryFile,
-		NucleotideExport export, 
+		NucleotideBlastResults blastResults, 
 		BigDecimal expectedValue, 
 		boolean filter,
 		String outputName,
@@ -430,7 +430,7 @@ implements BLASTBinariesExecutor {
 			BLASTType.TBLASTN,  
 			database,
 			queryFile,
-			export, 
+			blastResults, 
 			expectedValue, 
 			filter,
 			outputName,
@@ -442,7 +442,7 @@ implements BLASTBinariesExecutor {
 	public ExecutionResult executeTBlastN(
 		NucleotideDatabase database, 
 		ProteinSearchEntry.ProteinQuery query,
-		NucleotideExport export, 
+		NucleotideBlastResults blastResults, 
 		BigDecimal expectedValue, 
 		boolean filter,
 		String outputName,
@@ -452,7 +452,7 @@ implements BLASTBinariesExecutor {
 			BLASTType.TBLASTN,  
 			database,
 			query,
-			export, 
+			blastResults, 
 			expectedValue, 
 			filter,
 			outputName,
@@ -461,7 +461,7 @@ implements BLASTBinariesExecutor {
 	}
 	
 	@Override
-	public List<String> extractSignificantSequences(ExportEntry entry) 
+	public List<String> extractSignificantSequences(BlastResultsEntry entry) 
 	throws IOException {
 		final Set<String> alignments = new HashSet<>();
 		

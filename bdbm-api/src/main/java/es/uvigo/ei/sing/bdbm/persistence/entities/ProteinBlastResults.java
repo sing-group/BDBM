@@ -25,7 +25,7 @@ package es.uvigo.ei.sing.bdbm.persistence.entities;
 import java.util.List;
 
 
-public interface ProteinExport extends Export, ProteinSequenceEntity {
-	public List<? extends ProteinExportEntry> listEntries();
-	public interface ProteinExportEntry extends ExportEntry, ProteinSequenceEntity {}
+public interface ProteinBlastResults extends BlastResults, ProteinSequenceEntity {
+	public List<? extends ProteinBlastResultsEntry> listEntries();
+	public interface ProteinBlastResultsEntry extends BlastResultsEntry, ProteinSequenceEntity {}
 }

@@ -28,10 +28,10 @@ import java.util.Arrays;
 import javax.swing.SwingUtilities;
 
 import es.uvigo.ei.sing.bdbm.environment.SequenceType;
-import es.uvigo.ei.sing.bdbm.persistence.entities.Export;
+import es.uvigo.ei.sing.bdbm.persistence.entities.BlastResults;
 import es.uvigo.ei.sing.bdbm.persistence.entities.SearchEntry;
 import es.uvigo.ei.sing.bdbm.persistence.entities.SequenceEntity;
-import es.uvigo.ei.sing.bdbm.persistence.entities.Export.ExportEntry;
+import es.uvigo.ei.sing.bdbm.persistence.entities.BlastResults.BlastResultsEntry;
 import es.uvigo.ei.sing.bdbm.persistence.entities.SearchEntry.Query;
 import es.uvigo.ei.sing.bdbm.persistence.watcher.RepositoryEvent;
 import es.uvigo.ei.sing.bdbm.persistence.watcher.RepositoryListener;
@@ -101,15 +101,15 @@ class SynchronizationRepositoryListener<T, C extends SequenceEntity> implements 
 						} else {
 							removeSearchEntryQuery(modifiedFile, searchEntryNode);
 						}
-					} else if (entity instanceof Export) {
-						final Export export = (Export) entity;
-						final SortedMutableTreeNode<Export, ExportEntry> exportNode =
-							(SortedMutableTreeNode<Export, ExportEntry>) entityNode;
+					} else if (entity instanceof BlastResults) {
+						final BlastResults blastResults = (BlastResults) entity;
+						final SortedMutableTreeNode<BlastResults, BlastResultsEntry> blastResultsNode =
+							(SortedMutableTreeNode<BlastResults, BlastResultsEntry>) entityNode;
 						
 						if (modifiedFile.exists()) {
-							addExportEntry(export, modifiedFile, exportNode);
+							addBlastResultsEntry(blastResults, modifiedFile, blastResultsNode);
 						} else {
-							removeExportEntry(modifiedFile, exportNode);
+							removeBlastResultsEntry(modifiedFile, blastResultsNode);
 						}
 					} else if (entity.getBaseFile().equals(modifiedFile)) {
 						this.treeModel.replaceNode(
@@ -171,8 +171,8 @@ class SynchronizationRepositoryListener<T, C extends SequenceEntity> implements 
 		}
 	}
 	
-	private ExportEntry getExportEntryForFile(Export export, File file) {
-		for (ExportEntry entry : export.listEntries()) {
+	private BlastResultsEntry getBlastResultsEntryForFile(BlastResults blastResults, File file) {
+		for (BlastResultsEntry entry : blastResults.listEntries()) {
 			if (entry.getBaseFile().equals(file) ||
 				entry.getOutFile().equals(file) ||
 				entry.getSummaryFastaFile().equals(file) ||
@@ -186,39 +186,39 @@ class SynchronizationRepositoryListener<T, C extends SequenceEntity> implements 
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void addExportEntry(
-		final Export export,
+	private void addBlastResultsEntry(
+		final BlastResults blastResults,
 		final File modifiedFile, 
-		final SortedMutableTreeNode<Export, ExportEntry> exportNode
+		final SortedMutableTreeNode<BlastResults, BlastResultsEntry> blastResultsNode
 	) {
-		final ExportEntry entry = this.getExportEntryForFile(export, modifiedFile);
+		final BlastResultsEntry entry = this.getBlastResultsEntryForFile(blastResults, modifiedFile);
 		
 		if (entry != null) {
-			final SortedMutableTreeNode<ExportEntry, String> entryNode = 
-				(SortedMutableTreeNode<ExportEntry, String>) 
-				getUserObjectChildNode(exportNode, entry);
+			final SortedMutableTreeNode<BlastResultsEntry, String> entryNode = 
+				(SortedMutableTreeNode<BlastResultsEntry, String>) 
+				getUserObjectChildNode(blastResultsNode, entry);
 				
 			if (entry.getBaseFile().equals(modifiedFile)) {
 				this.treeModel.insertNode(
-					exportNode, 
-					RepositoryTreeModel.createExportEntryNode(entry)
+					blastResultsNode, 
+					RepositoryTreeModel.createBlastResultsEntryNode(entry)
 				);
 			} else {
 				if (modifiedFile.equals(entry.getOutFile())) {
 					if (getUserObjectChildNode(entryNode, entry.getOutFile().getName()) == null)
-						throw new IllegalStateException("Inconsitent Export Entry state. Missing out file.");
+						throw new IllegalStateException("Inconsitent BLAST Results Entry state. Missing out file.");
 				} else if (modifiedFile.equals(entry.getSummaryFastaFile())) {
 					if (getUserObjectChildNode(entryNode, modifiedFile.getName()) == null) {
 						this.treeModel.insertNode(
 							entryNode,
-							RepositoryTreeModel.createExportEntrySummaryFileNode(modifiedFile)
+							RepositoryTreeModel.createBlastResultsEntrySummaryFileNode(modifiedFile)
 						);
 					}
 				} else { // It's a .txt file
 					if (getUserObjectChildNode(entryNode, modifiedFile.getName()) == null) {
 						this.treeModel.insertNode(
 							entryNode,
-							RepositoryTreeModel.createExportEntryTextFileNode(modifiedFile)
+							RepositoryTreeModel.createBlastResultsEntryTextFileNode(modifiedFile)
 						);
 					}
 				}
@@ -239,30 +239,30 @@ class SynchronizationRepositoryListener<T, C extends SequenceEntity> implements 
 	}
 
 	@SuppressWarnings("unchecked")
-	private void removeExportEntry(
+	private void removeBlastResultsEntry(
 		final File modifiedFile,
-		final SortedMutableTreeNode<Export, ExportEntry> exportNode
+		final SortedMutableTreeNode<BlastResults, BlastResultsEntry> blastResultsNode
 	) {
-		final TypedMutableTreeNode<ExportEntry> entryNode = 
-			getSubEntityNodeForFile(exportNode, modifiedFile);
+		final TypedMutableTreeNode<BlastResultsEntry> entryNode = 
+			getSubEntityNodeForFile(blastResultsNode, modifiedFile);
 		
 		if (entryNode != null) { // Entry deleted
-			this.treeModel.deleteNode(exportNode, entryNode);
+			this.treeModel.deleteNode(blastResultsNode, entryNode);
 		} else {
-			for (TypedMutableTreeNode<ExportEntry> exportEntryNode : exportNode.getChildNodes()) {
-				if (exportEntryNode.getUserObject().getOutFile().equals(modifiedFile)) {
-					throw new IllegalStateException("Inconsitent Export Entry state. Out file can't be deleted.");
-				} else if (exportEntryNode.getUserObject().getSummaryFastaFile().equals(modifiedFile)) {
-					throw new IllegalStateException("Inconsitent Export Entry state. FASTA file can't be deleted.");
+			for (TypedMutableTreeNode<BlastResultsEntry> blastResultsEntryNode : blastResultsNode.getChildNodes()) {
+				if (blastResultsEntryNode.getUserObject().getOutFile().equals(modifiedFile)) {
+					throw new IllegalStateException("Inconsitent BLAST Results Entry state. Out file can't be deleted.");
+				} else if (blastResultsEntryNode.getUserObject().getSummaryFastaFile().equals(modifiedFile)) {
+					throw new IllegalStateException("Inconsitent BLAST Results Entry state. FASTA file can't be deleted.");
 				} else {
-					final SortedMutableTreeNode<ExportEntry, String> sortedExportEntryNode =
-						(SortedMutableTreeNode<ExportEntry, String>) exportEntryNode;
+					final SortedMutableTreeNode<BlastResultsEntry, String> sortedblastResultsEntryNode =
+						(SortedMutableTreeNode<BlastResultsEntry, String>) blastResultsEntryNode;
 					
 					final TypedMutableTreeNode<String> fileNode = 
-						getUserObjectChildNode(sortedExportEntryNode, modifiedFile.getName());
+						getUserObjectChildNode(sortedblastResultsEntryNode, modifiedFile.getName());
 					
 					if (fileNode != null) {
-						this.treeModel.deleteNode(sortedExportEntryNode, fileNode);
+						this.treeModel.deleteNode(sortedblastResultsEntryNode, fileNode);
 					}
 				}
 			}

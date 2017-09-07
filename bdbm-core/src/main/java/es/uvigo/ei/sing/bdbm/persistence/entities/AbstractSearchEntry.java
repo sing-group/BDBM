@@ -138,7 +138,7 @@ public abstract class AbstractSearchEntry extends AbstractSequenceEntity impleme
 				throw new IOException("Query file '" + query.getBaseFile().getAbsolutePath() + "' couldn't be deleted.");
 			}
 		} else {
-			throw new IllegalArgumentException("Query doesn't belongs to this Export");
+			throw new IllegalArgumentException("Query doesn't belongs to this Query");
 		}
 	}
 	

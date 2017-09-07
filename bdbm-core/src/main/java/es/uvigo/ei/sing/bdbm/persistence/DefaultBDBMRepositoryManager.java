@@ -27,14 +27,14 @@ import java.io.IOException;
 import es.uvigo.ei.sing.bdbm.environment.paths.RepositoryPaths;
 import es.uvigo.ei.sing.bdbm.persistence.BDBMRepositoryManager;
 import es.uvigo.ei.sing.bdbm.persistence.DatabaseRepositoryManager;
-import es.uvigo.ei.sing.bdbm.persistence.ExportRepositoryManager;
+import es.uvigo.ei.sing.bdbm.persistence.BlastResultsRepositoryManager;
 import es.uvigo.ei.sing.bdbm.persistence.FastaRepositoryManager;
 import es.uvigo.ei.sing.bdbm.persistence.RepositoryManager;
 import es.uvigo.ei.sing.bdbm.persistence.SearchEntryRepositoryManager;
 
 public class DefaultBDBMRepositoryManager implements BDBMRepositoryManager {
 	private final DatabaseRepositoryManager databaseManager;
-	private final ExportRepositoryManager exportManager;
+	private final BlastResultsRepositoryManager blastResultsManager;
 	private final FastaRepositoryManager fastaManager;
 	private final SearchEntryRepositoryManager searchEntryManager;
 	
@@ -43,7 +43,7 @@ public class DefaultBDBMRepositoryManager implements BDBMRepositoryManager {
 	public DefaultBDBMRepositoryManager() {
 		this.repositories = new RepositoryManager[] {
 			this.databaseManager = new DefaultDatabaseRepositoryManager(),
-			this.exportManager = new DefaultExportRepositoryManager(),
+			this.blastResultsManager = new DefaultBlastResultsRepositoryManager(),
 			this.fastaManager = new DefaultFastaRespositoryManager(),
 			this.searchEntryManager = new DefaultSearchEntryRepositoryManager(),
 		};
@@ -73,8 +73,8 @@ public class DefaultBDBMRepositoryManager implements BDBMRepositoryManager {
 	}
 	
 	@Override
-	public ExportRepositoryManager export() {
-		return this.exportManager;
+	public BlastResultsRepositoryManager blastResults() {
+		return this.blastResultsManager;
 	}
 	
 	@Override

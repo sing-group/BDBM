@@ -30,29 +30,30 @@ import java.util.List;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 
 import es.uvigo.ei.sing.bdbm.environment.SequenceType;
-import es.uvigo.ei.sing.bdbm.persistence.entities.Export;
-import es.uvigo.ei.sing.bdbm.persistence.entities.ProteinExport;
+import es.uvigo.ei.sing.bdbm.persistence.entities.BlastResults;
+import es.uvigo.ei.sing.bdbm.persistence.entities.ProteinBlastResults;
 
-public class DefaultProteinExport extends AbstractExport implements ProteinExport {
-	public DefaultProteinExport(File file) {
+public class DefaultProteinBlastResults extends AbstractBlastResults implements ProteinBlastResults {
+	public DefaultProteinBlastResults(File file) {
 		super(SequenceType.PROTEIN, file);
 	}
 	
 	@Override
-	public List<ProteinExportEntry> listEntries() {
+	public List<ProteinBlastResultsEntry> listEntries() {
 		final File[] files = this.getDirectory().listFiles((FileFilter) DirectoryFileFilter.DIRECTORY);
-		final List<ProteinExportEntry> exportEntries = new ArrayList<ProteinExportEntry>(files.length);
+		final List<ProteinBlastResultsEntry> blastResultsEntries = 
+			new ArrayList<ProteinBlastResultsEntry>(files.length);
 		
 		for (File file : files) {
-			exportEntries.add(new DefaultProteinExportEntry(this, file));
+			blastResultsEntries.add(new DefaultProteinBlastResultsEntry(this, file));
 		}
 		
-		return exportEntries;
+		return blastResultsEntries;
 	}
 	
-	public class DefaultProteinExportEntry extends DefaultExportEntry implements ProteinExportEntry {
-		public DefaultProteinExportEntry(Export export, File baseFile) {
-			super(export, baseFile);
+	public class DefaultProteinBlastResultsEntry extends DefaultBlastResultsEntry implements ProteinBlastResultsEntry {
+		public DefaultProteinBlastResultsEntry(BlastResults blastResults, File baseFile) {
+			super(blastResults, baseFile);
 		}
 	}
 }

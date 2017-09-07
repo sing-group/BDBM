@@ -22,10 +22,10 @@
 
 package es.uvigo.ei.sing.bdbm.persistence;
 
-import es.uvigo.ei.sing.bdbm.persistence.entities.Export;
-import es.uvigo.ei.sing.bdbm.persistence.entities.NucleotideExport;
-import es.uvigo.ei.sing.bdbm.persistence.entities.ProteinExport;
+import es.uvigo.ei.sing.bdbm.persistence.entities.BlastResults;
+import es.uvigo.ei.sing.bdbm.persistence.entities.NucleotideBlastResults;
+import es.uvigo.ei.sing.bdbm.persistence.entities.ProteinBlastResults;
 
-public interface ExportRepositoryManager
-extends MixedRepositoryManager<Export, ProteinExport, NucleotideExport> {
+public interface BlastResultsRepositoryManager
+extends MixedRepositoryManager<BlastResults, ProteinBlastResults, NucleotideBlastResults> {
 }

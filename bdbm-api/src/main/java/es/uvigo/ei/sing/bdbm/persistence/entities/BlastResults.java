@@ -27,11 +27,11 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Observer;
 
-public interface Export extends SequenceEntity, Comparable<Export> {
+public interface BlastResults extends SequenceEntity, Comparable<BlastResults> {
 	public abstract File getDirectory();
-	public abstract List<? extends ExportEntry> listEntries();
-	public abstract ExportEntry getExportEntry(String name);
-	public abstract void deleteExportEntry(ExportEntry entry)
+	public abstract List<? extends BlastResultsEntry> listEntries();
+	public abstract BlastResultsEntry getBlastResultsEntry(String name);
+	public abstract void deleteBlastResultsEntry(BlastResultsEntry entry)
 	throws IllegalArgumentException, IOException;
 	
 	// Observable methods
@@ -43,8 +43,8 @@ public interface Export extends SequenceEntity, Comparable<Export> {
 	public void notifyObservers();
 	public void notifyObservers(Object arg);
 	
-	public interface ExportEntry extends SequenceEntity {
-		public Export getExport();
+	public interface BlastResultsEntry extends SequenceEntity {
+		public BlastResults getBlastResults();
 		public File getOutFile();
 		public File[] getSequenceFiles();
 		public File getSummaryFastaFile();

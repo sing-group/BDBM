@@ -27,7 +27,7 @@ public interface BDBMRepositoryManager extends Repository {
 
 	public abstract FastaRepositoryManager fasta();
 
-	public abstract ExportRepositoryManager export();
+	public abstract BlastResultsRepositoryManager blastResults();
 
 	public abstract SearchEntryRepositoryManager searchEntry();
 }
