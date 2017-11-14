@@ -39,8 +39,12 @@ import es.uvigo.ei.sing.bdbm.environment.binaries.DefaultBLASTBinaries;
 import es.uvigo.ei.sing.bdbm.environment.binaries.DefaultBedToolsBinaries;
 import es.uvigo.ei.sing.bdbm.environment.binaries.DefaultCompartBinaries;
 import es.uvigo.ei.sing.bdbm.environment.binaries.DefaultEMBOSSBinaries;
+import es.uvigo.ei.sing.bdbm.environment.binaries.DefaultProCompartBinaries;
+import es.uvigo.ei.sing.bdbm.environment.binaries.DefaultProSplignBinaries;
 import es.uvigo.ei.sing.bdbm.environment.binaries.DefaultSplignBinaries;
 import es.uvigo.ei.sing.bdbm.environment.binaries.EMBOSSBinaries;
+import es.uvigo.ei.sing.bdbm.environment.binaries.ProCompartBinaries;
+import es.uvigo.ei.sing.bdbm.environment.binaries.ProSplignBinaries;
 import es.uvigo.ei.sing.bdbm.environment.binaries.SplignBinaries;
 import es.uvigo.ei.sing.bdbm.environment.paths.DefaultRepositoryPaths;
 import es.uvigo.ei.sing.bdbm.environment.paths.RepositoryPaths;
@@ -52,6 +56,8 @@ public class DefaultBDBMEnvironment implements BDBMEnvironment {
 	private final DefaultBedToolsBinaries bedToolsBinaries;
 	private final DefaultSplignBinaries splignBinaries;
 	private final DefaultCompartBinaries compartBinaries;
+	private final DefaultProSplignBinaries proSplignBinaries;
+	private final DefaultProCompartBinaries proCompartBinaries;
 	
 	private final File propertiesFile;
 	private final Properties defaultProperties;
@@ -62,6 +68,8 @@ public class DefaultBDBMEnvironment implements BDBMEnvironment {
 		this.bedToolsBinaries = this.createBedToolsBinaries(null);
 		this.splignBinaries = this.createSplignBinaries(null);
 		this.compartBinaries = this.createCompartBinaries(null);
+		this.proSplignBinaries = this.createProSplignBinaries(null);
+		this.proCompartBinaries = this.createProCompartBinaries(null);
 		this.repositoryPaths = new DefaultRepositoryPaths(new File("."));
 		
 		this.propertiesFile = null;
@@ -108,6 +116,12 @@ public class DefaultBDBMEnvironment implements BDBMEnvironment {
 		);
 		this.compartBinaries = new DefaultCompartBinaries(
 			this.getProperty(CompartBinaries.BASE_DIRECTORY_PROP)
+		);
+		this.proSplignBinaries = new DefaultProSplignBinaries(
+			this.getProperty(ProSplignBinaries.BASE_DIRECTORY_PROP)
+		);
+		this.proCompartBinaries = new DefaultProCompartBinaries(
+			this.getProperty(ProCompartBinaries.BASE_DIRECTORY_PROP)
 		);
 	}
 	
@@ -204,6 +218,16 @@ public class DefaultBDBMEnvironment implements BDBMEnvironment {
 	@Override
 	public CompartBinaries getCompartBinaries() {
 		return this.compartBinaries;
+	}
+
+	@Override
+	public ProSplignBinaries getProSplignBinaries() {
+		return this.proSplignBinaries;
+	}
+	
+	@Override
+	public ProCompartBinaries getProCompartBinaries() {
+		return this.proCompartBinaries;
 	}
 
 	@Override
@@ -345,17 +369,63 @@ public class DefaultBDBMEnvironment implements BDBMEnvironment {
 		}
 	}
 
+
+	@Override
+	public boolean changeProSplignPath(File proSplignPath) throws IOException {
+		return this.changeProSplignPath(proSplignPath, true);
+	}
+
+	@Override
+	public boolean changeProSplignPath(File proSplignPath, boolean persist)
+	throws IOException {
+		if (this.changeProperty(
+			ProSplignBinaries.BASE_DIRECTORY_PROP,
+			proSplignPath.getAbsolutePath(),
+			persist
+		)) {
+			this.proSplignBinaries.setBaseDirectory(proSplignPath);
+			
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public boolean changeProCompartPath(File proCompartPath) throws IOException {
+		return this.changeProCompartPath(proCompartPath, true);
+	}
+
+	@Override
+	public boolean changeProCompartPath(File proCompartPath, boolean persist)
+		throws IOException {
+		if (this.changeProperty(
+			ProCompartBinaries.BASE_DIRECTORY_PROP,
+			proCompartPath.getAbsolutePath(),
+			persist
+		)) {
+			this.proCompartBinaries.setBaseDirectory(proCompartPath);
+			
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	@Override
 	public boolean changePaths(
 		File repositoryPath, File blastPath, File embossPath,
-		File bedToolsPath, File splignPath, File compartPath
+		File bedToolsPath, File splignPath, File compartPath,
+		File proSplignPath, File proCompartPath
 	) throws IOException {
 		return this.changeProperty(RepositoryPaths.BASE_DIRECTORY_PROP, repositoryPath.getAbsolutePath(), true)
 			|| this.changeProperty(BLASTBinaries.BASE_DIRECTORY_PROP, blastPath == null ? "" : blastPath.getAbsolutePath(), true)
 			|| this.changeProperty(EMBOSSBinaries.BASE_DIRECTORY_PROP, embossPath == null ? "" : embossPath.getAbsolutePath(), true)
 			|| this.changeProperty(BedToolsBinaries.BASE_DIRECTORY_PROP, bedToolsPath == null ? "" : bedToolsPath.getAbsolutePath(), true)
 			|| this.changeProperty(SplignBinaries.BASE_DIRECTORY_PROP, splignPath == null ? "" : splignPath.getAbsolutePath(), true)
-			|| this.changeProperty(CompartBinaries.BASE_DIRECTORY_PROP, compartPath == null ? "" : compartPath.getAbsolutePath(), true);
+			|| this.changeProperty(CompartBinaries.BASE_DIRECTORY_PROP, compartPath == null ? "" : compartPath.getAbsolutePath(), true)
+			|| this.changeProperty(ProSplignBinaries.BASE_DIRECTORY_PROP, proSplignPath == null ? "" : proSplignPath.getAbsolutePath(), true)
+			|| this.changeProperty(ProCompartBinaries.BASE_DIRECTORY_PROP, proCompartPath == null ? "" : proCompartPath.getAbsolutePath(), true);
 	}
 
 	@Override
@@ -386,5 +456,15 @@ public class DefaultBDBMEnvironment implements BDBMEnvironment {
 	@Override
 	public DefaultCompartBinaries createCompartBinaries(String path) {
 		return new DefaultCompartBinaries(path);
+	}
+
+	@Override
+	public DefaultProSplignBinaries createProSplignBinaries(String path) {
+		return new DefaultProSplignBinaries(path);
+	}
+	
+	@Override
+	public DefaultProCompartBinaries createProCompartBinaries(String path) {
+		return new DefaultProCompartBinaries(path);
 	}
 }

@@ -30,6 +30,8 @@ import es.uvigo.ei.sing.bdbm.environment.binaries.BLASTBinaries;
 import es.uvigo.ei.sing.bdbm.environment.binaries.BedToolsBinaries;
 import es.uvigo.ei.sing.bdbm.environment.binaries.CompartBinaries;
 import es.uvigo.ei.sing.bdbm.environment.binaries.EMBOSSBinaries;
+import es.uvigo.ei.sing.bdbm.environment.binaries.ProCompartBinaries;
+import es.uvigo.ei.sing.bdbm.environment.binaries.ProSplignBinaries;
 import es.uvigo.ei.sing.bdbm.environment.binaries.SplignBinaries;
 import es.uvigo.ei.sing.bdbm.environment.execution.BLASTBinariesExecutor;
 import es.uvigo.ei.sing.bdbm.environment.execution.BLASTBinaryToolsFactoryBuilder;
@@ -40,6 +42,10 @@ import es.uvigo.ei.sing.bdbm.environment.execution.CompartBinariesExecutor;
 import es.uvigo.ei.sing.bdbm.environment.execution.CompartBinaryToolsFactoryBuilder;
 import es.uvigo.ei.sing.bdbm.environment.execution.EMBOSSBinariesExecutor;
 import es.uvigo.ei.sing.bdbm.environment.execution.EMBOSSBinaryToolsFactoryBuilder;
+import es.uvigo.ei.sing.bdbm.environment.execution.ProCompartBinariesExecutor;
+import es.uvigo.ei.sing.bdbm.environment.execution.ProCompartBinaryToolsFactoryBuilder;
+import es.uvigo.ei.sing.bdbm.environment.execution.ProSplignBinariesExecutor;
+import es.uvigo.ei.sing.bdbm.environment.execution.ProSplignBinaryToolsFactoryBuilder;
 import es.uvigo.ei.sing.bdbm.environment.execution.SplignBinariesExecutor;
 import es.uvigo.ei.sing.bdbm.environment.execution.SplignBinaryToolsFactoryBuilder;
 import es.uvigo.ei.sing.bdbm.persistence.BDBMRepositoryManager;
@@ -76,6 +82,12 @@ public class BDBMManager {
 		this.controller.setCompartBinariesExecutor(
 			createCompartBinariesExecutor(this.getEnvironment().getCompartBinaries())
 		);
+		this.controller.setProSplignBinariesExecutor(
+			createProSplignBinariesExecutor(this.getEnvironment().getProSplignBinaries())
+		);
+		this.controller.setProCompartBinariesExecutor(
+			createProCompartBinariesExecutor(this.getEnvironment().getProCompartBinaries())
+		);
 	}
 	
 	private BLASTBinariesExecutor createBLASTBinariesExecutor(BLASTBinaries binaries)
@@ -105,6 +117,18 @@ public class BDBMManager {
 	private CompartBinariesExecutor createCompartBinariesExecutor(CompartBinaries binaries)
 	throws BinaryCheckException {
 		return CompartBinaryToolsFactoryBuilder.newFactory(binaries)
+			.createExecutor();
+	}
+	
+	private ProSplignBinariesExecutor createProSplignBinariesExecutor(ProSplignBinaries binaries)
+		throws BinaryCheckException {
+		return ProSplignBinaryToolsFactoryBuilder.newFactory(binaries)
+			.createExecutor();
+	}
+	
+	private ProCompartBinariesExecutor createProCompartBinariesExecutor(ProCompartBinaries binaries)
+		throws BinaryCheckException {
+		return ProCompartBinaryToolsFactoryBuilder.newFactory(binaries)
 			.createExecutor();
 	}
 	

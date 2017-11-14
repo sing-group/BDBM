@@ -62,7 +62,7 @@ public class TBLASTNCommand extends BLASTPCommand {
 		final Boolean filter = parameters.getSingleValue(OPTION_FILTER);
 		final String outputName = parameters.getSingleValue(OPTION_OUTPUT_NAME);
 		final boolean keepSingleSequences = parameters.getSingleValue(OPTION_KEEP_SINGLE_SEQUENCE_FILES);
-		
+
 		this.controller.tblastn(
 			new DefaultNucleotideDatabase(database), 
 			new DefaultProteinSearchEntry(query.getParentFile(), false).getQuery(query.getName()), 

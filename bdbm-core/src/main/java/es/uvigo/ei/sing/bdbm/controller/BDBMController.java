@@ -34,6 +34,8 @@ import es.uvigo.ei.sing.bdbm.environment.execution.BedToolsBinariesExecutor;
 import es.uvigo.ei.sing.bdbm.environment.execution.CompartBinariesExecutor;
 import es.uvigo.ei.sing.bdbm.environment.execution.EMBOSSBinariesExecutor;
 import es.uvigo.ei.sing.bdbm.environment.execution.ExecutionException;
+import es.uvigo.ei.sing.bdbm.environment.execution.ProCompartBinariesExecutor;
+import es.uvigo.ei.sing.bdbm.environment.execution.ProSplignBinariesExecutor;
 import es.uvigo.ei.sing.bdbm.environment.execution.SplignBinariesExecutor;
 import es.uvigo.ei.sing.bdbm.fasta.FastaParseException;
 import es.uvigo.ei.sing.bdbm.fasta.ReformatFastaParameters;
@@ -47,6 +49,7 @@ import es.uvigo.ei.sing.bdbm.persistence.entities.NucleotideDatabase;
 import es.uvigo.ei.sing.bdbm.persistence.entities.NucleotideBlastResults;
 import es.uvigo.ei.sing.bdbm.persistence.entities.NucleotideFasta;
 import es.uvigo.ei.sing.bdbm.persistence.entities.NucleotideSearchEntry;
+import es.uvigo.ei.sing.bdbm.persistence.entities.NucleotideSearchEntry.NucleotideQuery;
 import es.uvigo.ei.sing.bdbm.persistence.entities.ProteinDatabase;
 import es.uvigo.ei.sing.bdbm.persistence.entities.ProteinBlastResults;
 import es.uvigo.ei.sing.bdbm.persistence.entities.ProteinFasta;
@@ -54,7 +57,6 @@ import es.uvigo.ei.sing.bdbm.persistence.entities.ProteinSearchEntry;
 import es.uvigo.ei.sing.bdbm.persistence.entities.SearchEntry;
 import es.uvigo.ei.sing.bdbm.persistence.entities.SequenceEntity;
 import es.uvigo.ei.sing.bdbm.persistence.entities.BlastResults.BlastResultsEntry;
-import es.uvigo.ei.sing.bdbm.persistence.entities.NucleotideSearchEntry.NucleotideQuery;
 import es.uvigo.ei.sing.bdbm.persistence.entities.ProteinSearchEntry.ProteinQuery;
 import es.uvigo.ei.sing.bdbm.persistence.entities.SearchEntry.Query;
 
@@ -65,6 +67,8 @@ public interface BDBMController {
 	public abstract void setBedToolsBinariesExecutor(BedToolsBinariesExecutor bBinariesExecutor);
 	public abstract void setSplignBinariesExecutor(SplignBinariesExecutor sBinariesExecutor);
 	public abstract void setCompartBinariesExecutor(CompartBinariesExecutor cBinariesExecutor);
+	public abstract void setProSplignBinariesExecutor(ProSplignBinariesExecutor psBinariesExecutor);
+	public abstract void setProCompartBinariesExecutor(ProCompartBinariesExecutor pcBinariesExecutor);
 
 	public abstract boolean exists(SequenceEntity entity);
 
@@ -192,6 +196,13 @@ public interface BDBMController {
 		NucleotideFasta cdsFasta,
 		boolean concatenateExons,
 		String outputName
+	) throws IOException, InterruptedException, ExecutionException, IllegalStateException, FastaParseException;
+
+	public abstract NucleotideFasta proSplignCompart(
+	  NucleotideFasta nucleotideFasta,
+	  ProteinFasta proteinFasta,
+	  String outputName,
+	  int maxTargetSeqs
 	) throws IOException, InterruptedException, ExecutionException, IllegalStateException, FastaParseException;
 	
 	public abstract void renameSequences(

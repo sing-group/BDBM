@@ -29,6 +29,8 @@ import es.uvigo.ei.sing.bdbm.environment.binaries.BLASTBinaries;
 import es.uvigo.ei.sing.bdbm.environment.binaries.BedToolsBinaries;
 import es.uvigo.ei.sing.bdbm.environment.binaries.CompartBinaries;
 import es.uvigo.ei.sing.bdbm.environment.binaries.EMBOSSBinaries;
+import es.uvigo.ei.sing.bdbm.environment.binaries.ProCompartBinaries;
+import es.uvigo.ei.sing.bdbm.environment.binaries.ProSplignBinaries;
 import es.uvigo.ei.sing.bdbm.environment.binaries.SplignBinaries;
 import es.uvigo.ei.sing.bdbm.environment.paths.RepositoryPaths;
 
@@ -39,6 +41,8 @@ public interface BDBMEnvironment {
 	public abstract BedToolsBinaries getBedToolsBinaries();
 	public abstract SplignBinaries getSplignBinaries();
 	public abstract CompartBinaries getCompartBinaries();
+	public abstract ProSplignBinaries getProSplignBinaries();
+	public abstract ProCompartBinaries getProCompartBinaries();
 	
 	public abstract boolean isAccessionInferEnabled();
 	
@@ -55,11 +59,16 @@ public interface BDBMEnvironment {
 	throws IOException;
 	public abstract boolean changeCompartPath(File compartPath)
 	throws IOException;
+	public abstract boolean changeProSplignPath(File proSplignPath)
+	  throws IOException;
+	public abstract boolean changeProCompartPath(File proCompartPath)
+	  throws IOException;
 	public abstract boolean changeRepositoryPath(File repositoryPath)
 	throws IOException;
 	public abstract boolean changePaths(
 		File repositoryPath, File blastPath, File embossPath,
-		File bedToolsPath, File splignPath, File compartPath
+		File bedToolsPath, File splignPath, File compartPath,
+		File proSplignPath, File proCompartPath
 	) throws IOException;
 	
 	public abstract boolean changeEMBOSSPath(File embossPath, boolean persist)
@@ -72,6 +81,10 @@ public interface BDBMEnvironment {
 	throws IOException;
 	public abstract boolean changeCompartPath(File compartPath, boolean persist)
 	throws IOException;
+	public abstract boolean changeProSplignPath(File proSplignPath, boolean persist)
+	  throws IOException;
+	public abstract boolean changeProCompartPath(File proCompartPath, boolean persist)
+	  throws IOException;
 	public abstract boolean changeRepositoryPath(File repositoryPath, boolean persist)
 	throws IOException;
 	
@@ -81,4 +94,6 @@ public interface BDBMEnvironment {
 	public abstract BedToolsBinaries createBedToolsBinaries(String path);
 	public abstract SplignBinaries createSplignBinaries(String path);
 	public abstract CompartBinaries createCompartBinaries(String path);
+	public abstract ProSplignBinaries createProSplignBinaries(String path);
+	public abstract ProCompartBinaries createProCompartBinaries(String path);
 }

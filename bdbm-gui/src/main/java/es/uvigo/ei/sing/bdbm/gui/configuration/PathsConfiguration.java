@@ -31,10 +31,13 @@ public class PathsConfiguration {
 	private final File baseBedTools;
 	private final File baseSplign;
 	private final File baseCompart;
+	private final File baseProSplign;
+	private final File baseProCompart;
 	
 	public PathsConfiguration(
 		File baseRespository, File baseBLAST, File baseEMBOSS,
-		File baseBedTools, File baseSplign, File baseCompart
+		File baseBedTools, File baseSplign, File baseCompart,
+		File baseProSplign, File baseProCompart
 	) {
 		this.baseRespository = baseRespository;
 		this.baseBLAST = baseBLAST;
@@ -42,6 +45,8 @@ public class PathsConfiguration {
 		this.baseBedTools = baseBedTools;
 		this.baseSplign = baseSplign;
 		this.baseCompart = baseCompart;
+		this.baseProSplign = baseProSplign;
+		this.baseProCompart = baseProCompart;
 	}
 	
 	public File getBaseRespository() {
@@ -66,5 +71,13 @@ public class PathsConfiguration {
 	
 	public File getBaseCompart() {
 		return baseCompart;
+	}
+
+	public File getBaseProSplign() {
+		return baseProSplign;
+	}
+	
+	public File getBaseProCompart() {
+		return baseProCompart;
 	}
 }

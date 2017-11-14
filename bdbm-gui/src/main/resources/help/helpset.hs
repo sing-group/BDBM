@@ -3,7 +3,7 @@
                          "http://java.sun.com/products/javahelp/helpset_2_0.dtd">
 
 <helpset version="2.0">
-	<title>mAbsolute Help</title>
+	<title>BDBM Help</title>
 	<maps>
 		<homeID>top</homeID>
 		<mapref location="map.xml"/>
@@ -34,7 +34,7 @@
 	    <name>main window</name>
 	    <size width="1200" height="800" />
 	    <location x="100" y="100"/>
-	    <title>mAbsolute Help</title>
+	    <title>BDBM Help</title>
 	    <toolbar>
 	        <helpaction>javax.help.BackAction</helpaction>
 	        <helpaction>javax.help.ForwardAction</helpaction>

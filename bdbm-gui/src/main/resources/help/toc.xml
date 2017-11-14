@@ -84,6 +84,10 @@
 				target="bdbm.operations.splign-compart"
 			/>
 			<tocitem 
+				text="ProSplign-Compart (NCBI)" 
+				target="bdbm.operations.prosplign-compart"
+			/>
+			<tocitem 
 				text="Reformat Fasta" 
 				target="bdbm.operations.reformat-fasta"
 			/>

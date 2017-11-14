@@ -22,14 +22,14 @@
 
 package es.uvigo.ei.sing.bdbm.environment.binaries;
 
-public interface SplignBinaries extends Binaries {
-	public final static String SPLIGN_BINARIES_PREFIX = "splign.";
+public interface ProSplignBinaries extends Binaries {
+	public final static String PRO_SPLIGN_BINARIES_PREFIX = "prosplign.";
 	
 	public final static String BASE_DIRECTORY_PROP = 
-		SPLIGN_BINARIES_PREFIX + "binDir";
+		PRO_SPLIGN_BINARIES_PREFIX + "binDir";
 	
 	public final static String SPLIGN_PROP = 
-		SPLIGN_BINARIES_PREFIX + "splign";
+		PRO_SPLIGN_BINARIES_PREFIX + "prosplign";
 	
-	public abstract String getSplign();
+	public abstract String getProSplign();
 }

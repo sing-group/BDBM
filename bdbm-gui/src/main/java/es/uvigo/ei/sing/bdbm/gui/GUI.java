@@ -61,6 +61,7 @@ import es.uvigo.ei.sing.bdbm.cli.commands.GetORFCommand;
 import es.uvigo.ei.sing.bdbm.cli.commands.ImportFastaCommand;
 import es.uvigo.ei.sing.bdbm.cli.commands.MakeBLASTDBCommand;
 import es.uvigo.ei.sing.bdbm.cli.commands.MergeFastaCommand;
+import es.uvigo.ei.sing.bdbm.cli.commands.ProSplignCompartCommand;
 import es.uvigo.ei.sing.bdbm.cli.commands.ReformatFastaCommand;
 import es.uvigo.ei.sing.bdbm.cli.commands.RetrieveSearchEntryCommand;
 import es.uvigo.ei.sing.bdbm.cli.commands.SplignCompartCommand;
@@ -75,6 +76,8 @@ import es.uvigo.ei.sing.bdbm.environment.execution.BedToolsBinaryToolsFactoryBui
 import es.uvigo.ei.sing.bdbm.environment.execution.BinaryCheckException;
 import es.uvigo.ei.sing.bdbm.environment.execution.CompartBinaryToolsFactoryBuilder;
 import es.uvigo.ei.sing.bdbm.environment.execution.EMBOSSBinaryToolsFactoryBuilder;
+import es.uvigo.ei.sing.bdbm.environment.execution.ProCompartBinaryToolsFactoryBuilder;
+import es.uvigo.ei.sing.bdbm.environment.execution.ProSplignBinaryToolsFactoryBuilder;
 import es.uvigo.ei.sing.bdbm.environment.execution.SplignBinaryToolsFactoryBuilder;
 import es.uvigo.ei.sing.bdbm.environment.paths.RepositoryPaths;
 import es.uvigo.ei.sing.bdbm.gui.command.BDBMCommandAction;
@@ -88,6 +91,7 @@ import es.uvigo.ei.sing.bdbm.gui.command.dialogs.ExternalTBLASTXCommandDialog;
 import es.uvigo.ei.sing.bdbm.gui.command.dialogs.GetORFCommandDialog;
 import es.uvigo.ei.sing.bdbm.gui.command.dialogs.MakeBLASTDBCommandDialog;
 import es.uvigo.ei.sing.bdbm.gui.command.dialogs.MergeFastaCommandDialog;
+import es.uvigo.ei.sing.bdbm.gui.command.dialogs.ProSplignCompartCommandDialog;
 import es.uvigo.ei.sing.bdbm.gui.command.dialogs.ReformatFastaCommandDialog;
 import es.uvigo.ei.sing.bdbm.gui.command.dialogs.RetrieveSearchEntryCommandDialog;
 import es.uvigo.ei.sing.bdbm.gui.command.dialogs.SplignCompartCommandDialog;
@@ -262,6 +266,13 @@ public class GUI implements Observer {
 			new SplignCompartCommand(bdbmController),
 			SplignCompartCommandDialog.class
 		));
+
+		// ProSplign-Compart Operations
+		menuOperations.add(new BDBMCommandAction(
+		  bdbmController,
+		  new ProSplignCompartCommand(bdbmController),
+		  ProSplignCompartCommandDialog.class
+	    ));
 		
 		// Fasta manipulation operations
 		menuOperations.addSeparator();
@@ -629,6 +640,98 @@ public class GUI implements Observer {
 		}
 	}
 
+	private static boolean askForProSplignPath(final Component parent) {
+		return JOptionPane.showConfirmDialog(
+			parent, 
+			"Missing or invalid prosplign binaries path. Do you want to select a new path?\n"
+			+ "(If you select 'No', program will exit)",
+			"Invalid ProSplign",
+			JOptionPane.YES_NO_OPTION,
+			JOptionPane.ERROR_MESSAGE
+		) == JOptionPane.YES_OPTION;
+	}
+
+	private static boolean checkProSplignBinaries(DefaultBDBMEnvironment env, Component parent)
+	throws IOException {
+		final JFileChooser chooser = new JFileChooser(env.getProSplignBinaries().getBaseDirectory());
+		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		chooser.setMultiSelectionEnabled(false);
+		
+		while (!checkProSplignPath(env)) {
+			if (askForProSplignPath(parent) && 
+				chooser.showOpenDialog(parent) == JFileChooser.APPROVE_OPTION
+			) {
+				try {
+					env.changeProSplignPath(chooser.getSelectedFile(), false);
+				} catch (IOException ioe) {
+					showIOError(parent, ioe);
+				}
+			} else {
+				return false;
+			}
+		}
+		
+		env.saveToProperties();
+		
+		return true;
+	}
+
+	private static boolean checkProSplignPath(final BDBMEnvironment env) {
+		try {
+			ProSplignBinaryToolsFactoryBuilder.newFactory(env.getProSplignBinaries());
+			return true;
+		} catch (BinaryCheckException bbce) {
+			bbce.printStackTrace();
+			return false;
+		}
+	}
+
+	private static boolean askForProCompartPath(final Component parent) {
+		return JOptionPane.showConfirmDialog(
+			parent, 
+			"Missing or invalid procompart binaries path. Do you want to select a new path?\n"
+			+ "(If you select 'No', program will exit)",
+			"Invalid ProCompart",
+			JOptionPane.YES_NO_OPTION,
+			JOptionPane.ERROR_MESSAGE
+		) == JOptionPane.YES_OPTION;
+	}
+
+	private static boolean checkProCompartBinaries(DefaultBDBMEnvironment env, Component parent)
+	throws IOException {
+		final JFileChooser chooser = new JFileChooser(env.getProCompartBinaries().getBaseDirectory());
+		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		chooser.setMultiSelectionEnabled(false);
+		
+		while (!checkProCompartPath(env)) {
+			if (askForProCompartPath(parent) && 
+				chooser.showOpenDialog(parent) == JFileChooser.APPROVE_OPTION
+			) {
+				try {
+					env.changeProCompartPath(chooser.getSelectedFile(), false);
+				} catch (IOException ioe) {
+					showIOError(parent, ioe);
+				}
+			} else {
+				return false;
+			}
+		}
+		
+		env.saveToProperties();
+		
+		return true;
+	}
+
+	private static boolean checkProCompartPath(final BDBMEnvironment env) {
+		try {
+			ProCompartBinaryToolsFactoryBuilder.newFactory(env.getProCompartBinaries());
+			
+			return true;
+		} catch (BinaryCheckException bbce) {
+			return false;
+		}
+	}
+
 	private static boolean checkRepositoryPaths(
 		final DefaultBDBMEnvironment env, final Component parent
 	) {
@@ -773,6 +876,10 @@ public class GUI implements Observer {
 						System.exit(14);
 					} else if (!checkCompartBinaries(env, splash)) {
 						System.exit(15);
+					} else if (!checkProSplignBinaries(env, splash)) {
+						System.exit(16);
+					} else if (!checkProCompartBinaries(env, splash)) {
+						System.exit(17);
 					} else {
 						gui.initGUI();
 						gui.showMainFrame();

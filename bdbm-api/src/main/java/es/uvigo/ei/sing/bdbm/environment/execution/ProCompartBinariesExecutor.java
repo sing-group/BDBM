@@ -20,16 +20,15 @@
  * #L%
  */
 
-package es.uvigo.ei.sing.bdbm.environment.binaries;
+package es.uvigo.ei.sing.bdbm.environment.execution;
 
-public interface SplignBinaries extends Binaries {
-	public final static String SPLIGN_BINARIES_PREFIX = "splign.";
+import java.io.File;
+
+import es.uvigo.ei.sing.bdbm.environment.binaries.ProCompartBinaries;
+
+public interface ProCompartBinariesExecutor extends BinariesExecutor<ProCompartBinaries> {
+	public boolean checkProCompartBinaries(ProCompartBinaries bBinaries);
 	
-	public final static String BASE_DIRECTORY_PROP = 
-		SPLIGN_BINARIES_PREFIX + "binDir";
-	
-	public final static String SPLIGN_PROP = 
-		SPLIGN_BINARIES_PREFIX + "splign";
-	
-	public abstract String getSplign();
+	public ExecutionResult procompart(File database, File outputFile)
+	throws ExecutionException, InterruptedException;
 }

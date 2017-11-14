@@ -40,9 +40,10 @@
 	<mapID target="bdbm.operations.blast-db-alias" url="HTML/Operations/BlastDBAlias.html"/>	
 	<mapID target="bdbm.operations.retrieve-search-entry" url="HTML/Operations/RetrieveSearchEntry.html"/>	
 	<mapID target="bdbm.operations.get-orf" url="HTML/Operations/GetORF.html"/>	
-	<mapID target="bdbm.operations.splign-compart" url="HTML/Operations/SplignCompart.html"/>	
-	<mapID target="bdbm.operations.reformat-fasta" url="HTML/Operations/ReformatFasta.html"/>	
-	<mapID target="bdbm.operations.merge-fastas" url="HTML/Operations/MergeFastas.html"/>	
+	<mapID target="bdbm.operations.splign-compart" url="HTML/Operations/SplignCompart.html"/>
+	<mapID target="bdbm.operations.prosplign-compart" url="HTML/Operations/ProSplignCompart.html"/>
+	<mapID target="bdbm.operations.reformat-fasta" url="HTML/Operations/ReformatFasta.html"/>
+	<mapID target="bdbm.operations.merge-fastas" url="HTML/Operations/MergeFastas.html"/>
 	
 	<mapID target="bdbm.blast" url="HTML/Blast/Blast.html"/>	
 	<mapID target="bdbm.blast.blastn" url="HTML/Blast/Blastn.html"/>		

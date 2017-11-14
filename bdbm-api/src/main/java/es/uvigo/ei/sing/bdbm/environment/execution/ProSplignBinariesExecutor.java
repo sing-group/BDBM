@@ -20,16 +20,18 @@
  * #L%
  */
 
-package es.uvigo.ei.sing.bdbm.environment.binaries;
+package es.uvigo.ei.sing.bdbm.environment.execution;
 
-public interface SplignBinaries extends Binaries {
-	public final static String SPLIGN_BINARIES_PREFIX = "splign.";
+import java.io.File;
+
+import es.uvigo.ei.sing.bdbm.environment.binaries.ProSplignBinaries;
+
+public interface ProSplignBinariesExecutor extends BinariesExecutor<ProSplignBinaries> {
+	public boolean checkProSplignBinaries(ProSplignBinaries bBinaries);
 	
-	public final static String BASE_DIRECTORY_PROP = 
-		SPLIGN_BINARIES_PREFIX + "binDir";
-	
-	public final static String SPLIGN_PROP = 
-		SPLIGN_BINARIES_PREFIX + "splign";
-	
-	public abstract String getSplign();
+	public ExecutionResult proSplign(File compart, File nucleotidesFasta, File proteinQueryFasta, File outputDir, String outputFileName)
+	throws ExecutionException, InterruptedException;
+//	
+//	public ExecutionResult ldsdir(String ldsdir, String comps, InputLineCallback ... callbacks)
+//	throws ExecutionException, InterruptedException;
 }

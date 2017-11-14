@@ -1,0 +1,41 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!--
+  #%L
+  BDBM GUI
+  %%
+  Copyright (C) 2014 - 2017 Miguel Reboiro-Jato, Critina P. Vieira, Hugo López-Fdez, Noé Vázquez González, Florentino Fdez-Riverola and Jorge Vieira
+  %%
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
+  
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+  
+  You should have received a copy of the GNU General Public
+  License along with this program.  If not, see
+  <http://www.gnu.org/licenses/gpl-3.0.html>.
+  #L%
+  -->
+
+<html>
+<head>
+  <title>ProSplign-Compart (NCBI)</title>
+</head>
+<body>
+  <h1><i>ProSplign-Compart (NCBI)</i></h1>
+   <p>An alternative to <i>Splign-Compart (NCBI)</i> is <i>ProSplign-Compart (NCBI)</i>. When using this option, protein reference sequences rather than CDSs (nucleotide) reference sequences are used. Since protein sequences change at a slower pace than nucleotide sequences, in principle the reference and target sequences can be more distantly related than when using the <i>Splign-Compart (NCBI)</i> option, but it is difficult to quantify how distantly related they can be. Moreover, <i>Splign-Compart (NCBI)</i> runs considerably faster than <i>ProSplign-Compart (NCBI)</i>.</p>
+   <p>When using the <i>ProSplign-Compart (NCBI)</i> option the user must specify the FASTA file containing the genome to be annotated (<i>Genome Fasta</i>), as well as the file containing the reference protein sequences (<i>Query protein FASTA</i>), and the name of the output file (<i>Output name</i>). The main results file is saved in the <i>/fasta/nucleotides</i> folder that is located in the specified repository folder. The first number on the header is an index that is followed by the name of the protein sequence used to obtain the annotation. The remaining information gives the possibility to link this file to two other files that will be saved in the <i>/Export Files/nucleotides</i> folder that is located in the specified repository folder (see below), and information on the name of the sequence that was annotated (see text after <i>Header:</i>). In the <i>/Export Files/nucleotides</i> folder, the file with the <i>txt</i> extension shows the output of the <i>tblastx</i> search used for the subsequent annotation, while the file with the <i>fasta</i> extension gives the genome region where the gene has been annotated, including the name of the target nucleotide sequence (see text after <i>Header:</i>). The correspondence between the two files is made by looking at the first four numbers in the file with the <i>Fasta</i> extension that must match the first, second, fourth and fifth number, respectively, in the file with the <i>txt</i> extension. It should be noted that a single reference sequence can give rise to more than one annotation if <i>ProSplign</i> cannot completely confidently align the reference and target sequences (those positions that are confidently aligned are labelled with an asterisk in the file with the <i>txt</i> extension).</p>
+   <p>The resulting CDS annotation is based on the homology to a given protein reference sequence, and thus may produce sequence annotations with lengths that are not multiple of three, if for instance, sequencing errors causing frameshifts are present in the genome to be annotated. Nevertheless, the existence of intron splicing signals at the exons 5’ and 3’ ends is taken into account. There will be no stop codon in the CDS annotation since the reference sequence is a protein.</p>
+  <div align="center">
+    <p>
+      <img src="../Images/DialogProSplignCompart.png" border="0"/><br/>
+      <strong><i>ProSplign-Compart (NCBI)</i></strong>
+    </p>
+  </div>
+</body>
+</html>

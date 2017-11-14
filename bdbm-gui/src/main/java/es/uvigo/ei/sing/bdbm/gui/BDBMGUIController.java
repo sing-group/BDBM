@@ -94,7 +94,9 @@ public class BDBMGUIController extends Observable {
 			configuration.getBaseEMBOSS(),
 			configuration.getBaseBedTools(),
 			configuration.getBaseSplign(),
-			configuration.getBaseCompart()
+			configuration.getBaseCompart(),
+			configuration.getBaseProSplign(),
+			configuration.getBaseProCompart()
 		)) {
 			this.setChanged();
 			this.notifyObservers(configuration);

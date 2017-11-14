@@ -1,6 +1,6 @@
 /*-
  * #%L
- * BDBM API
+ * BDBM Core
  * %%
  * Copyright (C) 2014 - 2017 Miguel Reboiro-Jato, Critina P. Vieira, Hugo López-Fdez, Noé Vázquez González, Florentino Fdez-Riverola and Jorge Vieira
  * %%
@@ -20,16 +20,21 @@
  * #L%
  */
 
-package es.uvigo.ei.sing.bdbm.environment.binaries;
+package es.uvigo.ei.sing.bdbm.environment;
 
-public interface SplignBinaries extends Binaries {
-	public final static String SPLIGN_BINARIES_PREFIX = "splign.";
+import java.util.ServiceLoader;
+
+public class ProSplignEnvironmentFactory {
+	private final static ServiceLoader<ProSplignEnvironment> SERVICE_LOADER = 
+		ServiceLoader.load(ProSplignEnvironment.class);
 	
-	public final static String BASE_DIRECTORY_PROP = 
-		SPLIGN_BINARIES_PREFIX + "binDir";
-	
-	public final static String SPLIGN_PROP = 
-		SPLIGN_BINARIES_PREFIX + "splign";
-	
-	public abstract String getSplign();
+	public static ProSplignEnvironment createEnvironment() {
+		for (ProSplignEnvironment environment : SERVICE_LOADER) {
+			if (environment.isValidFor(System.getProperty("os.name"))) {
+				return environment;
+			}
+		}
+		
+		return null;
+	}
 }
