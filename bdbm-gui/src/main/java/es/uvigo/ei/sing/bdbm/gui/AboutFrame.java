@@ -49,7 +49,7 @@ import javax.swing.WindowConstants;
 public class AboutFrame extends JDialog {
 	private static final long serialVersionUID = 1L;
 	
-	private static final int FRAME_WIDTH = 360;
+	private static final int FRAME_WIDTH = 490;
 	private static final int LINE_HEIGHT = 15;
 	private static final int IMAGE_HEIGHT = 86;
 	
@@ -58,7 +58,7 @@ public class AboutFrame extends JDialog {
 	public final static ImageIcon IMAGE_SING = new ImageIcon(AboutFrame.class.getResource("images/SING.png"));
 	
 	private final static String LINK_MEG = "http://evolution.ibmc.up.pt/";
-	private final static String LINK_SING = "http://sing.ei.uvigo.es";
+	private final static String LINK_SING = "http://www.sing-group.org";
 
 	public AboutFrame(Frame parent) {
 		super(parent, "About", false);
@@ -76,9 +76,10 @@ public class AboutFrame extends JDialog {
 
 		final JLabel[] megLabels = new JLabel[] {
 			lblTitleMEG = new JLabel("Molecular Evolution Group", SwingConstants.CENTER),
-			new JLabel("Instituto de Biologia Molecular e Celular", SwingConstants.CENTER),
-			new JLabel("Rua do Campo Alegre, 823", SwingConstants.CENTER),
-			new JLabel("4150-180 Porto", SwingConstants.CENTER),
+			new JLabel("IBMC - Instituto de Biologia Molecular e Celular", SwingConstants.CENTER),
+			new JLabel("i3S - Instituto de Investigação e Inovação da Universidade do Porto", SwingConstants.CENTER),
+			new JLabel("Rua Alfredo Allen", SwingConstants.CENTER),
+			new JLabel("4200-135 Porto", SwingConstants.CENTER),
 			new JLabel("Portugal", SwingConstants.CENTER),
 			lblLinkMEG = new JLabel(AboutFrame.LINK_MEG)
 		};
