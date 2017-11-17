@@ -95,6 +95,10 @@
 				text="Merge Fastas" 
 				target="bdbm.operations.merge-fastas"
 			/>
+			<tocitem 
+				text="Refine Annotation" 
+				target="bdbm.operations.refine-annotation"
+			/>
 		</tocitem>
 		
 		<tocitem 

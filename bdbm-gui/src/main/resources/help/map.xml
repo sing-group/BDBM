@@ -44,6 +44,7 @@
 	<mapID target="bdbm.operations.prosplign-compart" url="HTML/Operations/ProSplignCompart.html"/>
 	<mapID target="bdbm.operations.reformat-fasta" url="HTML/Operations/ReformatFasta.html"/>
 	<mapID target="bdbm.operations.merge-fastas" url="HTML/Operations/MergeFastas.html"/>
+	<mapID target="bdbm.operations.refine-annotation" url="HTML/Operations/RefineAnnotation.html"/>
 	
 	<mapID target="bdbm.blast" url="HTML/Blast/Blast.html"/>	
 	<mapID target="bdbm.blast.blastn" url="HTML/Blast/Blastn.html"/>		

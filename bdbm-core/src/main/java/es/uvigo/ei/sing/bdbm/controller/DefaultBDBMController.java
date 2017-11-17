@@ -52,25 +52,25 @@ import es.uvigo.ei.sing.bdbm.fasta.ReformatFastaParameters;
 import es.uvigo.ei.sing.bdbm.fasta.SequenceLengthConfiguration;
 import es.uvigo.ei.sing.bdbm.fasta.naming.FastaSequenceRenameMode;
 import es.uvigo.ei.sing.bdbm.persistence.BDBMRepositoryManager;
+import es.uvigo.ei.sing.bdbm.persistence.BlastResultsRepositoryManager;
 import es.uvigo.ei.sing.bdbm.persistence.DatabaseRepositoryManager;
 import es.uvigo.ei.sing.bdbm.persistence.EntityAlreadyExistsException;
 import es.uvigo.ei.sing.bdbm.persistence.EntityValidationException;
 import es.uvigo.ei.sing.bdbm.persistence.ExportRepositoryManager;
-import es.uvigo.ei.sing.bdbm.persistence.BlastResultsRepositoryManager;
 import es.uvigo.ei.sing.bdbm.persistence.FastaRepositoryManager;
 import es.uvigo.ei.sing.bdbm.persistence.SearchEntryRepositoryManager;
-import es.uvigo.ei.sing.bdbm.persistence.entities.Database;
 import es.uvigo.ei.sing.bdbm.persistence.entities.BlastResults;
 import es.uvigo.ei.sing.bdbm.persistence.entities.BlastResults.BlastResultsEntry;
+import es.uvigo.ei.sing.bdbm.persistence.entities.Database;
 import es.uvigo.ei.sing.bdbm.persistence.entities.Fasta;
+import es.uvigo.ei.sing.bdbm.persistence.entities.NucleotideBlastResults;
 import es.uvigo.ei.sing.bdbm.persistence.entities.NucleotideDatabase;
 import es.uvigo.ei.sing.bdbm.persistence.entities.NucleotideExport;
-import es.uvigo.ei.sing.bdbm.persistence.entities.NucleotideBlastResults;
 import es.uvigo.ei.sing.bdbm.persistence.entities.NucleotideFasta;
 import es.uvigo.ei.sing.bdbm.persistence.entities.NucleotideSearchEntry;
 import es.uvigo.ei.sing.bdbm.persistence.entities.NucleotideSearchEntry.NucleotideQuery;
-import es.uvigo.ei.sing.bdbm.persistence.entities.ProteinDatabase;
 import es.uvigo.ei.sing.bdbm.persistence.entities.ProteinBlastResults;
+import es.uvigo.ei.sing.bdbm.persistence.entities.ProteinDatabase;
 import es.uvigo.ei.sing.bdbm.persistence.entities.ProteinFasta;
 import es.uvigo.ei.sing.bdbm.persistence.entities.ProteinSearchEntry;
 import es.uvigo.ei.sing.bdbm.persistence.entities.ProteinSearchEntry.ProteinQuery;
@@ -686,7 +686,7 @@ public class DefaultBDBMController implements BDBMController {
 			throw new IllegalArgumentException("ORF already exists: " + outputName);
 		} else {
 			try {
-				this.embossBinariesExecutor.executeGetORF(fasta, orf, minSize, maxSize);
+				this.embossBinariesExecutor.executeGetORF(fasta, orf, minSize, maxSize, 3);
 				if (noNewLines) {
 					this.renameSequencesAndRemoveLineBreaks(orf, FastaSequenceRenameMode.NONE, null);
 				}
@@ -695,6 +695,43 @@ public class DefaultBDBMController implements BDBMController {
 			} finally {
 				if (!fastaManager.exists(orf))
 					fastaManager.delete(orf);
+			}
+		}
+	}
+
+	@Override
+	public NucleotideFasta refineAnnotation(
+		NucleotideFasta genomeRegion,
+		NucleotideFasta annotation,
+		int overlapping,
+		int minSize,
+		int maxSize,
+		String outputName
+	) throws IOException, InterruptedException, ExecutionException, IllegalStateException, FastaParseException {
+		final FastaRepositoryManager fastaManager = this.repositoryManager.fasta();
+		final NucleotideFasta outputFasta = fastaManager.getNucleotide(outputName);
+
+		if (fastaManager.exists(outputFasta)) {
+			throw new IllegalArgumentException(
+				"FASTA already exists: " + outputName);
+		} else {
+			final RefineAnnotationPipeline pipeline =
+				new RefineAnnotationPipeline(this.embossBinariesExecutor);
+
+			final ExecutionResult result = pipeline.refineAnnotation(
+				genomeRegion, annotation,
+				overlapping, minSize, maxSize,
+				outputFasta
+			);
+
+			if (result != null && result.getExitStatus() != 0) {
+				if (fastaManager.exists(outputFasta))
+					fastaManager.delete(outputFasta);
+
+				throw new ExecutionException(result.getExitStatus(),
+					"Error executing refine annotation", "refineAnnotation");
+			} else {
+				return outputFasta;
 			}
 		}
 	}

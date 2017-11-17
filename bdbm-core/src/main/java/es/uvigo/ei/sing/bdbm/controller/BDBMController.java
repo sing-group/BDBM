@@ -8,12 +8,12 @@
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
@@ -42,23 +42,23 @@ import es.uvigo.ei.sing.bdbm.fasta.ReformatFastaParameters;
 import es.uvigo.ei.sing.bdbm.fasta.naming.FastaSequenceRenameMode;
 import es.uvigo.ei.sing.bdbm.persistence.BDBMRepositoryManager;
 import es.uvigo.ei.sing.bdbm.persistence.EntityAlreadyExistsException;
-import es.uvigo.ei.sing.bdbm.persistence.entities.Database;
 import es.uvigo.ei.sing.bdbm.persistence.entities.BlastResults;
+import es.uvigo.ei.sing.bdbm.persistence.entities.BlastResults.BlastResultsEntry;
+import es.uvigo.ei.sing.bdbm.persistence.entities.Database;
 import es.uvigo.ei.sing.bdbm.persistence.entities.Fasta;
-import es.uvigo.ei.sing.bdbm.persistence.entities.NucleotideDatabase;
 import es.uvigo.ei.sing.bdbm.persistence.entities.NucleotideBlastResults;
+import es.uvigo.ei.sing.bdbm.persistence.entities.NucleotideDatabase;
 import es.uvigo.ei.sing.bdbm.persistence.entities.NucleotideFasta;
 import es.uvigo.ei.sing.bdbm.persistence.entities.NucleotideSearchEntry;
 import es.uvigo.ei.sing.bdbm.persistence.entities.NucleotideSearchEntry.NucleotideQuery;
-import es.uvigo.ei.sing.bdbm.persistence.entities.ProteinDatabase;
 import es.uvigo.ei.sing.bdbm.persistence.entities.ProteinBlastResults;
+import es.uvigo.ei.sing.bdbm.persistence.entities.ProteinDatabase;
 import es.uvigo.ei.sing.bdbm.persistence.entities.ProteinFasta;
 import es.uvigo.ei.sing.bdbm.persistence.entities.ProteinSearchEntry;
-import es.uvigo.ei.sing.bdbm.persistence.entities.SearchEntry;
-import es.uvigo.ei.sing.bdbm.persistence.entities.SequenceEntity;
-import es.uvigo.ei.sing.bdbm.persistence.entities.BlastResults.BlastResultsEntry;
 import es.uvigo.ei.sing.bdbm.persistence.entities.ProteinSearchEntry.ProteinQuery;
+import es.uvigo.ei.sing.bdbm.persistence.entities.SearchEntry;
 import es.uvigo.ei.sing.bdbm.persistence.entities.SearchEntry.Query;
+import es.uvigo.ei.sing.bdbm.persistence.entities.SequenceEntity;
 
 public interface BDBMController {
 	public abstract void setRepositoryManager(BDBMRepositoryManager repositoryManager);
@@ -84,7 +84,7 @@ public interface BDBMController {
 	public abstract ProteinFasta[] listProteinFastas();
 	public abstract ProteinSearchEntry[] listProteinSearchEntries();
 	public abstract ProteinBlastResults[] listProteinBlastResults();
-	
+
 	public abstract NucleotideDatabase[] listNucleotideDatabases();
 	public abstract NucleotideFasta[] listNucleotideFastas();
 	public abstract NucleotideSearchEntry[] listNucleotideSearchEntries();
@@ -105,18 +105,18 @@ public interface BDBMController {
 	public abstract NucleotideBlastResults blastn(
 		NucleotideDatabase database,
 		NucleotideQuery query,
-		BigDecimal expectedValue, 
+		BigDecimal expectedValue,
 		boolean filter,
 		boolean keepSingleSequenceFiles,
 		String outputName,
 		Map<String, String> additionalParameters
 	) throws IOException, InterruptedException, ExecutionException, IllegalStateException;
-	
+
 	public abstract NucleotideBlastResults blastn(
 		NucleotideDatabase database,
 		File queryFile,
-		BigDecimal expectedValue, 
-		boolean filter, 
+		BigDecimal expectedValue,
+		boolean filter,
 		boolean keepSingleSequenceFiles,
 		String outputName,
 		Map<String, String> additionalParameters
@@ -124,18 +124,18 @@ public interface BDBMController {
 
 	public abstract ProteinBlastResults blastp(
 		ProteinDatabase database,
-		ProteinQuery query, 
-		BigDecimal expectedValue, 
+		ProteinQuery query,
+		BigDecimal expectedValue,
 		boolean keepSingleSequenceFiles,
 		boolean filter,
 		String outputName,
 		Map<String, String> additionalParameters
 	) throws IOException, InterruptedException, ExecutionException, IllegalStateException;
-	
+
 	public abstract ProteinBlastResults blastp(
 		ProteinDatabase database,
 		File queryFile,
-		BigDecimal expectedValue, 
+		BigDecimal expectedValue,
 		boolean filter,
 		boolean keepSingleSequenceFiles,
 		String outputName,
@@ -145,8 +145,8 @@ public interface BDBMController {
 	public abstract NucleotideBlastResults tblastx(
 		NucleotideDatabase database,
 		NucleotideQuery query,
-		BigDecimal expectedValue, 
-		boolean filter, 
+		BigDecimal expectedValue,
+		boolean filter,
 		boolean keepSingleSequenceFiles,
 		String outputName,
 		Map<String, String> additionalParameters
@@ -155,8 +155,8 @@ public interface BDBMController {
 	public abstract NucleotideBlastResults tblastx(
 		NucleotideDatabase database,
 		File queryFile,
-		BigDecimal expectedValue, 
-		boolean filter, 
+		BigDecimal expectedValue,
+		boolean filter,
 		boolean keepSingleSequenceFiles,
 		String outputName,
 		Map<String, String> additionalParameters
@@ -181,13 +181,21 @@ public interface BDBMController {
 		String outputName,
 		Map<String, String> additionalParameters
 	) throws IOException, InterruptedException, ExecutionException, IllegalStateException;
-	
+
 	public Map<String, String> getBlastAdditionalParameters(BLASTType blastType);
 
 	public abstract NucleotideFasta getORF(
-		NucleotideFasta fasta, 
-		int minSize, int maxSize, 
+		NucleotideFasta fasta,
+		int minSize, int maxSize,
 		boolean noNewLine,
+		String outputName
+	) throws IOException, InterruptedException, ExecutionException, IllegalStateException, FastaParseException;
+
+	public abstract NucleotideFasta refineAnnotation(
+		NucleotideFasta genomeRegion,
+		NucleotideFasta annotation,
+		int overlapping,
+		int minSize, int maxSize,
 		String outputName
 	) throws IOException, InterruptedException, ExecutionException, IllegalStateException, FastaParseException;
 
@@ -204,21 +212,21 @@ public interface BDBMController {
 	  String outputName,
 	  int maxTargetSeqs
 	) throws IOException, InterruptedException, ExecutionException, IllegalStateException, FastaParseException;
-	
+
 	public abstract void renameSequences(
 		Fasta fasta, FastaSequenceRenameMode mode,
 		Map<ReformatFastaParameters, Object> additionalParameters
 	) throws FastaParseException, IOException;
-	
+
 	public abstract void renameSequencesAndChangeLength(
 		Fasta fasta, int fragmentLength, FastaSequenceRenameMode mode,
 		Map<ReformatFastaParameters, Object> additionalParameters
 	) throws FastaParseException, IOException;
-	
+
 	public abstract void renameSequencesAndRemoveLineBreaks(
 		Fasta fasta, FastaSequenceRenameMode mode,
 		Map<ReformatFastaParameters, Object> additionalParameters
 	) throws FastaParseException, IOException;
-	
+
 	public abstract void mergeFastas(Fasta[] fastas, String outputFasta) throws FastaParseException, IOException;
 }

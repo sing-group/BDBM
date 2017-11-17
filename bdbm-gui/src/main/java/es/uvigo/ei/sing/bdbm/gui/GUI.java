@@ -8,12 +8,12 @@
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
@@ -62,6 +62,7 @@ import es.uvigo.ei.sing.bdbm.cli.commands.ImportFastaCommand;
 import es.uvigo.ei.sing.bdbm.cli.commands.MakeBLASTDBCommand;
 import es.uvigo.ei.sing.bdbm.cli.commands.MergeFastaCommand;
 import es.uvigo.ei.sing.bdbm.cli.commands.ProSplignCompartCommand;
+import es.uvigo.ei.sing.bdbm.cli.commands.RefineAnnotationCommand;
 import es.uvigo.ei.sing.bdbm.cli.commands.ReformatFastaCommand;
 import es.uvigo.ei.sing.bdbm.cli.commands.RetrieveSearchEntryCommand;
 import es.uvigo.ei.sing.bdbm.cli.commands.SplignCompartCommand;
@@ -92,6 +93,7 @@ import es.uvigo.ei.sing.bdbm.gui.command.dialogs.GetORFCommandDialog;
 import es.uvigo.ei.sing.bdbm.gui.command.dialogs.MakeBLASTDBCommandDialog;
 import es.uvigo.ei.sing.bdbm.gui.command.dialogs.MergeFastaCommandDialog;
 import es.uvigo.ei.sing.bdbm.gui.command.dialogs.ProSplignCompartCommandDialog;
+import es.uvigo.ei.sing.bdbm.gui.command.dialogs.RefineAnnotationCommandDialog;
 import es.uvigo.ei.sing.bdbm.gui.command.dialogs.ReformatFastaCommandDialog;
 import es.uvigo.ei.sing.bdbm.gui.command.dialogs.RetrieveSearchEntryCommandDialog;
 import es.uvigo.ei.sing.bdbm.gui.command.dialogs.SplignCompartCommandDialog;
@@ -103,18 +105,18 @@ import es.uvigo.ei.sing.bdbm.persistence.DefaultBDBMRepositoryManager;
 
 public class GUI implements Observer {
 	public final static String SHOW_CONFIGURATION = "gui.configuration.visible";
-	
+
 	private final static Logger LOG = LoggerFactory.getLogger(GUI.class);
 	private final static ImageIcon IMAGE_BDBM =
 		new ImageIcon(BDBMSplash.class.getResource("images/bdbm.png"));
-	
+
 	private BDBMManager manager;
 	private BDBMGUIController guiController;
 
 	private JFrame mainFrame;
-	
+
 	public GUI() {}
-	
+
 	public GUI(boolean init) throws FileNotFoundException, IOException, BinaryCheckException {
 		if (init) {
 			this.initControllers();
@@ -125,7 +127,7 @@ public class GUI implements Observer {
 	private void initControllers() throws FileNotFoundException, IOException, BinaryCheckException {
 		if (this.guiController != null)
 			this.guiController.deleteObserver(this);
-		
+
 		try {
 			this.manager = createBDBMManager();
 			this.guiController = createGUIController(this.manager);
@@ -133,18 +135,18 @@ public class GUI implements Observer {
 		} catch (Exception e) {
 			this.manager = null;
 			this.guiController = null;
-			
+
 			throw e;
 		}
 	}
-	
+
 	private void initGUI() throws FileNotFoundException, IOException, BinaryCheckException {
 		if (this.manager == null || this.guiController == null)
 			this.initControllers();
-		
+
 		this.mainFrame = createMainFrame(this.guiController);
 	}
-	
+
 	public void showMainFrame() {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
@@ -153,7 +155,7 @@ public class GUI implements Observer {
 			}
 		});
 	}
-	
+
 	public void showMainFrameAndWait()
 	throws InterruptedException, InvocationTargetException {
 		SwingUtilities.invokeAndWait(new Runnable() {
@@ -163,7 +165,7 @@ public class GUI implements Observer {
 			}
 		});
 	}
-	
+
 	private static BDBMManager createBDBMManager()
 	throws FileNotFoundException, IOException, BinaryCheckException {
 		return new BDBMManager(
@@ -185,31 +187,31 @@ public class GUI implements Observer {
 	private static DefaultBDBMController createBDBMController() {
 		return new DefaultBDBMController();
 	}
-	
+
 	private static BDBMGUIController createGUIController(BDBMManager manager) {
 		return new BDBMGUIController(manager);
 	}
-	
+
 	private static BDBMMainPanel createMainPanel(BDBMGUIController controller) {
 		return new BDBMMainPanel(controller);
 	}
-	
+
 	private static final JMenuBar createMenuBar(
 		final BDBMGUIController controller, final Frame parent
 	) {
 		final BDBMController bdbmController = controller.getController();
 
 		final JMenuBar menuBar = new JMenuBar();
-		
+
 		final JMenu menuFile = new JMenu("File");
 		menuFile.add(new BDBMCommandAction(
-			bdbmController, 
+			bdbmController,
 			new ImportFastaCommand(bdbmController)
 		));
 		if (controller.showConfiguration()) {
 			menuFile.add(new AbstractAction("Configuration") {
 				private static final long serialVersionUID = 1L;
-		
+
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					new ConfigurationDialog(
@@ -224,34 +226,34 @@ public class GUI implements Observer {
 		menuFile.addSeparator();
 		menuFile.add(new AbstractAction("Exit") {
 			private static final long serialVersionUID = 1L;
-	
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				System.exit(0);
 			}
 		});
-		
+
 		final JMenu menuOperations = new JMenu("Operations");
 		menuOperations.add(new BDBMCommandAction(
 			bdbmController,
-			new MakeBLASTDBCommand(bdbmController), 
+			new MakeBLASTDBCommand(bdbmController),
 			MakeBLASTDBCommandDialog.class
 		));
 		menuOperations.add(new BDBMCommandAction(
 			bdbmController,
-			new BLASTDBAliasToolCommand(bdbmController), 
+			new BLASTDBAliasToolCommand(bdbmController),
 			BLASTDBAliasToolCommandDialog.class
 		));
 		final BDBMCommandAction retrieveSearchEntryCA = new BDBMCommandAction(
 			bdbmController,
-			new RetrieveSearchEntryCommand(bdbmController), 
+			new RetrieveSearchEntryCommand(bdbmController),
 			RetrieveSearchEntryCommandDialog.class
 		);
-	
+
 		retrieveSearchEntryCA.addParamValue(boolean.class, controller.getEnvironment().isAccessionInferEnabled());
-		
+
 		menuOperations.add(retrieveSearchEntryCA);
-		
+
 		// ORF Operations
 		menuOperations.addSeparator();
 		menuOperations.add(new BDBMCommandAction(
@@ -259,7 +261,7 @@ public class GUI implements Observer {
 			new GetORFCommand(bdbmController),
 			GetORFCommandDialog.class
 		));
-		
+
 		// Splign-Compart Operations
 		menuOperations.add(new BDBMCommandAction(
 			bdbmController,
@@ -273,21 +275,27 @@ public class GUI implements Observer {
 		  new ProSplignCompartCommand(bdbmController),
 		  ProSplignCompartCommandDialog.class
 	    ));
-		
+
 		// Fasta manipulation operations
 		menuOperations.addSeparator();
 		menuOperations.add(new BDBMCommandAction(
-			bdbmController, 
-			new ReformatFastaCommand(bdbmController), 
+			bdbmController,
+			new ReformatFastaCommand(bdbmController),
 			ReformatFastaCommandDialog.class)
 		);
-		
+
 		menuOperations.add(new BDBMCommandAction(
-			bdbmController, 
-			new MergeFastaCommand(bdbmController), 
+			bdbmController,
+			new MergeFastaCommand(bdbmController),
 			MergeFastaCommandDialog.class)
 		);
-		
+
+		menuOperations.add(new BDBMCommandAction(
+			bdbmController,
+			new RefineAnnotationCommand(bdbmController),
+			RefineAnnotationCommandDialog.class)
+		);
+
 		final JMenu menuBlast = new JMenu("BLAST");
 		menuBlast.add(new BDBMCommandAction(
 			bdbmController,
@@ -309,7 +317,7 @@ public class GUI implements Observer {
 			new TBLASTXCommand(bdbmController),
 			TBLASTXCommandDialog.class
 		));
-		
+
 		menuBlast.addSeparator();
 		menuBlast.add(new BDBMCommandAction(
 			"BLASTN with external query",
@@ -335,8 +343,8 @@ public class GUI implements Observer {
 			new TBLASTXCommand(bdbmController),
 			ExternalTBLASTXCommandDialog.class
 		));
-		
-		
+
+
 		final JMenu menuHelp = new JMenu("Help");
 		try {
 			final URL hsURL = HelpSet.findHelpSet(GUI.class.getClassLoader(), "help/helpset.hs");
@@ -351,29 +359,29 @@ public class GUI implements Observer {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					JOptionPane.showMessageDialog(
-						parent, 
+						parent,
 						"Sorry, an error happend while trying to load help. Please, contact administrators.",
 						"Help",
 						JOptionPane.ERROR_MESSAGE
 					);
 				}
-			});	
+			});
 		}
 		menuHelp.add(new AbstractAction("About BDBM") {
 			private static final long serialVersionUID = 1L;
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				new AboutFrame(parent).setVisible(true);
 			}
 		});
-		
+
 		menuBar.add(menuFile);
 		menuBar.add(menuOperations);
 		menuBar.add(menuBlast);
 		menuBar.add(Box.createHorizontalGlue());
 		menuBar.add(menuHelp);
-		
+
 		return menuBar;
 	}
 
@@ -381,18 +389,18 @@ public class GUI implements Observer {
 		final JFrame frame = new JFrame("BLAST DataBase Manager");
 		frame.setIconImage(GUI.IMAGE_BDBM.getImage());
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
+
 		frame.setSize(960, 700);
 		frame.setLocationRelativeTo(null);
 		frame.setContentPane(createMainPanel(controller));
 		frame.setJMenuBar(createMenuBar(controller, frame));
-		
+
 		return frame;
 	}
-	
+
 	private static boolean askForRepositoryPath(final Component parent) {
 		return JOptionPane.showConfirmDialog(
-			parent, 
+			parent,
 			"Missing or invalid repository path. Do you want to select a new path?\n"
 			+ "(If you select 'No', program will exit)",
 			"Invalid Repository",
@@ -403,7 +411,7 @@ public class GUI implements Observer {
 
 	private static boolean askForCreatingRepositoryIn(final Component parent, final File repositoryPath) {
 		return JOptionPane.showConfirmDialog(
-			parent, 
+			parent,
 			"Selected path does not contain a valid repository. Do you want to create a repository in " + repositoryPath.getAbsolutePath() + "?",
 			"Create Base Repository",
 			JOptionPane.YES_NO_OPTION,
@@ -413,7 +421,7 @@ public class GUI implements Observer {
 
 	private static boolean askForEmbossPath(final Component parent) {
 		return JOptionPane.showConfirmDialog(
-			parent, 
+			parent,
 			"Missing or invalid EMBOSS binaries path. Do you want to select a new path?\n"
 			+ "(If you select 'No', program will exit)",
 			"Invalid EMBOSS",
@@ -426,9 +434,9 @@ public class GUI implements Observer {
 		final JFileChooser chooser = new JFileChooser(env.getEMBOSSBinaries().getBaseDirectory());
 		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		chooser.setMultiSelectionEnabled(false);
-		
+
 		while (!checkEmbossPath(env)) {
-			if (askForEmbossPath(parent) && 
+			if (askForEmbossPath(parent) &&
 				chooser.showOpenDialog(parent) == JFileChooser.APPROVE_OPTION
 			) {
 				try {
@@ -440,16 +448,16 @@ public class GUI implements Observer {
 				return false;
 			}
 		}
-		
+
 		env.saveToProperties();
-		
+
 		return true;
 	}
 
 	private static boolean checkEmbossPath(final BDBMEnvironment env) {
 		try {
 			EMBOSSBinaryToolsFactoryBuilder.newFactory(env.getEMBOSSBinaries());
-			
+
 			return true;
 		} catch (BinaryCheckException bbce) {
 			return false;
@@ -458,7 +466,7 @@ public class GUI implements Observer {
 
 	private static boolean askForBlastPath(final Component parent) {
 		return JOptionPane.showConfirmDialog(
-			parent, 
+			parent,
 			"Missing or invalid BLAST binaries path. Do you want to select a new path?\n"
 			+ "(If you select 'No', program will exit)",
 			"Invalid BLAST",
@@ -471,9 +479,9 @@ public class GUI implements Observer {
 		final JFileChooser chooser = new JFileChooser(env.getBLASTBinaries().getBaseDirectory());
 		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		chooser.setMultiSelectionEnabled(false);
-		
+
 		while (!checkBlastPath(env)) {
-			if (askForBlastPath(parent) && 
+			if (askForBlastPath(parent) &&
 				chooser.showOpenDialog(parent) == JFileChooser.APPROVE_OPTION
 			) {
 				try {
@@ -485,16 +493,16 @@ public class GUI implements Observer {
 				return false;
 			}
 		}
-		
+
 		env.saveToProperties();
-		
+
 		return true;
 	}
 
 	private static boolean checkBlastPath(final BDBMEnvironment env) {
 		try {
 			BLASTBinaryToolsFactoryBuilder.newFactory(env.getBLASTBinaries());
-			
+
 			return true;
 		} catch (BinaryCheckException bbce) {
 			bbce.printStackTrace();
@@ -504,7 +512,7 @@ public class GUI implements Observer {
 
 	private static boolean askForBedToolsPath(final Component parent) {
 		return JOptionPane.showConfirmDialog(
-			parent, 
+			parent,
 			"Missing or invalid bedtools binaries path. Do you want to select a new path?\n"
 			+ "(If you select 'No', program will exit)",
 			"Invalid BedTools",
@@ -518,9 +526,9 @@ public class GUI implements Observer {
 		final JFileChooser chooser = new JFileChooser(env.getBedToolsBinaries().getBaseDirectory());
 		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		chooser.setMultiSelectionEnabled(false);
-		
+
 		while (!checkBedToolsPath(env)) {
-			if (askForBedToolsPath(parent) && 
+			if (askForBedToolsPath(parent) &&
 				chooser.showOpenDialog(parent) == JFileChooser.APPROVE_OPTION
 			) {
 				try {
@@ -532,16 +540,16 @@ public class GUI implements Observer {
 				return false;
 			}
 		}
-		
+
 		env.saveToProperties();
-		
+
 		return true;
 	}
 
 	private static boolean checkBedToolsPath(final BDBMEnvironment env) {
 		try {
 			BedToolsBinaryToolsFactoryBuilder.newFactory(env.getBedToolsBinaries());
-			
+
 			return true;
 		} catch (BinaryCheckException bbce) {
 			return false;
@@ -550,7 +558,7 @@ public class GUI implements Observer {
 
 	private static boolean askForSplignPath(final Component parent) {
 		return JOptionPane.showConfirmDialog(
-			parent, 
+			parent,
 			"Missing or invalid splign binaries path. Do you want to select a new path?\n"
 			+ "(If you select 'No', program will exit)",
 			"Invalid Splign",
@@ -564,9 +572,9 @@ public class GUI implements Observer {
 		final JFileChooser chooser = new JFileChooser(env.getSplignBinaries().getBaseDirectory());
 		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		chooser.setMultiSelectionEnabled(false);
-		
+
 		while (!checkSplignPath(env)) {
-			if (askForSplignPath(parent) && 
+			if (askForSplignPath(parent) &&
 				chooser.showOpenDialog(parent) == JFileChooser.APPROVE_OPTION
 			) {
 				try {
@@ -578,16 +586,16 @@ public class GUI implements Observer {
 				return false;
 			}
 		}
-		
+
 		env.saveToProperties();
-		
+
 		return true;
 	}
 
 	private static boolean checkSplignPath(final BDBMEnvironment env) {
 		try {
 			SplignBinaryToolsFactoryBuilder.newFactory(env.getSplignBinaries());
-			
+
 			return true;
 		} catch (BinaryCheckException bbce) {
 			return false;
@@ -596,7 +604,7 @@ public class GUI implements Observer {
 
 	private static boolean askForCompartPath(final Component parent) {
 		return JOptionPane.showConfirmDialog(
-			parent, 
+			parent,
 			"Missing or invalid compart binaries path. Do you want to select a new path?\n"
 			+ "(If you select 'No', program will exit)",
 			"Invalid Compart",
@@ -610,9 +618,9 @@ public class GUI implements Observer {
 		final JFileChooser chooser = new JFileChooser(env.getCompartBinaries().getBaseDirectory());
 		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		chooser.setMultiSelectionEnabled(false);
-		
+
 		while (!checkCompartPath(env)) {
-			if (askForCompartPath(parent) && 
+			if (askForCompartPath(parent) &&
 				chooser.showOpenDialog(parent) == JFileChooser.APPROVE_OPTION
 			) {
 				try {
@@ -624,16 +632,16 @@ public class GUI implements Observer {
 				return false;
 			}
 		}
-		
+
 		env.saveToProperties();
-		
+
 		return true;
 	}
 
 	private static boolean checkCompartPath(final BDBMEnvironment env) {
 		try {
 			CompartBinaryToolsFactoryBuilder.newFactory(env.getCompartBinaries());
-			
+
 			return true;
 		} catch (BinaryCheckException bbce) {
 			return false;
@@ -642,7 +650,7 @@ public class GUI implements Observer {
 
 	private static boolean askForProSplignPath(final Component parent) {
 		return JOptionPane.showConfirmDialog(
-			parent, 
+			parent,
 			"Missing or invalid prosplign binaries path. Do you want to select a new path?\n"
 			+ "(If you select 'No', program will exit)",
 			"Invalid ProSplign",
@@ -656,9 +664,9 @@ public class GUI implements Observer {
 		final JFileChooser chooser = new JFileChooser(env.getProSplignBinaries().getBaseDirectory());
 		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		chooser.setMultiSelectionEnabled(false);
-		
+
 		while (!checkProSplignPath(env)) {
-			if (askForProSplignPath(parent) && 
+			if (askForProSplignPath(parent) &&
 				chooser.showOpenDialog(parent) == JFileChooser.APPROVE_OPTION
 			) {
 				try {
@@ -670,9 +678,9 @@ public class GUI implements Observer {
 				return false;
 			}
 		}
-		
+
 		env.saveToProperties();
-		
+
 		return true;
 	}
 
@@ -688,7 +696,7 @@ public class GUI implements Observer {
 
 	private static boolean askForProCompartPath(final Component parent) {
 		return JOptionPane.showConfirmDialog(
-			parent, 
+			parent,
 			"Missing or invalid procompart binaries path. Do you want to select a new path?\n"
 			+ "(If you select 'No', program will exit)",
 			"Invalid ProCompart",
@@ -702,9 +710,9 @@ public class GUI implements Observer {
 		final JFileChooser chooser = new JFileChooser(env.getProCompartBinaries().getBaseDirectory());
 		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		chooser.setMultiSelectionEnabled(false);
-		
+
 		while (!checkProCompartPath(env)) {
-			if (askForProCompartPath(parent) && 
+			if (askForProCompartPath(parent) &&
 				chooser.showOpenDialog(parent) == JFileChooser.APPROVE_OPTION
 			) {
 				try {
@@ -716,16 +724,16 @@ public class GUI implements Observer {
 				return false;
 			}
 		}
-		
+
 		env.saveToProperties();
-		
+
 		return true;
 	}
 
 	private static boolean checkProCompartPath(final BDBMEnvironment env) {
 		try {
 			ProCompartBinaryToolsFactoryBuilder.newFactory(env.getProCompartBinaries());
-			
+
 			return true;
 		} catch (BinaryCheckException bbce) {
 			return false;
@@ -737,35 +745,35 @@ public class GUI implements Observer {
 	) {
 		final RepositoryPaths repositoryPaths = env.getRepositoryPaths();
 		final String defaultPath = env.getProperty(RepositoryPaths.BASE_DIRECTORY_PROP);
-		
+
 		if (repositoryPaths.isValid()) {
 			return true;
 		}
-		
+
 		if (!defaultPath.isEmpty()) {
 			final File repositoryPath = new File(defaultPath);
 			if (askForCreatingRepositoryIn(parent, repositoryPath)) {
 				try {
 					repositoryPaths.buildBaseDirectory(repositoryPath);
 					env.changeRepositoryPath(repositoryPath);
-					
+
 					return true;
 				} catch (IOException ioe) {
 					showIOError(parent, ioe);
 				}
 			}
 		}
-		
+
 		final JFileChooser chooser = new JFileChooser(repositoryPaths.getBaseDirectory());
 		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		chooser.setMultiSelectionEnabled(false);
-		
+
 		while (!repositoryPaths.isValid()) {
-			if (askForRepositoryPath(parent) && 
+			if (askForRepositoryPath(parent) &&
 				chooser.showOpenDialog(parent) == JFileChooser.APPROVE_OPTION
 			) {
 				final File repositoryPath = chooser.getSelectedFile();
-				
+
 				try {
 					if (repositoryPaths.checkBaseDirectory(repositoryPath)) {
 						env.changeRepositoryPath(repositoryPath);
@@ -782,13 +790,13 @@ public class GUI implements Observer {
 				return false;
 			}
 		}
-		
+
 		return true;
 	}
 
 	private static void showIOError(final Component parent, IOException ioe) {
 		JOptionPane.showMessageDialog(
-			parent, 
+			parent,
 			"I/O error: " + ioe.getMessage(),
 			"I/O Error",
 			JOptionPane.ERROR_MESSAGE
@@ -810,22 +818,22 @@ public class GUI implements Observer {
 		@Override
 		public void run() {
 			GUI.this.shutdown();
-			
+
 			final BDBMSplash splash = new BDBMSplash();
 			splash.setVisible(true);
-			
+
 			try {
 				GUI.this.initGUI();
-				
+
 				GUI.this.showMainFrameAndWait();
 			} catch (Exception e) {
 				LOG.error("Error produced while restarting", e);
-				JOptionPane.showMessageDialog(null, 
+				JOptionPane.showMessageDialog(null,
 					"Error produced while restarting: " + e.getMessage() + ". Program will exit.",
 					"Missing Property",
 					JOptionPane.ERROR_MESSAGE
 				);
-				
+
 				System.exit(15);
 			} finally {
 				splash.setVisible(false);
@@ -841,7 +849,7 @@ public class GUI implements Observer {
 			this.mainFrame.setVisible(false);
 			this.mainFrame.dispose();
 		}
-		
+
 		this.manager = null;
 		this.guiController = null;
 		this.mainFrame = null;
@@ -856,14 +864,14 @@ public class GUI implements Observer {
 				} catch (Exception e) {
 					LOG.error("Error changing look and feel", e);
 				}
-					
+
 				final BDBMSplash splash = new BDBMSplash();
 				try {
 					splash.setVisible(true);
-		
+
 					final GUI gui = new GUI();
 					final DefaultBDBMEnvironment env = createBDBMEnvironment();
-		
+
 					if (!checkRepositoryPaths(env, splash)) {
 						System.exit(10);
 					} else if (!checkBlastBinaries(env, splash)) {
@@ -886,7 +894,7 @@ public class GUI implements Observer {
 					}
 				} catch (FileNotFoundException fnfe) {
 					LOG.error("Configuration file not found in path: " + new File("bdbm.conf").getAbsolutePath(), fnfe);
-					
+
 					JOptionPane.showMessageDialog(null,
 						"Configuration file not found in path: "
 							+ new File("bdbm.conf").getAbsolutePath()
@@ -894,27 +902,27 @@ public class GUI implements Observer {
 						"Missing Configuration File",
 						JOptionPane.ERROR_MESSAGE
 					);
-		
+
 					System.exit(1);
 				} catch (IllegalStateException ise) {
 					LOG.error("Missing property error", ise);
-					
-					JOptionPane.showMessageDialog(null, 
+
+					JOptionPane.showMessageDialog(null,
 						ise.getMessage() + ". Program will exit.",
 						"Missing Property",
 						JOptionPane.ERROR_MESSAGE
 					);
-		
+
 					System.exit(2);
 				} catch (Exception e) {
 					LOG.error("Unknown error", e);
-					
-					JOptionPane.showMessageDialog(null, 
+
+					JOptionPane.showMessageDialog(null,
 						"Unknown error: " + e.getMessage() + ". Program will exit.",
 						"Initialization Error",
 						JOptionPane.ERROR_MESSAGE
 					);
-		
+
 					System.exit(-1);
 				} finally {
 					splash.setVisible(false);

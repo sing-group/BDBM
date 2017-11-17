@@ -33,8 +33,11 @@ import java.io.RandomAccessFile;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -746,5 +749,70 @@ public class FastaUtils {
 		} else {
 			throw new IllegalArgumentException("Invalid sequence name: " + line);
 		}
+	}
+
+	public static void sortBySequenceLength(File fasta, boolean descending)
+		throws IOException, FastaParseException {
+		File temporaryFile = 
+			Files.createTempFile("bdbm_sort_tmp", ".fasta").toFile();
+		
+		writeFasta(sortSequences(parseFasta(fasta), descending), temporaryFile);
+		
+		Files.move(
+			temporaryFile.toPath(), fasta.toPath(),
+			StandardCopyOption.REPLACE_EXISTING
+		);
+	}
+
+	public static void writeFasta(List<Sequence> sequences, File file)
+		throws IOException {
+		PrintWriter writer = new PrintWriter(file);
+
+		for (Sequence sequence : sequences) {
+			writer.print(sequence.getName());
+			writer.println();
+
+			for (String sequenceFragment : sequence.getFragments()) {
+				writer.print(sequenceFragment);
+				writer.println();
+			}
+		}
+		writer.println();
+		writer.close();
+	}
+
+	public static List<Sequence> parseFasta(File fasta)
+		throws FastaParseException, IOException 
+	{
+		FastaParser parser = new DefaultFastaParser();
+		
+		SequenceListFastaParserAdapter parserListener = 
+			new SequenceListFastaParserAdapter();
+		parser.addParseListener(parserListener);
+		parser.parse(fasta);
+
+		return parserListener.getSequences();
+	}
+
+	public static List<Sequence> sortSequences(
+		List<Sequence> sequences, boolean descending
+	) {
+		List<Sequence> toSort = new LinkedList<>(sequences);
+
+		Collections.sort(toSort, new Comparator<Sequence>() {
+
+			@Override
+			public int compare(Sequence o1, Sequence o2) {
+				Integer o1Length = new Integer(o1.getChain().length());
+				Integer o2Length = new Integer(o2.getChain().length());
+				if (descending) {
+					return o2Length.compareTo(o1Length);
+				} else {
+					return o1Length.compareTo(o2Length);
+				}
+			}
+		});
+
+		return toSort;
 	}
 }

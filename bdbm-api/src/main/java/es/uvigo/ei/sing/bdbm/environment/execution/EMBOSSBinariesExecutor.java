@@ -22,6 +22,9 @@
 
 package es.uvigo.ei.sing.bdbm.environment.execution;
 
+import java.util.Map;
+import java.util.Optional;
+
 import es.uvigo.ei.sing.bdbm.environment.binaries.EMBOSSBinaries;
 import es.uvigo.ei.sing.bdbm.persistence.entities.NucleotideFasta;
 
@@ -32,8 +35,18 @@ public interface EMBOSSBinariesExecutor extends BinariesExecutor<EMBOSSBinaries>
 		NucleotideFasta fasta,
 		NucleotideFasta orf,
 		int minSize,
-		int maxSize
+		int maxSize,
+		int find
 	) throws InterruptedException, ExecutionException;
+
+	public ExecutionResult executeGetORF(
+	  NucleotideFasta fasta,
+	  NucleotideFasta orf,
+	  int minSize,
+	  int maxSize,
+	  int find,
+	  Map<String, Optional<String>> additionalParameters
+    ) throws InterruptedException, ExecutionException;
 	
 	public ExecutionResult executeRevseq(
 		NucleotideFasta fasta,
