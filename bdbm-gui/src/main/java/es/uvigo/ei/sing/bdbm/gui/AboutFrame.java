@@ -29,20 +29,24 @@ import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
 
@@ -135,8 +139,23 @@ public class AboutFrame extends JDialog {
 		this.setResizable(false);
 		this.pack();
 		this.setLocationRelativeTo(null);
+		this.addKeyBindings();
 	}
 	
+	protected void addKeyBindings() {
+		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+			.put(KeyStroke.getKeyStroke("ESCAPE"), "closeTheDialog");
+		getRootPane().getActionMap().put("closeTheDialog",
+			new AbstractAction() {
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					AboutFrame.this.setVisible(false);
+				}
+			});
+	}
+
 	private final static void fixSize(Component component, int width, int height) {
 		if (component == null || (height <= 0 && width <= 0)) return;
 		
