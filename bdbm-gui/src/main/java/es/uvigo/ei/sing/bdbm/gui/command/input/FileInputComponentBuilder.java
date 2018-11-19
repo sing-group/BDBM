@@ -39,10 +39,14 @@ import es.uvigo.ei.sing.yaacli.command.option.Option;
 public class FileInputComponentBuilder implements InputComponentBuilder {
 	private final static JFileChooser FILE_CHOOSER = new JFileChooser(new File("."));
 	
-	public static void setCurrentDirectory(File directory) {
-		FILE_CHOOSER.setCurrentDirectory(directory);
-	}
-	
+  public static void setCurrentDirectory(File directory) {
+    FILE_CHOOSER.setCurrentDirectory(directory);
+  }
+
+  public static File getCurrentDirectory() {
+    return FILE_CHOOSER.getCurrentDirectory();
+  }
+
 	@Override
 	public boolean canHandle(Option<?> option) {
 		return !option.isMultiple() && File.class.equals(option.getConverter().getTargetClass());

@@ -22,21 +22,43 @@
 
 package es.uvigo.ei.sing.bdbm.gui;
 
+import static es.uvigo.ei.sing.bdbm.gui.command.input.FileInputComponentBuilder.getCurrentDirectory;
+import static javax.swing.JFileChooser.APPROVE_OPTION;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.ActionEvent;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Observable;
 import java.util.Observer;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 
 import es.uvigo.ei.sing.bdbm.log.ExecutionObservableAppender;
 
 public class PanelLogger extends JPanel implements Observer {
 	private static final long serialVersionUID = 1L;
+	
 	private final JTextArea taLogger;
+	
+	private Action copySelectedTextAction;
+	private Action exportLogToFileAction;
+	private Action clearLogAction;
 
 	public PanelLogger(ExecutionObservableAppender appender) {
 		super(new BorderLayout());
@@ -48,6 +70,7 @@ public class PanelLogger extends JPanel implements Observer {
 		this.taLogger.setForeground(Color.WHITE);
 		this.taLogger.setFont(new Font(Font.MONOSPACED, Font.BOLD, 12));
 		this.taLogger.setEditable(false);
+		this.taLogger.setComponentPopupMenu(getTextAreaPopupMenu());
 		
 		final JScrollPane scrollPane = new JScrollPane(this.taLogger);
 		scrollPane.setBackground(Color.BLACK);
@@ -55,8 +78,109 @@ public class PanelLogger extends JPanel implements Observer {
 		
 		appender.addObserver(this);
 	}
-	
-	@Override
+
+  private JPopupMenu getTextAreaPopupMenu() {
+    JPopupMenu menu = new JPopupMenu() {
+      private static final long serialVersionUID = 1L;
+
+      @Override
+      public void setVisible(boolean b) {
+        checkActionsState();
+        super.setVisible(b);
+      }
+    };
+
+    menu.add(getCopySelectedTextAction());
+    menu.add(getExportLogToFileAction());
+    menu.add(new JSeparator());
+    menu.add(getClearLogAction());
+
+    return menu;
+  }
+
+  private void checkActionsState() {
+    this.copySelectedTextAction
+      .setEnabled(this.taLogger.getSelectedText() != null && !this.taLogger.getSelectedText().isEmpty());
+    this.exportLogToFileAction.setEnabled(this.taLogger.getText() != null && !this.taLogger.getText().isEmpty());
+  }
+
+  private Action getCopySelectedTextAction() {
+    if (this.copySelectedTextAction == null) {
+      this.copySelectedTextAction = new AbstractAction("Copy selection") {
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          copySelectedText();
+        }
+      };
+    }
+    return this.copySelectedTextAction;
+  }
+
+  private void copySelectedText() {
+    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+    StringSelection selection = new StringSelection(taLogger.getSelectedText());
+    clipboard.setContents(selection, selection);
+  }
+
+  private Action getExportLogToFileAction() {
+    if (this.exportLogToFileAction == null) {
+      this.exportLogToFileAction = new AbstractAction("Export log to file") {
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          exportLogToFile();
+        }
+      };
+    }
+    return this.exportLogToFileAction;
+  }
+
+  private void exportLogToFile() {
+    JFileChooser fileChooser = new JFileChooser(new File("."));
+    File currentDirectory = getCurrentDirectory();
+    if (currentDirectory != null) {
+      fileChooser.setCurrentDirectory(currentDirectory);
+    }
+
+    if (fileChooser.showOpenDialog(this) == APPROVE_OPTION) {
+      Path outputFile = fileChooser.getSelectedFile().toPath();
+
+      try {
+        Files.write(outputFile, this.taLogger.getText().getBytes());
+      } catch (IOException e) {
+        JOptionPane.showMessageDialog(
+          this,
+          "There was an error writing the log to " + outputFile.toFile().getAbsolutePath(),
+          "Error",
+          JOptionPane.ERROR_MESSAGE
+        );
+      }
+    }
+  }
+
+  private Action getClearLogAction() {
+    if (this.clearLogAction == null) {
+      this.clearLogAction = new AbstractAction("Clear log") {
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          clearLog();
+        }
+      };
+    }
+    return this.clearLogAction;
+  }
+  
+  private void clearLog() {
+    this.taLogger.setText("");
+    this.taLogger.setCaretPosition(this.taLogger.getText().length());
+  }
+
+  @Override
 	public void setBackground(Color bg) {
 		super.setBackground(bg);
 		if (this.taLogger != null)
