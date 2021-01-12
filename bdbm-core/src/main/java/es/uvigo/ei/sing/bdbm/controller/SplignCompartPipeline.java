@@ -41,6 +41,7 @@ import org.slf4j.LoggerFactory;
 import es.uvigo.ei.sing.bdbm.environment.execution.BLASTBinariesExecutor;
 import es.uvigo.ei.sing.bdbm.environment.execution.BedToolsBinariesExecutor;
 import es.uvigo.ei.sing.bdbm.environment.execution.CompartBinariesExecutor;
+import es.uvigo.ei.sing.bdbm.environment.execution.DefaultExecutionResult;
 import es.uvigo.ei.sing.bdbm.environment.execution.EMBOSSBinariesExecutor;
 import es.uvigo.ei.sing.bdbm.environment.execution.ExecutionException;
 import es.uvigo.ei.sing.bdbm.environment.execution.ExecutionResult;
@@ -115,11 +116,29 @@ public class SplignCompartPipeline {
 			final ExecutionResult reverseAndMergeResult = reverseAndMerge(
 				genomeFasta,
 				dirManager.getReversedGenomeFile(),
-				dirManager.getRenamedReversedGenomeFile(), dirManager.getBidirectionalGenomeFile());
+				dirManager.getRenamedReversedGenomeFile(),
+				dirManager.getBidirectionalGenomeFile());
+
 			if (reverseAndMergeResult != null) {
 				return reverseAndMergeResult;
 			}
-			
+
+      dirManager.getReversedGenomeFile().delete();
+      dirManager.getRenamedReversedGenomeFile().delete();
+
+      if (dirManager.getReversedGenomeFile().exists()) {
+        return new DefaultExecutionResult(
+          1, "The reversed genome file could not be deleted", "The reversed genome file could not be deleted"
+        );
+      }
+
+      if (dirManager.getRenamedReversedGenomeFile().exists()) {
+        return new DefaultExecutionResult(
+          1, "The renamed reversed genome file could not be deleted",
+          "The renamed reversed  genome file could not be deleted"
+        );
+      }
+
 			this.checkReverseAndMergeOutput(dirManager.getBidirectionalGenomeFile());
 			
 			// Genome and genes database creation
@@ -185,6 +204,7 @@ public class SplignCompartPipeline {
 		final ExecutionResult revseqResult = this.eBinaries.executeRevseq(
 			fasta, new DefaultNucleotideFasta(reversedFastaFile)
 		);
+
 		if (revseqResult.getExitStatus() != 0) {
 			return revseqResult;
 		}
